@@ -19,7 +19,7 @@ import (
 )
 
 type AuthHandler struct {
-	ssoClient *client.SSOClient
+	SSOClient *client.SSOClient
 }
 
 func NewAuthHandler(addr string) (*AuthHandler, error) {
@@ -28,7 +28,7 @@ func NewAuthHandler(addr string) (*AuthHandler, error) {
 		return nil, err
 	}
 
-	return &AuthHandler{ssoClient: ssoClient}, nil
+	return &AuthHandler{SSOClient: ssoClient}, nil
 }
 
 // @Summary User registration
@@ -55,7 +55,7 @@ func (h *AuthHandler) Register(c *gin.Context) {
 	}
 
 	// calling gRPC sso-service
-	resp, err := h.ssoClient.Register(request.Login, request.Username, request.Password)
+	resp, err := h.SSOClient.Register(request.Login, request.Username, request.Password)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 	}
@@ -103,7 +103,7 @@ func (h *AuthHandler) Login(c *gin.Context) {
 	}
 
 	// calling gRPC sso-service Login handler
-	response, err := h.ssoClient.Login(request.Login, request.Password)
+	response, err := h.SSOClient.Login(request.Login, request.Password)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -147,7 +147,7 @@ func (h *AuthHandler) ValidateToken(c *gin.Context) {
 	}
 
 	// calling gRPC sso-service ValidateToken handler
-	response, err := h.ssoClient.ValidateToken(request.Token)
+	response, err := h.SSOClient.ValidateToken(request.Token)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -180,7 +180,7 @@ func (h *AuthHandler) GetUserByToken(c *gin.Context) {
 	}
 
 	// calling gRPC sso-service GetUserByToken handler
-	response, err := h.ssoClient.GetUserByToken(request.Token)
+	response, err := h.SSOClient.GetUserByToken(request.Token)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
