@@ -16,5 +16,8 @@ func main() {
 
 	r := gin.Default()
 	r.POST("/api/v1/register", authHandler.Register)
+	r.POST("/api/v1/login", authHandler.Login)
+	r.POST("/api/v1/validate_token", authHandler.ValidateToken)
+	r.GET("/api/v1/user_by_token", authHandler.GetUserByToken)
 	r.Run(":8080")
 }

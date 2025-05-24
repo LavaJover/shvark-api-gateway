@@ -2,10 +2,12 @@ package client
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	ssopb "github.com/LavaJover/shvark-sso-service/proto/gen"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 type SSOClient struct {
@@ -20,8 +22,9 @@ func NewSSOClient(addr string) (*SSOClient, error) {
 	conn, err := grpc.DialContext(
 		ctx,
 		addr,
-		grpc.WithInsecure(),
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithBlock(),
+		grpc.WithDefaultServiceConfig(`{"loadBalancingPolicy": "round_robin"}`),
 	)
 	if err != nil {
 		return nil, err
@@ -42,6 +45,17 @@ func (c *SSOClient) Register(login, username, rawPassword string) (*ssopb.Regist
 		Username: username,
 		Password: rawPassword,
 	})
+}
+
+func (c *SSOClient) RegisterWithretry(login, username, rawPassword string, maxRetries int) (*ssopb.RegisterResponse, error) {
+	for range maxRetries {
+		resp, err := c.Register(login, username, rawPassword)
+		if err == nil {
+			return resp, err
+		}
+		time.Sleep(1 * time.Second)
+	}
+	return nil, errors.New("max retries exceeded")
 }
 
 func (c *SSOClient) Login(login, rawPassword string) (*ssopb.LoginResponse, error) {

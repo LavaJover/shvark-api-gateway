@@ -1,5 +1,16 @@
 package handlers
 
+/*
+
+To-Do:
+1) gRPC microservice errors -> HTTP status
+2) Retry middleware
+3) Connetion pools - grpc.WithResolvers + balancing
+4) OpenTelemetry for tracing
+5) Metrics (callback time) 
+6) Viper configs
+*/
+
 import (
 	"net/http"
 
