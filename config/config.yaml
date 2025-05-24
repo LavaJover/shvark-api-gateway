@@ -1,0 +1,8 @@
+env: "local"
+http_server:
+  host: "localhost"
+  port: "50056"
+log_config:
+  log_level: "debug"
+  log_format: "json"
+  log_output: "stdout"
