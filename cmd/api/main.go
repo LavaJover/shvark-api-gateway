@@ -3,8 +3,8 @@ package main
 import (
 	"log"
 
-	"github.com/LavaJover/shvark-api-gateway/internal/handlers"
-	"github.com/LavaJover/shvark-api-gateway/internal/middleware"
+	"github.com/LavaJover/shvark-api-gateway/internal/delivery/http/handlers"
+	"github.com/LavaJover/shvark-api-gateway/internal/delivery/http/middleware"
 	_ "github.com/LavaJover/shvark-api-gateway/pkg/docs"
 	"github.com/gin-gonic/gin"
 	"github.com/swaggo/files"
