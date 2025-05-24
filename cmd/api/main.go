@@ -4,10 +4,11 @@ import (
 	"log"
 
 	"github.com/LavaJover/shvark-api-gateway/internal/handlers"
-	"github.com/gin-gonic/gin"
-	ginSwagger "github.com/swaggo/gin-swagger"
-	"github.com/swaggo/files"
+	"github.com/LavaJover/shvark-api-gateway/internal/middleware"
 	_ "github.com/LavaJover/shvark-api-gateway/pkg/docs"
+	"github.com/gin-gonic/gin"
+	"github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 // @title Shvark API Gateway
@@ -16,6 +17,7 @@ import (
 // @host localhost:8080
 // @BasePath /api/v1
 func main() {
+	// init clients
 	ssoAddr := "localhost:50051"
 	authHandler, err := handlers.NewAuthHandler(ssoAddr)
 	if err != nil {
@@ -23,6 +25,15 @@ func main() {
 	}
 
 	r := gin.Default()
+
+	// use middleware
+	r.Use(middleware.RecoveryMiddleware())
+	r.Use(middleware.CorsMiddleware())
+	r.Use(middleware.LogginMiddleware())
+	r.Use(middleware.RateLimitMiddleware())
+	r.Use(middleware.HeaderCheckMiddleware())
+
+	// define routes
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	r.POST("/api/v1/register", authHandler.Register)
