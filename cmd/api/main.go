@@ -17,11 +17,18 @@ import (
 // @host localhost:8080
 // @BasePath /api/v1
 func main() {
-	// init clients
+	// init sso-client
 	ssoAddr := "localhost:50051"
 	authHandler, err := handlers.NewAuthHandler(ssoAddr)
 	if err != nil {
 		log.Fatalf("failed to init auth handler: %v\n", err)
+	}
+
+	// init user-client
+	userAddr := "localhost:50052"
+	userHandler, err := handlers.NewUserHandler(userAddr)
+	if err != nil {
+		log.Fatalf("failed to init user handler")
 	}
 
 	r := gin.Default()
@@ -31,7 +38,7 @@ func main() {
 	r.Use(middleware.CorsMiddleware())
 	r.Use(middleware.LogginMiddleware())
 	r.Use(middleware.RateLimitMiddleware())
-	r.Use(middleware.HeaderCheckMiddleware())
+	// r.Use(middleware.HeaderCheckMiddleware())
 
 	// define routes
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
@@ -40,6 +47,9 @@ func main() {
 	r.POST("/api/v1/login", authHandler.Login)
 	r.POST("/api/v1/validate_token", authHandler.ValidateToken)
 	r.GET("/api/v1/user_by_token", authHandler.GetUserByToken)
+
+	// user-service
+	r.GET("/api/v1/users/:id", userHandler.GetUserByID)
 
 	r.Run(":8080")
 }

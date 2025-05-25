@@ -40,7 +40,7 @@ func NewAuthHandler(addr string) (*AuthHandler, error) {
 // @Success 201 {object} RegisterResponse
 // @Failure 400 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
-// @Router /api/v1/register [post]
+// @Router /register [post]
 func (h *AuthHandler) Register(c *gin.Context) {
 	var request struct {
 		Login 	 string	`json:"login" binding:"required"`
@@ -89,7 +89,7 @@ type ErrorResponse struct {
 // @Success 200 {object} LoginResponse
 // @Failure 400 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
-// @Router /api/v1/login [post]
+// @Router /login [post]
 func (h *AuthHandler) Login(c *gin.Context) {
 	var request struct{
 		Login 		string `json:"login" binding:"required"`
@@ -134,7 +134,7 @@ type LoginResponse struct {
 // @Success 200 {object} ValidateTokenResponse
 // @Failure 400 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
-// @Router /api/v1/validate_token [post]
+// @Router /validate_token [post]
 func (h *AuthHandler) ValidateToken(c *gin.Context) {
 	var request struct {
 		Token string `json:"token" binding:"required"`
