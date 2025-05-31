@@ -1,5 +1,11 @@
 github.com/KyleBanks/depth v1.2.1 h1:5h8fQADFrWtarTdtDudMmGsC7GPbOAu6RVB3ffsVFHc=
 github.com/KyleBanks/depth v1.2.1/go.mod h1:jzSb9d0L43HxTQfT+oSA1EEp2q+ne2uh6XgeJcm8brE=
+github.com/LavaJover/shvark-authz-service v0.0.0-20250518135159-e47df48e9c1c h1:g3Hjy4UKEdKlaTQ5b0hJYzm1TJocw0gNEIPqg2GLrqY=
+github.com/LavaJover/shvark-authz-service v0.0.0-20250518135159-e47df48e9c1c/go.mod h1:NE4VB+lZVeHvJJGRxGj6eeG6gxF9bcTQl5PViZQfOBI=
+github.com/LavaJover/shvark-banking-service v0.0.0-20250530210440-ad7b91b1beeb h1:k6E6EB5GMr5DuGAm75K/aL2xrk7OGnTnFl+u60AXt/0=
+github.com/LavaJover/shvark-banking-service v0.0.0-20250530210440-ad7b91b1beeb/go.mod h1:+uNYo5BLNdX9sZQS+viQZp+J508mBM82KE7BkSDdqwk=
+github.com/LavaJover/shvark-profile-service v0.0.0-20250519161935-955e6b16225d h1:xuRct1ICwKAOcrXokgOy2AF1YdvKl0ku9GIqAZLyGsc=
+github.com/LavaJover/shvark-profile-service v0.0.0-20250519161935-955e6b16225d/go.mod h1:xSLMdyF68a2I1L23yzsOsVNQkRuXblIsp6WhLlIY9ak=
 github.com/LavaJover/shvark-sso-service v0.0.1 h1:R9IsrX3weRtB7/4Iib5g+WqYXrSIGFnzIriTme5+dEs=
 github.com/LavaJover/shvark-sso-service v0.0.1/go.mod h1:2wQmGAOAZcVAeXfms1Tm/DWR8vDZ7Ds7ydxVSIcb8kQ=
 github.com/LavaJover/shvark-user-service v0.0.2 h1:BL51l1XJXUGfELfgEhwtTPOL/bl4hqzJdVxH3qcwkRg=
@@ -163,8 +169,8 @@ golang.org/x/tools v0.33.0/go.mod h1:CIJMaWEY88juyUfo7UbgPqbC8rU2OqfAV1h2Qp0oMYI
 golang.org/x/xerrors v0.0.0-20190717185122-a985d3407aa7/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
 google.golang.org/genproto/googleapis/rpc v0.0.0-20250512202823-5a2f75b736a9 h1:IkAfh6J/yllPtpYFU0zZN1hUPYdT0ogkBT/9hMxHjvg=
 google.golang.org/genproto/googleapis/rpc v0.0.0-20250512202823-5a2f75b736a9/go.mod h1:qQ0YXyHHx3XkvlzUtpXDkS29lDSafHMZBAZDc03LQ3A=
-google.golang.org/grpc v1.72.1 h1:HR03wO6eyZ7lknl75XlxABNVLLFc2PAb6mHlYh756mA=
-google.golang.org/grpc v1.72.1/go.mod h1:wH5Aktxcg25y1I3w7H69nHfXdOG3UiadoBtjh3izSDM=
+google.golang.org/grpc v1.72.2 h1:TdbGzwb82ty4OusHWepvFWGLgIbNo1/SUynEN0ssqv8=
+google.golang.org/grpc v1.72.2/go.mod h1:wH5Aktxcg25y1I3w7H69nHfXdOG3UiadoBtjh3izSDM=
 google.golang.org/protobuf v1.36.6 h1:z1NpPI8ku2WgiWnf+t9wTPsn6eP1L7ksHUlkfLvd9xY=
 google.golang.org/protobuf v1.36.6/go.mod h1:jduwjTPXsFjZGTmRluh+L6NjiWu7pchiJ2/5YcXBHnY=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=

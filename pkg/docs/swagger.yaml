@@ -1,9 +1,154 @@
 basePath: /api/v1
 definitions:
+  handlers.AddPolicyRequest:
+    properties:
+      action:
+        type: string
+      object:
+        type: string
+      role:
+        type: string
+    required:
+    - action
+    - object
+    - role
+    type: object
+  handlers.AddPolicyResponse:
+    properties:
+      success:
+        type: boolean
+    required:
+    - success
+    type: object
+  handlers.AssignRoleRequest:
+    properties:
+      role:
+        type: string
+      user_id:
+        type: string
+    required:
+    - role
+    - user_id
+    type: object
+  handlers.AssignRoleResponse:
+    properties:
+      success:
+        type: boolean
+    required:
+    - success
+    type: object
+  handlers.BankDetail:
+    properties:
+      bank_name:
+        type: string
+      country:
+        type: string
+      currency:
+        type: string
+      delay:
+        type: string
+      enabled:
+        type: boolean
+      id:
+        type: string
+      max_amount:
+        type: number
+      min_amount:
+        type: number
+      payment_system:
+        type: string
+      trader_id:
+        type: string
+    type: object
+  handlers.CheckPermissionRequest:
+    properties:
+      action:
+        type: string
+      object:
+        type: string
+      user_id:
+        type: string
+    required:
+    - action
+    - object
+    - user_id
+    type: object
+  handlers.CheckPermissionResponse:
+    properties:
+      allowed:
+        type: boolean
+    required:
+    - allowed
+    type: object
+  handlers.CreateBankDetailRequest:
+    properties:
+      bank_name:
+        type: string
+      country:
+        type: string
+      currency:
+        type: string
+      delay:
+        example: 100s
+        type: string
+      enabled:
+        type: boolean
+      max_amount:
+        type: number
+      min_amount:
+        type: number
+      payment_system:
+        type: string
+      trader_id:
+        type: string
+    type: object
+  handlers.CreateBankDetailResponse:
+    properties:
+      bank_detail_id:
+        type: string
+      message:
+        type: string
+    type: object
+  handlers.DeletePolicyRequest:
+    properties:
+      action:
+        type: string
+      object:
+        type: string
+      role:
+        type: string
+    required:
+    - action
+    - object
+    - role
+    type: object
+  handlers.DeletePolicyResponse:
+    properties:
+      success:
+        type: boolean
+    required:
+    - success
+    type: object
   handlers.ErrorResponse:
     properties:
       error:
         example: invalid email
+        type: string
+    type: object
+  handlers.GetBankDetailByIDResponse:
+    properties:
+      bank_detail:
+        $ref: '#/definitions/handlers.BankDetail'
+    type: object
+  handlers.GetProfileByIDResponse:
+    properties:
+      avatar_url:
+        type: string
+      profile_id:
+        type: string
+      tg_link:
+        type: string
+      user_id:
         type: string
     type: object
   handlers.GetUserByIDResponse:
@@ -51,6 +196,23 @@ definitions:
         example: 1d6ab366-4fca-4bcc-972d-875c35ea939a
         type: string
     type: object
+  handlers.RevokeRoleRequest:
+    properties:
+      role:
+        type: string
+      user_id:
+        type: string
+    required:
+    - role
+    - user_id
+    type: object
+  handlers.RevokeRoleResponse:
+    properties:
+      success:
+        type: boolean
+    required:
+    - success
+    type: object
   handlers.ValidateTokenRequest:
     properties:
       token:
@@ -71,6 +233,65 @@ info:
   title: Shvark API Gateway
   version: "1.0"
 paths:
+  /banking/details:
+    post:
+      consumes:
+      - application/json
+      description: Create new bank detail
+      parameters:
+      - description: New bank details
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.CreateBankDetailRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/handlers.CreateBankDetailResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Create new bank detail
+      tags:
+      - banking
+  /banking/details/{uuid}:
+    get:
+      consumes:
+      - application/json
+      description: Get bank detail by ID
+      parameters:
+      - description: bank detail UUID
+        in: path
+        name: uuid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.GetBankDetailByIDResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Get bank detail by ID
+      tags:
+      - banking
   /login:
     post:
       consumes:
@@ -101,6 +322,183 @@ paths:
       summary: User login
       tags:
       - Auth
+  /profiles/{uuid}:
+    get:
+      consumes:
+      - application/json
+      description: Get profile by uuid
+      parameters:
+      - description: Profile uuid
+        in: path
+        name: uuid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.GetProfileByIDResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Get profile by uuid
+      tags:
+      - profiles
+  /rbac/permissions:
+    post:
+      consumes:
+      - application/json
+      description: Check user permission
+      parameters:
+      - description: Permission subject, object, action
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.CheckPermissionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.CheckPermissionResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Check user permission
+      tags:
+      - RBAC
+  /rbac/policies:
+    delete:
+      consumes:
+      - application/json
+      description: Delete policy
+      parameters:
+      - description: Policy details to delete
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.DeletePolicyRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.DeletePolicyResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Delete policy
+      tags:
+      - RBAC
+    post:
+      consumes:
+      - application/json
+      description: Add policy
+      parameters:
+      - description: New policy details
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.AddPolicyRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.AddPolicyResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Add policy
+      tags:
+      - RBAC
+  /rbac/roles:
+    delete:
+      consumes:
+      - application/json
+      description: Revoke role
+      parameters:
+      - description: Role assigned to user to revoke
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.RevokeRoleRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.RevokeRoleResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Revoke role
+      tags:
+      - RBAC
+    post:
+      consumes:
+      - application/json
+      description: Assign role
+      parameters:
+      - description: Role assigned to user
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.AssignRoleRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.AssignRoleResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Assign role
+      tags:
+      - RBAC
   /register:
     post:
       consumes:

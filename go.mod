@@ -3,14 +3,19 @@ module github.com/LavaJover/shvark-api-gateway
 go 1.23.2
 
 require (
+	github.com/LavaJover/shvark-authz-service v0.0.0-20250518135159-e47df48e9c1c
+	github.com/LavaJover/shvark-banking-service v0.0.0-20250530210440-ad7b91b1beeb
+	github.com/LavaJover/shvark-profile-service v0.0.0-20250519161935-955e6b16225d
 	github.com/LavaJover/shvark-sso-service v0.0.1
 	github.com/LavaJover/shvark-user-service v0.0.2
 	github.com/gin-gonic/gin v1.10.1
+	github.com/google/uuid v1.6.0
 	github.com/swaggo/files v1.0.1
 	github.com/swaggo/gin-swagger v1.6.0
 	github.com/swaggo/swag v1.16.4
 	github.com/ulule/limiter/v3 v3.11.2
-	google.golang.org/grpc v1.72.1
+	google.golang.org/grpc v1.72.2
+	google.golang.org/protobuf v1.36.6
 )
 
 require (
@@ -28,7 +33,6 @@ require (
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/go-playground/validator/v10 v10.26.0 // indirect
 	github.com/goccy/go-json v0.10.5 // indirect
-	github.com/google/uuid v1.6.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.10 // indirect
@@ -48,6 +52,5 @@ require (
 	golang.org/x/text v0.25.0 // indirect
 	golang.org/x/tools v0.33.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20250512202823-5a2f75b736a9 // indirect
-	google.golang.org/protobuf v1.36.6 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

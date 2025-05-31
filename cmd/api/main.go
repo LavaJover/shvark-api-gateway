@@ -21,14 +21,35 @@ func main() {
 	ssoAddr := "localhost:50051"
 	authHandler, err := handlers.NewAuthHandler(ssoAddr)
 	if err != nil {
-		log.Fatalf("failed to init auth handler: %v\n", err)
+		log.Printf("failed to init auth handler: %v\n", err)
 	}
 
 	// init user-client
 	userAddr := "localhost:50052"
 	userHandler, err := handlers.NewUserHandler(userAddr)
 	if err != nil {
-		log.Fatalf("failed to init user handler")
+		log.Printf("failed to init user handler")
+	}
+
+	// init profile-client
+	profileAddr := "localhost:50055"
+	profileHandler, err := handlers.NewProfileHandler(profileAddr)
+	if err != nil {
+		log.Printf("failed to init profile handler")
+	}
+
+	// init authz-client
+	authzAddr := "localhost:50054"
+	authzHandler, err := handlers.NewAuthzhandler(authzAddr)
+	if err != nil {
+		log.Printf("failed to init authz handler")
+	}
+
+	// init banking-client
+	bankingAddr := "localhost:50057"
+	bankingHandler, err := handlers.NewBankingHandler(bankingAddr)
+	if err != nil {
+		log.Printf("failed to init banking handler")
 	}
 
 	r := gin.Default()
@@ -50,6 +71,20 @@ func main() {
 
 	// user-service
 	r.GET("/api/v1/users/:id", userHandler.GetUserByID)
+
+	// profile-service
+	r.GET("/api/v1/profiles/:uuid", profileHandler.GetProfileByID)
+
+	// RBAC-service
+	r.POST("/api/v1/rbac/roles", authzHandler.AssignRole)
+	r.DELETE("/api/v1/rbac/roles", authzHandler.RevokeRole)
+	r.POST("/api/v1/rbac/policies", authzHandler.AddPolicy)
+	r.DELETE("/api/v1/rbac/policies", authzHandler.DeletePolicy)
+	r.POST("/api/v1/rbac/permissions", authzHandler.CheckPermission)
+
+	// banking-service
+	r.POST("/api/v1/banking/details", bankingHandler.CreateBankDetail)
+	r.GET("/api/v1/banking/details/:uuid", bankingHandler.GetBankDetailByID)
 
 	r.Run(":8080")
 }
