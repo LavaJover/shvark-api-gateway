@@ -146,6 +146,103 @@ type GetBankDetailByIDResponse struct {
 	BankDetail	`json:"bank_detail"`
 }
 
+// @Summary Update bank detail
+// @Description Update bank detail
+// @Tags banking
+// @Accept json
+// @Produce json
+// @Param input body UpdateBankDetailRequest true "New data for bank detail with given ID"
+// @Success 200 {object} UpdateBankDetailResponse
+// @Failure 400 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /banking/details [patch]
 func (h *BankingHandler) UpdateBankDetail(c *gin.Context) {
-	
+	var request UpdateBankDetailRequest
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	delay, err := time.ParseDuration(request.Delay)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	updatedBankDetail := domain.BankDetail{
+		ID: request.ID,
+		TraderID: request.TraderID,
+		Country: request.Country,
+		Currency: request.Currency,
+		MinAmount: request.MinAmount,
+		MaxAmount: request.MaxAmount,
+		BankName: request.BankName,
+		PaymentSystem: request.PaymentSystem,
+		Delay: delay,
+		Enabled: request.Enabled,
+	}
+
+	_, err = h.BankingClient.UpdateBankDetail(&updatedBankDetail)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, UpdateBankDetailResponse{})
+}
+
+type UpdateBankDetailRequest struct {
+	BankDetail `json:"bank_detail"`
+}
+
+type UpdateBankDetailResponse struct {
+
+}
+
+// @Summary Get bank details by trader ID
+// @Description Get bank details by trader ID
+// @Tags banking
+// @Accept json
+// @Produce json
+// @Param trader query string false "trader uuid"
+// @Success 200 {object} GetBankDetailsByTraderIDResponse
+// @Failure 400 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /banking/details/ [get]
+func (h *BankingHandler) GetBankDetailsByTraderID(c *gin.Context) {
+	traderID, err := uuid.Parse(c.Query("trader"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	response, err := h.BankingClient.GetBankDetailsByTraderID(traderID.String())
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	bankDetails := make([]BankDetail, len(response.BankDetails))
+	for i, bankDetail := range response.BankDetails {
+		bankDetails[i] = BankDetail{
+			ID: bankDetail.BankDetailId,
+			TraderID: bankDetail.TraderId,
+			Country: bankDetail.Country,
+			Currency: bankDetail.Currency,
+			MinAmount: float32(bankDetail.MinAmount),
+			MaxAmount: float32(bankDetail.MaxAmount),
+			BankName: bankDetail.BankName,
+			PaymentSystem: bankDetail.PaymentSystem,
+			Delay: bankDetail.Delay.String(),
+			Enabled: bankDetail.Enabled,
+		}
+	}
+
+	c.JSON(http.StatusOK, GetBankDetailsByTraderIDResponse{
+		BankDetails: bankDetails,
+	})
+}
+
+type GetBankDetailsByTraderIDResponse struct {
+	BankDetails []BankDetail `json:"bank_details"`
 }

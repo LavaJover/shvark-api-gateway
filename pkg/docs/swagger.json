@@ -53,6 +53,93 @@
                         }
                     }
                 }
+            },
+            "patch": {
+                "description": "Update bank detail",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "banking"
+                ],
+                "summary": "Update bank detail",
+                "parameters": [
+                    {
+                        "description": "New data for bank detail with given ID",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handlers.UpdateBankDetailRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.UpdateBankDetailResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/banking/details/": {
+            "get": {
+                "description": "Get bank details by trader ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "banking"
+                ],
+                "summary": "Get bank details by trader ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "trader uuid",
+                        "name": "trader",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.GetBankDetailsByTraderIDResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
             }
         },
         "/banking/details/{uuid}": {
@@ -765,6 +852,17 @@
                 }
             }
         },
+        "handlers.GetBankDetailsByTraderIDResponse": {
+            "type": "object",
+            "properties": {
+                "bank_details": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/handlers.BankDetail"
+                    }
+                }
+            }
+        },
         "handlers.GetProfileByIDResponse": {
             "type": "object",
             "properties": {
@@ -874,6 +972,17 @@
                     "type": "boolean"
                 }
             }
+        },
+        "handlers.UpdateBankDetailRequest": {
+            "type": "object",
+            "properties": {
+                "bank_detail": {
+                    "$ref": "#/definitions/handlers.BankDetail"
+                }
+            }
+        },
+        "handlers.UpdateBankDetailResponse": {
+            "type": "object"
         },
         "handlers.ValidateTokenRequest": {
             "type": "object",

@@ -140,6 +140,13 @@ definitions:
       bank_detail:
         $ref: '#/definitions/handlers.BankDetail'
     type: object
+  handlers.GetBankDetailsByTraderIDResponse:
+    properties:
+      bank_details:
+        items:
+          $ref: '#/definitions/handlers.BankDetail'
+        type: array
+    type: object
   handlers.GetProfileByIDResponse:
     properties:
       avatar_url:
@@ -213,6 +220,13 @@ definitions:
     required:
     - success
     type: object
+  handlers.UpdateBankDetailRequest:
+    properties:
+      bank_detail:
+        $ref: '#/definitions/handlers.BankDetail'
+    type: object
+  handlers.UpdateBankDetailResponse:
+    type: object
   handlers.ValidateTokenRequest:
     properties:
       token:
@@ -234,6 +248,35 @@ info:
   version: "1.0"
 paths:
   /banking/details:
+    patch:
+      consumes:
+      - application/json
+      description: Update bank detail
+      parameters:
+      - description: New data for bank detail with given ID
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.UpdateBankDetailRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.UpdateBankDetailResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Update bank detail
+      tags:
+      - banking
     post:
       consumes:
       - application/json
@@ -261,6 +304,34 @@ paths:
           schema:
             $ref: '#/definitions/handlers.ErrorResponse'
       summary: Create new bank detail
+      tags:
+      - banking
+  /banking/details/:
+    get:
+      consumes:
+      - application/json
+      description: Get bank details by trader ID
+      parameters:
+      - description: trader uuid
+        in: query
+        name: trader
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.GetBankDetailsByTraderIDResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Get bank details by trader ID
       tags:
       - banking
   /banking/details/{uuid}:
