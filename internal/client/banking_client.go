@@ -52,6 +52,12 @@ func (c *BankingClient) CreateBankDetail(bankDetail *domain.BankDetail) (*bankin
 			PaymentSystem: bankDetail.PaymentSystem,
 			Enabled: bankDetail.Enabled,
 			Delay: durationpb.New(bankDetail.Delay),
+			CardNumber: bankDetail.CardNumber,
+			Phone: bankDetail.Phone,
+			Owner: bankDetail.Owner,
+			MaxOrdersSimultaneosly: bankDetail.MaxOrdersSimultaneosly,
+			MaxAmountDay: float64(bankDetail.MaxAmountDay),
+			MaxAmountMonth: float64(bankDetail.MaxAmountMonth),
 		},
 	)
 }
@@ -98,6 +104,12 @@ func (c *BankingClient) UpdateBankDetail(bankDetail *domain.BankDetail) (*bankin
 				PaymentSystem: bankDetail.PaymentSystem,
 				Enabled: bankDetail.Enabled,
 				Delay: durationpb.New(bankDetail.Delay),
+				CardNumber: bankDetail.CardNumber,
+				Phone: bankDetail.Phone,
+				Owner: bankDetail.Owner,
+				MaxOrdersSimultaneosly: bankDetail.MaxOrdersSimultaneosly,
+				MaxAmountDay: float64(bankDetail.MaxAmountDay),
+				MaxAmountMonth: float64(bankDetail.MaxAmountMonth),
 			},
 		},
 	)

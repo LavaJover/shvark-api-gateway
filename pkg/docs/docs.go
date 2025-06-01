@@ -708,6 +708,9 @@ const docTemplate = `{
                 "bank_name": {
                     "type": "string"
                 },
+                "card_number": {
+                    "type": "string"
+                },
                 "country": {
                     "type": "string"
                 },
@@ -726,10 +729,25 @@ const docTemplate = `{
                 "max_amount": {
                     "type": "number"
                 },
+                "max_amount_day": {
+                    "type": "integer"
+                },
+                "max_amount_month": {
+                    "type": "integer"
+                },
+                "max_orders_simultaneosly": {
+                    "type": "integer"
+                },
                 "min_amount": {
                     "type": "number"
                 },
+                "owner": {
+                    "type": "string"
+                },
                 "payment_system": {
+                    "type": "string"
+                },
+                "phone": {
                     "type": "string"
                 },
                 "trader_id": {
@@ -773,6 +791,9 @@ const docTemplate = `{
                 "bank_name": {
                     "type": "string"
                 },
+                "card_number": {
+                    "type": "string"
+                },
                 "country": {
                     "type": "string"
                 },
@@ -789,10 +810,25 @@ const docTemplate = `{
                 "max_amount": {
                     "type": "number"
                 },
+                "max_amount_day": {
+                    "type": "integer"
+                },
+                "max_amount_month": {
+                    "type": "integer"
+                },
+                "max_orders_simultaneosly": {
+                    "type": "integer"
+                },
                 "min_amount": {
                     "type": "number"
                 },
+                "owner": {
+                    "type": "string"
+                },
                 "payment_system": {
+                    "type": "string"
+                },
+                "phone": {
                     "type": "string"
                 },
                 "trader_id": {
