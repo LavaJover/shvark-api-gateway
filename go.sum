@@ -4,6 +4,8 @@ github.com/LavaJover/shvark-authz-service v0.0.0-20250518135159-e47df48e9c1c h1:
 github.com/LavaJover/shvark-authz-service v0.0.0-20250518135159-e47df48e9c1c/go.mod h1:NE4VB+lZVeHvJJGRxGj6eeG6gxF9bcTQl5PViZQfOBI=
 github.com/LavaJover/shvark-banking-service v0.0.3 h1:RZ5njEsOU0yuPYMCvGIBhErqj4jMhG4pEPefoPU3VB0=
 github.com/LavaJover/shvark-banking-service v0.0.3/go.mod h1:+uNYo5BLNdX9sZQS+viQZp+J508mBM82KE7BkSDdqwk=
+github.com/LavaJover/shvark-banking-service v0.0.4 h1:ZEBGWC+vAfykF/auQpzi2aLTXgt7W5YBlledOBKfrgk=
+github.com/LavaJover/shvark-banking-service v0.0.4/go.mod h1:+uNYo5BLNdX9sZQS+viQZp+J508mBM82KE7BkSDdqwk=
 github.com/LavaJover/shvark-order-service v0.0.1 h1:i/Mibdc2gwhZ99AvMh/AUA7NJQDUKs+JkNZCat43z1g=
 github.com/LavaJover/shvark-order-service v0.0.1/go.mod h1:Vv6FVpMnySc2WYBCZGMZB2JnucjedpKZbNabbouDc2Y=
 github.com/LavaJover/shvark-profile-service v0.0.0-20250519161935-955e6b16225d h1:xuRct1ICwKAOcrXokgOy2AF1YdvKl0ku9GIqAZLyGsc=

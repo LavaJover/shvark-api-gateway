@@ -58,6 +58,12 @@ func (h *BankingHandler) CreateBankDetail(c *gin.Context) {
 		PaymentSystem: request.PaymentSystem,
 		Delay: delay,
 		Enabled: request.Enabled,
+		CardNumber: request.CardNumber,
+		Phone: request.Phone,
+		Owner: request.Owner,
+		MaxOrdersSimultaneosly: request.MaxOrdersSimultaneosly,
+		MaxAmountDay: request.MaxAmountDay,
+		MaxAmountMonth: request.MaxAmountMonth,
 	}
 
 	response, err := h.BankingClient.CreateBankDetail(&bankDetail)
@@ -73,15 +79,21 @@ func (h *BankingHandler) CreateBankDetail(c *gin.Context) {
 }
 
 type CreateBankDetailRequest struct {
-	TraderID 		string			`json:"trader_id"`
-	Country 		string			`json:"country"`
-	Currency 		string			`json:"currency"`
-	MinAmount 		float32			`json:"min_amount"`
-	MaxAmount 		float32			`json:"max_amount"`
-	BankName 		string			`json:"bank_name"`
-	PaymentSystem 	string			`json:"payment_system"`
-	Delay			string			`json:"delay" example:"100s"`
-	Enabled 		bool			`json:"enabled"`
+	TraderID 				string		`json:"trader_id"`
+	Country 				string		`json:"country"`
+	Currency 				string		`json:"currency"`
+	MinAmount 				float32		`json:"min_amount"`
+	MaxAmount 				float32		`json:"max_amount"`
+	BankName 				string		`json:"bank_name"`
+	PaymentSystem 			string		`json:"payment_system"`
+	Delay					string		`json:"delay" example:"100s"`
+	Enabled 				bool		`json:"enabled"`
+	CardNumber 				string 		`json:"card_number"`
+	Phone 					string		`json:"phone"`
+	Owner 					string		`json:"owner"`
+	MaxOrdersSimultaneosly  int32		`json:"max_orders_simultaneosly"`
+	MaxAmountDay			int32		`json:"max_amount_day"`
+	MaxAmountMonth			int32		`json:"max_amount_month"`
 }
 
 type CreateBankDetailResponse struct {
@@ -125,21 +137,33 @@ func (h *BankingHandler) GetBankDetailByID(c *gin.Context) {
 			PaymentSystem: response.BankDetail.PaymentSystem,
 			Delay: response.BankDetail.Delay.String(),
 			Enabled: response.BankDetail.Enabled,
+			CardNumber: response.BankDetail.CardNumber,
+			Phone: response.BankDetail.Phone,
+			Owner: response.BankDetail.Owner,
+			MaxOrdersSimultaneosly: response.BankDetail.MaxOrdersSimultaneosly,
+			MaxAmountDay: int32(response.BankDetail.MaxAmountDay),
+			MaxAmountMonth: int32(response.BankDetail.MaxAmountMonth),
 		},
 	})
 }
 
 type BankDetail struct {
-	ID 				string	`json:"id"`
-	TraderID 		string	`json:"trader_id"`
-	Country 		string	`json:"country"`
-	Currency 		string	`json:"currency"`
-	MinAmount 		float32	`json:"min_amount"`
-	MaxAmount 		float32	`json:"max_amount"`
-	BankName 		string	`json:"bank_name"`
-	PaymentSystem 	string	`json:"payment_system"`
-	Delay			string	`json:"delay"`
-	Enabled 		bool	`json:"enabled"`
+	ID 						string	`json:"id"`
+	TraderID 				string	`json:"trader_id"`
+	Country 				string	`json:"country"`
+	Currency 				string	`json:"currency"`
+	MinAmount 				float32	`json:"min_amount"`
+	MaxAmount 				float32	`json:"max_amount"`
+	BankName 				string	`json:"bank_name"`
+	PaymentSystem 			string	`json:"payment_system"`
+	Delay					string	`json:"delay"`
+	Enabled 				bool	`json:"enabled"`
+	CardNumber 				string  `json:"card_number"`
+	Phone 					string	`json:"phone"`
+	Owner 					string	`json:"owner"`
+	MaxOrdersSimultaneosly  int32	`json:"max_orders_simultaneosly"`
+	MaxAmountDay			int32	`json:"max_amount_day"`
+	MaxAmountMonth			int32	`json:"max_amount_month"`
 }
 
 type GetBankDetailByIDResponse struct {
@@ -180,6 +204,12 @@ func (h *BankingHandler) UpdateBankDetail(c *gin.Context) {
 		PaymentSystem: request.PaymentSystem,
 		Delay: delay,
 		Enabled: request.Enabled,
+		CardNumber: request.CardNumber,
+		Phone: request.Phone,
+		Owner: request.Owner,
+		MaxOrdersSimultaneosly: request.MaxOrdersSimultaneosly,
+		MaxAmountDay: request.MaxAmountDay,
+		MaxAmountMonth: request.MaxAmountMonth,
 	}
 
 	_, err = h.BankingClient.UpdateBankDetail(&updatedBankDetail)
@@ -235,6 +265,12 @@ func (h *BankingHandler) GetBankDetailsByTraderID(c *gin.Context) {
 			PaymentSystem: bankDetail.PaymentSystem,
 			Delay: bankDetail.Delay.String(),
 			Enabled: bankDetail.Enabled,
+			CardNumber: bankDetail.CardNumber,
+			Phone: bankDetail.Phone,
+			Owner: bankDetail.Owner,
+			MaxOrdersSimultaneosly: bankDetail.MaxOrdersSimultaneosly,
+			MaxAmountDay: int32(bankDetail.MaxAmountDay),
+			MaxAmountMonth: int32(bankDetail.MaxAmountMonth),
 		}
 	}
 
