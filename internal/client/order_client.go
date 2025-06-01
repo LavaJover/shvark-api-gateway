@@ -1,0 +1,68 @@
+package client
+
+import (
+	"context"
+	"time"
+
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
+
+	"github.com/LavaJover/shvark-api-gateway/internal/domain"
+	orderpb "github.com/LavaJover/shvark-order-service/proto/gen"
+)
+
+type OrderClient struct {
+	conn *grpc.ClientConn
+	service orderpb.OrderServiceClient
+}
+
+func NewOrderClient(addr string) (*OrderClient, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	conn, err := grpc.DialContext(
+		ctx,
+		addr,
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+		grpc.WithBlock(),
+		grpc.WithDefaultServiceConfig(`{"loadBalancingPolicy": "round_robin"}`),
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return &OrderClient{
+		conn: conn,
+		service: orderpb.NewOrderServiceClient(conn),
+	}, nil
+}
+
+func (c *OrderClient) CreateOrder(order *domain.Order) (*orderpb.CreateOrderResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	return c.service.CreateOrder(
+		ctx,
+		&orderpb.CreateOrderRequest{
+			MerchantId: order.MerchantID,
+			Amount: float64(order.Amount),
+			Currency: order.Currency,
+			Country: order.Country,
+			ClientEmail: order.ClientEmail,
+			MetadataJson: order.MetadataJSON,
+			PaymentSystem: order.PaymentSystem,
+		},
+	)
+}
+
+func (c *OrderClient) GetOrderByID(orderID string) (*orderpb.GetOrderByIDResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	return c.service.GetOrderByID(
+		ctx,
+		&orderpb.GetOrderByIDRequest{
+			OrderId: orderID,
+		},
+	)
+}
