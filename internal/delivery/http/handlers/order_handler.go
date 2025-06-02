@@ -4,9 +4,13 @@ import (
 	"net/http"
 
 	"github.com/LavaJover/shvark-api-gateway/internal/client"
+	orderRequest "github.com/LavaJover/shvark-api-gateway/internal/delivery/http/dto/order/request"
+	orderResponse "github.com/LavaJover/shvark-api-gateway/internal/delivery/http/dto/order/response"
 	"github.com/LavaJover/shvark-api-gateway/internal/domain"
 	"github.com/gin-gonic/gin"
 )
+
+var _ = orderRequest.CreateOrderRequest{}
 
 type OrderHandler struct {
 	OrderClient *client.OrderClient
@@ -28,13 +32,13 @@ func NewOrderHandler(addr string) (*OrderHandler, error) {
 // @Tags orders
 // @Accept json
 // @Produce json
-// @Param input body CreateOrderRequest true "new order details"
-// @Success 200 {object} CreateOrderResponse
+// @Param input body orderRequest.CreateOrderRequest true "new order details"
+// @Success 200 {object} orderResponse.CreateOrderResponse
 // @Failure 400 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
 // @Router /orders [post]
 func (h *OrderHandler) CreateOrder(c *gin.Context) {
-	var request CreateOrderRequest
+	var request orderRequest.CreateOrderRequest
 	if err := c.ShouldBindJSON(&request); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -42,10 +46,10 @@ func (h *OrderHandler) CreateOrder(c *gin.Context) {
 
 	orderRequest := domain.Order{
 		MerchantID: request.MerchantID,
-		Amount: request.Amount,
+		Amount: float32(request.Amount),
 		Currency: request.Currency,
 		Country: request.Country,
-		ClientEmail: request.ClientEmail,
+		ClientEmail: request.ClientData,
 		MetadataJSON: request.Metadata,
 		PaymentSystem: request.PaymentSystem,
 	}
@@ -56,27 +60,20 @@ func (h *OrderHandler) CreateOrder(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, OrderResponse{
+	c.JSON(http.StatusOK, orderResponse.CreateOrderResponse{
 		OrderID: response.Order.OrderId,
 		OrderStatus: response.Order.Status.String(),
+		BankDetail: orderResponse.BankDetail{
+			ID: response.Order.BankDetail.BankDetailId,
+			TraderID: response.Order.BankDetail.TraderId,
+			Currency: response.Order.BankDetail.Currency,
+			Country: response.Order.BankDetail.Country,
+			MinAmount: response.Order.BankDetail.MinAmount,
+			MaxAmount: response.Order.BankDetail.MaxAmount,
+			BankName: response.Order.BankDetail.BankName,
+			PaymentSystem: response.Order.BankDetail.PaymentSystem,
+			Enabled: response.Order.BankDetail.Enabled,
+			Delay: response.Order.BankDetail.Delay.String(),
+		},
 	})
-}
-
-type CreateOrderRequest struct {
-	MerchantID  	string   `json:"merchant_id"`
-	Amount	    	float32	 `json:"amount"`
-	Currency   		string   `json:"currency"`
-	Country	   		string 	 `json:"country"`
-	ClientEmail 	string	 `json:"client_email"`
-	Metadata    	string 	 `json:"metadata"`
-	PaymentSystem   string   `json:"payment_system"`
-}
-
-type OrderResponse struct {
-	OrderID     string `json:"order_id"`
-	OrderStatus string `json:"order_status"`
-}
-
-type CreateOrderResponse struct {
-
 }

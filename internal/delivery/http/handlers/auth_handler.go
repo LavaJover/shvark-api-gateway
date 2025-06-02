@@ -16,6 +16,8 @@ import (
 
 	"github.com/LavaJover/shvark-api-gateway/internal/client"
 	"github.com/gin-gonic/gin"
+	authRequest "github.com/LavaJover/shvark-api-gateway/internal/delivery/http/dto/auth/request"
+	authResponse "github.com/LavaJover/shvark-api-gateway/internal/delivery/http/dto/auth/response"
 )
 
 type AuthHandler struct {
@@ -36,17 +38,13 @@ func NewAuthHandler(addr string) (*AuthHandler, error) {
 // @Tags Auth
 // @Accept json
 // @Produce json
-// @Param input body RegisterRequest true "Registration credentials"
-// @Success 201 {object} RegisterResponse
+// @Param input body authRequest.RegisterRequest true "Registration credentials"
+// @Success 201 {object} authResponse.RegisterResponse
 // @Failure 400 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
 // @Router /register [post]
 func (h *AuthHandler) Register(c *gin.Context) {
-	var request struct {
-		Login 	 string	`json:"login" binding:"required"`
-		Username string	`json:"username" binding:"required"`
-		Password string	`json:"password" binding:"required,min=8"`
-	}
+	var request authRequest.RegisterRequest
 
 	// validate incoming request
 	if err := c.ShouldBindJSON(&request); err != nil {
@@ -55,29 +53,18 @@ func (h *AuthHandler) Register(c *gin.Context) {
 	}
 
 	// calling gRPC sso-service
-	resp, err := h.SSOClient.Register(request.Login, request.Username, request.Password)
+	response, err := h.SSOClient.Register(request.Login, request.Username, request.Password)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 	}
 
-	c.JSON(http.StatusCreated, gin.H{
-		"user_id": resp.UserId,
-		"message": resp.Message,
+	c.JSON(http.StatusCreated, authResponse.RegisterResponse{
+		UserID: response.UserId,
 	})
 }
 
-type RegisterRequest struct {
-	Login string `json:"login" example:"CoolUserLogin"`
-	Username string `json:"username" example:"CoolUsername"`
-	Password string `json:"password" example:"securepass123"`
-}
-
-type RegisterResponse struct {
-	UserID string `json:"user_id" example:"1d6ab366-4fca-4bcc-972d-875c35ea939a"`
-}
-
 type ErrorResponse struct {
-	Error string `json:"error" example:"invalid email"`
+	Error string `json:"error" example:"invalid data"`
 }
 
 // @Summary User login
@@ -85,16 +72,13 @@ type ErrorResponse struct {
 // @Tags Auth
 // @Accept json
 // @Produce json
-// @Param input body LoginRequest true "Login credentials"
-// @Success 200 {object} LoginResponse
+// @Param input body authRequest.LoginRequest true "Login credentials"
+// @Success 200 {object} authResponse.LoginResponse
 // @Failure 400 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
 // @Router /login [post]
 func (h *AuthHandler) Login(c *gin.Context) {
-	var request struct{
-		Login 		string `json:"login" binding:"required"`
-		Password 	string `json:"password" binding:"required,min=8"`
-	}
+	var request authRequest.LoginRequest
 
 	// validate incoming request
 	if err := c.ShouldBindJSON(&request); err != nil {
@@ -109,20 +93,10 @@ func (h *AuthHandler) Login(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"access_token": response.AccessToken,
-		"refresh_token": response.RefreshToken,
+	c.JSON(http.StatusOK, authResponse.LoginResponse{
+		AccessToken: response.AccessToken,
+		RefreshToken: response.RefreshToken,
 	})
-}
-
-type LoginRequest struct {
-	Login 	 string `json:"login" example:"CoolUserLogin"`
-	Password string `json:"password" example:"securepass123"`
-}
-
-type LoginResponse struct {
-	AccessToken  string `json:"access_token"`
-	RefreshToken string `json:"refresh_token"`
 }
 
 // @Summary JWT validation check-point
@@ -130,15 +104,13 @@ type LoginResponse struct {
 // @Tags Auth
 // @Accept json
 // @Produce json
-// @Param input body ValidateTokenRequest true "JWT instance"
-// @Success 200 {object} ValidateTokenResponse
+// @Param input body authRequest.ValidateTokenRequest true "JWT instance"
+// @Success 200 {object} authResponse.ValidateTokenResponse
 // @Failure 400 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
 // @Router /validate_token [post]
 func (h *AuthHandler) ValidateToken(c *gin.Context) {
-	var request struct {
-		Token string `json:"token" binding:"required"`
-	}
+	var request authRequest.ValidateTokenRequest
 
 	// validate incoming request
 	if err := c.ShouldBindJSON(&request); err != nil {
@@ -153,20 +125,12 @@ func (h *AuthHandler) ValidateToken(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"valid": response.Valid,
-		"user_id": response.UserId,
+	c.JSON(http.StatusOK, authResponse.ValidateTokenResponse{
+		Valid: response.Valid,
+		UserId: response.UserId,
 	})
 }
 
-type ValidateTokenRequest struct {
-	Token string `json:"token"`
-}
-
-type ValidateTokenResponse struct {
-	Valid  bool 	`json:"valid"`
-	UserId string 	`json:"user_id" example:"1d6ab366-4fca-4bcc-972d-875c35ea939a"`
-}
 
 func (h *AuthHandler) GetUserByToken(c *gin.Context) {
 	var request struct {

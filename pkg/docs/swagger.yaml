@@ -1,43 +1,6 @@
 basePath: /api/v1
 definitions:
-  handlers.AddPolicyRequest:
-    properties:
-      action:
-        type: string
-      object:
-        type: string
-      role:
-        type: string
-    required:
-    - action
-    - object
-    - role
-    type: object
-  handlers.AddPolicyResponse:
-    properties:
-      success:
-        type: boolean
-    required:
-    - success
-    type: object
-  handlers.AssignRoleRequest:
-    properties:
-      role:
-        type: string
-      user_id:
-        type: string
-    required:
-    - role
-    - user_id
-    type: object
-  handlers.AssignRoleResponse:
-    properties:
-      success:
-        type: boolean
-    required:
-    - success
-    type: object
-  handlers.BankDetail:
+  github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_banking_response.BankDetail:
     properties:
       bank_name:
         type: string
@@ -72,7 +35,94 @@ definitions:
       trader_id:
         type: string
     type: object
-  handlers.CheckPermissionRequest:
+  github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_order_response.BankDetail:
+    properties:
+      bank_name:
+        type: string
+      country:
+        type: string
+      currency:
+        type: string
+      delay:
+        type: string
+      enabled:
+        type: boolean
+      id:
+        type: string
+      max_amount:
+        type: number
+      min_amount:
+        type: number
+      payment_system:
+        type: string
+      trader_id:
+        type: string
+    type: object
+  handlers.ErrorResponse:
+    properties:
+      error:
+        example: invalid data
+        type: string
+    type: object
+  request.AddPolicyRequest:
+    properties:
+      action:
+        type: string
+      object:
+        type: string
+      role:
+        type: string
+    required:
+    - action
+    - object
+    - role
+    type: object
+  request.AssignRoleRequest:
+    properties:
+      role:
+        type: string
+      user_id:
+        type: string
+    required:
+    - role
+    - user_id
+    type: object
+  request.BankDetail:
+    properties:
+      bank_name:
+        type: string
+      card_number:
+        type: string
+      country:
+        type: string
+      currency:
+        type: string
+      delay:
+        type: string
+      enabled:
+        type: boolean
+      id:
+        type: string
+      max_amount:
+        type: number
+      max_amount_day:
+        type: integer
+      max_amount_month:
+        type: integer
+      max_orders_simultaneosly:
+        type: integer
+      min_amount:
+        type: number
+      owner:
+        type: string
+      payment_system:
+        type: string
+      phone:
+        type: string
+      trader_id:
+        type: string
+    type: object
+  request.CheckPermissionRequest:
     properties:
       action:
         type: string
@@ -85,14 +135,7 @@ definitions:
     - object
     - user_id
     type: object
-  handlers.CheckPermissionResponse:
-    properties:
-      allowed:
-        type: boolean
-    required:
-    - allowed
-    type: object
-  handlers.CreateBankDetailRequest:
+  request.CreateBankDetailRequest:
     properties:
       bank_name:
         type: string
@@ -126,18 +169,11 @@ definitions:
       trader_id:
         type: string
     type: object
-  handlers.CreateBankDetailResponse:
-    properties:
-      bank_detail_id:
-        type: string
-      message:
-        type: string
-    type: object
-  handlers.CreateOrderRequest:
+  request.CreateOrderRequest:
     properties:
       amount:
         type: number
-      client_email:
+      client_data:
         type: string
       country:
         type: string
@@ -150,9 +186,7 @@ definitions:
       payment_system:
         type: string
     type: object
-  handlers.CreateOrderResponse:
-    type: object
-  handlers.DeletePolicyRequest:
+  request.DeletePolicyRequest:
     properties:
       action:
         type: string
@@ -165,32 +199,108 @@ definitions:
     - object
     - role
     type: object
-  handlers.DeletePolicyResponse:
+  request.LoginRequest:
+    properties:
+      login:
+        example: CoolUserLogin
+        type: string
+      password:
+        example: securepass123
+        type: string
+    type: object
+  request.RegisterRequest:
+    properties:
+      login:
+        type: string
+      password:
+        minLength: 8
+        type: string
+      username:
+        type: string
+    required:
+    - login
+    - password
+    - username
+    type: object
+  request.RevokeRoleRequest:
+    properties:
+      role:
+        type: string
+      user_id:
+        type: string
+    required:
+    - role
+    - user_id
+    type: object
+  request.UpdateBankDetailRequest:
+    properties:
+      bank_detail:
+        $ref: '#/definitions/request.BankDetail'
+    type: object
+  request.ValidateTokenRequest:
+    properties:
+      token:
+        type: string
+    type: object
+  response.AddPolicyResponse:
     properties:
       success:
         type: boolean
     required:
     - success
     type: object
-  handlers.ErrorResponse:
+  response.AssignRoleResponse:
     properties:
-      error:
-        example: invalid email
+      success:
+        type: boolean
+    required:
+    - success
+    type: object
+  response.CheckPermissionResponse:
+    properties:
+      allowed:
+        type: boolean
+    required:
+    - allowed
+    type: object
+  response.CreateBankDetailResponse:
+    properties:
+      bank_detail_id:
+        type: string
+      message:
         type: string
     type: object
-  handlers.GetBankDetailByIDResponse:
+  response.CreateOrderResponse:
+    properties:
+      amount:
+        type: number
+      bankDetail:
+        $ref: '#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_order_response.BankDetail'
+      order_id:
+        type: string
+      order_status:
+        type: string
+    type: object
+  response.DeletePolicyResponse:
+    properties:
+      success:
+        type: boolean
+    required:
+    - success
+    type: object
+  response.GetBankDetailByIDResponse:
     properties:
       bank_detail:
-        $ref: '#/definitions/handlers.BankDetail'
+        $ref: '#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_banking_response.BankDetail'
     type: object
-  handlers.GetBankDetailsByTraderIDResponse:
+  response.GetBankDetailsByTraderIDResponse:
     properties:
       bank_details:
         items:
-          $ref: '#/definitions/handlers.BankDetail'
+          $ref: '#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_banking_response.BankDetail'
         type: array
     type: object
-  handlers.GetProfileByIDResponse:
+  response.GetProfileByIDResponse:
     properties:
       avatar_url:
         type: string
@@ -201,7 +311,7 @@ definitions:
       user_id:
         type: string
     type: object
-  handlers.GetUserByIDResponse:
+  response.GetUserByIDResponse:
     properties:
       login:
         type: string
@@ -212,70 +322,29 @@ definitions:
       username:
         type: string
     type: object
-  handlers.LoginRequest:
-    properties:
-      login:
-        example: CoolUserLogin
-        type: string
-      password:
-        example: securepass123
-        type: string
-    type: object
-  handlers.LoginResponse:
+  response.LoginResponse:
     properties:
       access_token:
         type: string
       refresh_token:
         type: string
     type: object
-  handlers.RegisterRequest:
-    properties:
-      login:
-        example: CoolUserLogin
-        type: string
-      password:
-        example: securepass123
-        type: string
-      username:
-        example: CoolUsername
-        type: string
-    type: object
-  handlers.RegisterResponse:
+  response.RegisterResponse:
     properties:
       user_id:
         example: 1d6ab366-4fca-4bcc-972d-875c35ea939a
         type: string
     type: object
-  handlers.RevokeRoleRequest:
-    properties:
-      role:
-        type: string
-      user_id:
-        type: string
-    required:
-    - role
-    - user_id
-    type: object
-  handlers.RevokeRoleResponse:
+  response.RevokeRoleResponse:
     properties:
       success:
         type: boolean
     required:
     - success
     type: object
-  handlers.UpdateBankDetailRequest:
-    properties:
-      bank_detail:
-        $ref: '#/definitions/handlers.BankDetail'
+  response.UpdateBankDetailResponse:
     type: object
-  handlers.UpdateBankDetailResponse:
-    type: object
-  handlers.ValidateTokenRequest:
-    properties:
-      token:
-        type: string
-    type: object
-  handlers.ValidateTokenResponse:
+  response.ValidateTokenResponse:
     properties:
       user_id:
         example: 1d6ab366-4fca-4bcc-972d-875c35ea939a
@@ -301,14 +370,14 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/handlers.UpdateBankDetailRequest'
+          $ref: '#/definitions/request.UpdateBankDetailRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/handlers.UpdateBankDetailResponse'
+            $ref: '#/definitions/response.UpdateBankDetailResponse'
         "400":
           description: Bad Request
           schema:
@@ -330,14 +399,14 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/handlers.CreateBankDetailRequest'
+          $ref: '#/definitions/request.CreateBankDetailRequest'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/handlers.CreateBankDetailResponse'
+            $ref: '#/definitions/response.CreateBankDetailResponse'
         "400":
           description: Bad Request
           schema:
@@ -365,7 +434,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/handlers.GetBankDetailsByTraderIDResponse'
+            $ref: '#/definitions/response.GetBankDetailsByTraderIDResponse'
         "400":
           description: Bad Request
           schema:
@@ -394,7 +463,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/handlers.GetBankDetailByIDResponse'
+            $ref: '#/definitions/response.GetBankDetailByIDResponse'
         "400":
           description: Bad Request
           schema:
@@ -417,14 +486,14 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/handlers.LoginRequest'
+          $ref: '#/definitions/request.LoginRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/handlers.LoginResponse'
+            $ref: '#/definitions/response.LoginResponse'
         "400":
           description: Bad Request
           schema:
@@ -447,14 +516,14 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/handlers.CreateOrderRequest'
+          $ref: '#/definitions/request.CreateOrderRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/handlers.CreateOrderResponse'
+            $ref: '#/definitions/response.CreateOrderResponse'
         "400":
           description: Bad Request
           schema:
@@ -483,7 +552,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/handlers.GetProfileByIDResponse'
+            $ref: '#/definitions/response.GetProfileByIDResponse'
         "400":
           description: Bad Request
           schema:
@@ -506,14 +575,14 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/handlers.CheckPermissionRequest'
+          $ref: '#/definitions/request.CheckPermissionRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/handlers.CheckPermissionResponse'
+            $ref: '#/definitions/response.CheckPermissionResponse'
         "400":
           description: Bad Request
           schema:
@@ -536,14 +605,14 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/handlers.DeletePolicyRequest'
+          $ref: '#/definitions/request.DeletePolicyRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/handlers.DeletePolicyResponse'
+            $ref: '#/definitions/response.DeletePolicyResponse'
         "400":
           description: Bad Request
           schema:
@@ -565,14 +634,14 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/handlers.AddPolicyRequest'
+          $ref: '#/definitions/request.AddPolicyRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/handlers.AddPolicyResponse'
+            $ref: '#/definitions/response.AddPolicyResponse'
         "400":
           description: Bad Request
           schema:
@@ -595,14 +664,14 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/handlers.RevokeRoleRequest'
+          $ref: '#/definitions/request.RevokeRoleRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/handlers.RevokeRoleResponse'
+            $ref: '#/definitions/response.RevokeRoleResponse'
         "400":
           description: Bad Request
           schema:
@@ -624,14 +693,14 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/handlers.AssignRoleRequest'
+          $ref: '#/definitions/request.AssignRoleRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/handlers.AssignRoleResponse'
+            $ref: '#/definitions/response.AssignRoleResponse'
         "400":
           description: Bad Request
           schema:
@@ -654,14 +723,14 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/handlers.RegisterRequest'
+          $ref: '#/definitions/request.RegisterRequest'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/handlers.RegisterResponse'
+            $ref: '#/definitions/response.RegisterResponse'
         "400":
           description: Bad Request
           schema:
@@ -690,7 +759,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/handlers.GetUserByIDResponse'
+            $ref: '#/definitions/response.GetUserByIDResponse'
         "400":
           description: Bad Request
           schema:
@@ -713,14 +782,14 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/handlers.ValidateTokenRequest'
+          $ref: '#/definitions/request.ValidateTokenRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/handlers.ValidateTokenResponse'
+            $ref: '#/definitions/response.ValidateTokenResponse'
         "400":
           description: Bad Request
           schema:

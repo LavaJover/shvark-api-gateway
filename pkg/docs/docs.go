@@ -35,7 +35,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/handlers.CreateBankDetailRequest"
+                            "$ref": "#/definitions/request.CreateBankDetailRequest"
                         }
                     }
                 ],
@@ -43,7 +43,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/handlers.CreateBankDetailResponse"
+                            "$ref": "#/definitions/response.CreateBankDetailResponse"
                         }
                     },
                     "400": {
@@ -79,7 +79,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/handlers.UpdateBankDetailRequest"
+                            "$ref": "#/definitions/request.UpdateBankDetailRequest"
                         }
                     }
                 ],
@@ -87,7 +87,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/handlers.UpdateBankDetailResponse"
+                            "$ref": "#/definitions/response.UpdateBankDetailResponse"
                         }
                     },
                     "400": {
@@ -130,7 +130,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/handlers.GetBankDetailsByTraderIDResponse"
+                            "$ref": "#/definitions/response.GetBankDetailsByTraderIDResponse"
                         }
                     },
                     "400": {
@@ -174,7 +174,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/handlers.GetBankDetailByIDResponse"
+                            "$ref": "#/definitions/response.GetBankDetailByIDResponse"
                         }
                     },
                     "400": {
@@ -212,7 +212,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/handlers.LoginRequest"
+                            "$ref": "#/definitions/request.LoginRequest"
                         }
                     }
                 ],
@@ -220,7 +220,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/handlers.LoginResponse"
+                            "$ref": "#/definitions/response.LoginResponse"
                         }
                     },
                     "400": {
@@ -258,7 +258,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/handlers.CreateOrderRequest"
+                            "$ref": "#/definitions/request.CreateOrderRequest"
                         }
                     }
                 ],
@@ -266,7 +266,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/handlers.CreateOrderResponse"
+                            "$ref": "#/definitions/response.CreateOrderResponse"
                         }
                     },
                     "400": {
@@ -310,7 +310,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/handlers.GetProfileByIDResponse"
+                            "$ref": "#/definitions/response.GetProfileByIDResponse"
                         }
                     },
                     "400": {
@@ -348,7 +348,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/handlers.CheckPermissionRequest"
+                            "$ref": "#/definitions/request.CheckPermissionRequest"
                         }
                     }
                 ],
@@ -356,7 +356,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/handlers.CheckPermissionResponse"
+                            "$ref": "#/definitions/response.CheckPermissionResponse"
                         }
                     },
                     "400": {
@@ -394,7 +394,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/handlers.AddPolicyRequest"
+                            "$ref": "#/definitions/request.AddPolicyRequest"
                         }
                     }
                 ],
@@ -402,7 +402,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/handlers.AddPolicyResponse"
+                            "$ref": "#/definitions/response.AddPolicyResponse"
                         }
                     },
                     "400": {
@@ -438,7 +438,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/handlers.DeletePolicyRequest"
+                            "$ref": "#/definitions/request.DeletePolicyRequest"
                         }
                     }
                 ],
@@ -446,7 +446,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/handlers.DeletePolicyResponse"
+                            "$ref": "#/definitions/response.DeletePolicyResponse"
                         }
                     },
                     "400": {
@@ -484,7 +484,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/handlers.AssignRoleRequest"
+                            "$ref": "#/definitions/request.AssignRoleRequest"
                         }
                     }
                 ],
@@ -492,7 +492,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/handlers.AssignRoleResponse"
+                            "$ref": "#/definitions/response.AssignRoleResponse"
                         }
                     },
                     "400": {
@@ -528,7 +528,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/handlers.RevokeRoleRequest"
+                            "$ref": "#/definitions/request.RevokeRoleRequest"
                         }
                     }
                 ],
@@ -536,7 +536,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/handlers.RevokeRoleResponse"
+                            "$ref": "#/definitions/response.RevokeRoleResponse"
                         }
                     },
                     "400": {
@@ -574,7 +574,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/handlers.RegisterRequest"
+                            "$ref": "#/definitions/request.RegisterRequest"
                         }
                     }
                 ],
@@ -582,7 +582,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/handlers.RegisterResponse"
+                            "$ref": "#/definitions/response.RegisterResponse"
                         }
                     },
                     "400": {
@@ -626,7 +626,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/handlers.GetUserByIDResponse"
+                            "$ref": "#/definitions/response.GetUserByIDResponse"
                         }
                     },
                     "400": {
@@ -664,7 +664,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/handlers.ValidateTokenRequest"
+                            "$ref": "#/definitions/request.ValidateTokenRequest"
                         }
                     }
                 ],
@@ -672,7 +672,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/handlers.ValidateTokenResponse"
+                            "$ref": "#/definitions/response.ValidateTokenResponse"
                         }
                     },
                     "400": {
@@ -692,63 +692,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "handlers.AddPolicyRequest": {
-            "type": "object",
-            "required": [
-                "action",
-                "object",
-                "role"
-            ],
-            "properties": {
-                "action": {
-                    "type": "string"
-                },
-                "object": {
-                    "type": "string"
-                },
-                "role": {
-                    "type": "string"
-                }
-            }
-        },
-        "handlers.AddPolicyResponse": {
-            "type": "object",
-            "required": [
-                "success"
-            ],
-            "properties": {
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "handlers.AssignRoleRequest": {
-            "type": "object",
-            "required": [
-                "role",
-                "user_id"
-            ],
-            "properties": {
-                "role": {
-                    "type": "string"
-                },
-                "user_id": {
-                    "type": "string"
-                }
-            }
-        },
-        "handlers.AssignRoleResponse": {
-            "type": "object",
-            "required": [
-                "success"
-            ],
-            "properties": {
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "handlers.BankDetail": {
+        "github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_banking_response.BankDetail": {
             "type": "object",
             "properties": {
                 "bank_name": {
@@ -801,7 +745,138 @@ const docTemplate = `{
                 }
             }
         },
-        "handlers.CheckPermissionRequest": {
+        "github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_order_response.BankDetail": {
+            "type": "object",
+            "properties": {
+                "bank_name": {
+                    "type": "string"
+                },
+                "country": {
+                    "type": "string"
+                },
+                "currency": {
+                    "type": "string"
+                },
+                "delay": {
+                    "type": "string"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "max_amount": {
+                    "type": "number"
+                },
+                "min_amount": {
+                    "type": "number"
+                },
+                "payment_system": {
+                    "type": "string"
+                },
+                "trader_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "invalid data"
+                }
+            }
+        },
+        "request.AddPolicyRequest": {
+            "type": "object",
+            "required": [
+                "action",
+                "object",
+                "role"
+            ],
+            "properties": {
+                "action": {
+                    "type": "string"
+                },
+                "object": {
+                    "type": "string"
+                },
+                "role": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.AssignRoleRequest": {
+            "type": "object",
+            "required": [
+                "role",
+                "user_id"
+            ],
+            "properties": {
+                "role": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.BankDetail": {
+            "type": "object",
+            "properties": {
+                "bank_name": {
+                    "type": "string"
+                },
+                "card_number": {
+                    "type": "string"
+                },
+                "country": {
+                    "type": "string"
+                },
+                "currency": {
+                    "type": "string"
+                },
+                "delay": {
+                    "type": "string"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "max_amount": {
+                    "type": "number"
+                },
+                "max_amount_day": {
+                    "type": "integer"
+                },
+                "max_amount_month": {
+                    "type": "integer"
+                },
+                "max_orders_simultaneosly": {
+                    "type": "integer"
+                },
+                "min_amount": {
+                    "type": "number"
+                },
+                "owner": {
+                    "type": "string"
+                },
+                "payment_system": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "trader_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.CheckPermissionRequest": {
             "type": "object",
             "required": [
                 "action",
@@ -820,18 +895,7 @@ const docTemplate = `{
                 }
             }
         },
-        "handlers.CheckPermissionResponse": {
-            "type": "object",
-            "required": [
-                "allowed"
-            ],
-            "properties": {
-                "allowed": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "handlers.CreateBankDetailRequest": {
+        "request.CreateBankDetailRequest": {
             "type": "object",
             "properties": {
                 "bank_name": {
@@ -882,24 +946,13 @@ const docTemplate = `{
                 }
             }
         },
-        "handlers.CreateBankDetailResponse": {
-            "type": "object",
-            "properties": {
-                "bank_detail_id": {
-                    "type": "string"
-                },
-                "message": {
-                    "type": "string"
-                }
-            }
-        },
-        "handlers.CreateOrderRequest": {
+        "request.CreateOrderRequest": {
             "type": "object",
             "properties": {
                 "amount": {
                     "type": "number"
                 },
-                "client_email": {
+                "client_data": {
                     "type": "string"
                 },
                 "country": {
@@ -919,10 +972,7 @@ const docTemplate = `{
                 }
             }
         },
-        "handlers.CreateOrderResponse": {
-            "type": "object"
-        },
-        "handlers.DeletePolicyRequest": {
+        "request.DeletePolicyRequest": {
             "type": "object",
             "required": [
                 "action",
@@ -941,7 +991,71 @@ const docTemplate = `{
                 }
             }
         },
-        "handlers.DeletePolicyResponse": {
+        "request.LoginRequest": {
+            "type": "object",
+            "properties": {
+                "login": {
+                    "type": "string",
+                    "example": "CoolUserLogin"
+                },
+                "password": {
+                    "type": "string",
+                    "example": "securepass123"
+                }
+            }
+        },
+        "request.RegisterRequest": {
+            "type": "object",
+            "required": [
+                "login",
+                "password",
+                "username"
+            ],
+            "properties": {
+                "login": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string",
+                    "minLength": 8
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.RevokeRoleRequest": {
+            "type": "object",
+            "required": [
+                "role",
+                "user_id"
+            ],
+            "properties": {
+                "role": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.UpdateBankDetailRequest": {
+            "type": "object",
+            "properties": {
+                "bank_detail": {
+                    "$ref": "#/definitions/request.BankDetail"
+                }
+            }
+        },
+        "request.ValidateTokenRequest": {
+            "type": "object",
+            "properties": {
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.AddPolicyResponse": {
             "type": "object",
             "required": [
                 "success"
@@ -952,35 +1066,87 @@ const docTemplate = `{
                 }
             }
         },
-        "handlers.ErrorResponse": {
+        "response.AssignRoleResponse": {
             "type": "object",
+            "required": [
+                "success"
+            ],
             "properties": {
-                "error": {
-                    "type": "string",
-                    "example": "invalid email"
+                "success": {
+                    "type": "boolean"
                 }
             }
         },
-        "handlers.GetBankDetailByIDResponse": {
+        "response.CheckPermissionResponse": {
+            "type": "object",
+            "required": [
+                "allowed"
+            ],
+            "properties": {
+                "allowed": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "response.CreateBankDetailResponse": {
+            "type": "object",
+            "properties": {
+                "bank_detail_id": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.CreateOrderResponse": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "bankDetail": {
+                    "$ref": "#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_order_response.BankDetail"
+                },
+                "order_id": {
+                    "type": "string"
+                },
+                "order_status": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.DeletePolicyResponse": {
+            "type": "object",
+            "required": [
+                "success"
+            ],
+            "properties": {
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "response.GetBankDetailByIDResponse": {
             "type": "object",
             "properties": {
                 "bank_detail": {
-                    "$ref": "#/definitions/handlers.BankDetail"
+                    "$ref": "#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_banking_response.BankDetail"
                 }
             }
         },
-        "handlers.GetBankDetailsByTraderIDResponse": {
+        "response.GetBankDetailsByTraderIDResponse": {
             "type": "object",
             "properties": {
                 "bank_details": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/handlers.BankDetail"
+                        "$ref": "#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_banking_response.BankDetail"
                     }
                 }
             }
         },
-        "handlers.GetProfileByIDResponse": {
+        "response.GetProfileByIDResponse": {
             "type": "object",
             "properties": {
                 "avatar_url": {
@@ -997,7 +1163,7 @@ const docTemplate = `{
                 }
             }
         },
-        "handlers.GetUserByIDResponse": {
+        "response.GetUserByIDResponse": {
             "type": "object",
             "properties": {
                 "login": {
@@ -1014,20 +1180,7 @@ const docTemplate = `{
                 }
             }
         },
-        "handlers.LoginRequest": {
-            "type": "object",
-            "properties": {
-                "login": {
-                    "type": "string",
-                    "example": "CoolUserLogin"
-                },
-                "password": {
-                    "type": "string",
-                    "example": "securepass123"
-                }
-            }
-        },
-        "handlers.LoginResponse": {
+        "response.LoginResponse": {
             "type": "object",
             "properties": {
                 "access_token": {
@@ -1038,24 +1191,7 @@ const docTemplate = `{
                 }
             }
         },
-        "handlers.RegisterRequest": {
-            "type": "object",
-            "properties": {
-                "login": {
-                    "type": "string",
-                    "example": "CoolUserLogin"
-                },
-                "password": {
-                    "type": "string",
-                    "example": "securepass123"
-                },
-                "username": {
-                    "type": "string",
-                    "example": "CoolUsername"
-                }
-            }
-        },
-        "handlers.RegisterResponse": {
+        "response.RegisterResponse": {
             "type": "object",
             "properties": {
                 "user_id": {
@@ -1064,22 +1200,7 @@ const docTemplate = `{
                 }
             }
         },
-        "handlers.RevokeRoleRequest": {
-            "type": "object",
-            "required": [
-                "role",
-                "user_id"
-            ],
-            "properties": {
-                "role": {
-                    "type": "string"
-                },
-                "user_id": {
-                    "type": "string"
-                }
-            }
-        },
-        "handlers.RevokeRoleResponse": {
+        "response.RevokeRoleResponse": {
             "type": "object",
             "required": [
                 "success"
@@ -1090,26 +1211,10 @@ const docTemplate = `{
                 }
             }
         },
-        "handlers.UpdateBankDetailRequest": {
-            "type": "object",
-            "properties": {
-                "bank_detail": {
-                    "$ref": "#/definitions/handlers.BankDetail"
-                }
-            }
-        },
-        "handlers.UpdateBankDetailResponse": {
+        "response.UpdateBankDetailResponse": {
             "type": "object"
         },
-        "handlers.ValidateTokenRequest": {
-            "type": "object",
-            "properties": {
-                "token": {
-                    "type": "string"
-                }
-            }
-        },
-        "handlers.ValidateTokenResponse": {
+        "response.ValidateTokenResponse": {
             "type": "object",
             "properties": {
                 "user_id": {

@@ -8,6 +8,9 @@ import (
 	"github.com/LavaJover/shvark-api-gateway/internal/domain"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+
+	bankingRequest "github.com/LavaJover/shvark-api-gateway/internal/delivery/http/dto/banking/request"
+	bankingResponse "github.com/LavaJover/shvark-api-gateway/internal/delivery/http/dto/banking/response"
 )
 
 type BankingHandler struct {
@@ -30,13 +33,13 @@ func NewBankingHandler(addr string) (*BankingHandler, error) {
 // @Tags banking
 // @Accept json
 // @Produce json
-// @Param input body CreateBankDetailRequest true "New bank details"
-// @Success 201 {object} CreateBankDetailResponse
+// @Param input body bankingRequest.CreateBankDetailRequest true "New bank details"
+// @Success 201 {object} bankingResponse.CreateBankDetailResponse
 // @Failure 400 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
 // @Router /banking/details [post]
 func (h *BankingHandler) CreateBankDetail(c *gin.Context) {
-	var request CreateBankDetailRequest
+	var request bankingRequest.CreateBankDetailRequest
 	if err := c.ShouldBindJSON(&request); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -72,33 +75,10 @@ func (h *BankingHandler) CreateBankDetail(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, CreateBankDetailResponse{
+	c.JSON(http.StatusCreated, bankingResponse.CreateBankDetailResponse{
 		BankDetailId: response.BankDetailId,
 		Message: response.Message,
 	})
-}
-
-type CreateBankDetailRequest struct {
-	TraderID 				string		`json:"trader_id"`
-	Country 				string		`json:"country"`
-	Currency 				string		`json:"currency"`
-	MinAmount 				float32		`json:"min_amount"`
-	MaxAmount 				float32		`json:"max_amount"`
-	BankName 				string		`json:"bank_name"`
-	PaymentSystem 			string		`json:"payment_system"`
-	Delay					string		`json:"delay" example:"100s"`
-	Enabled 				bool		`json:"enabled"`
-	CardNumber 				string 		`json:"card_number"`
-	Phone 					string		`json:"phone"`
-	Owner 					string		`json:"owner"`
-	MaxOrdersSimultaneosly  int32		`json:"max_orders_simultaneosly"`
-	MaxAmountDay			int32		`json:"max_amount_day"`
-	MaxAmountMonth			int32		`json:"max_amount_month"`
-}
-
-type CreateBankDetailResponse struct {
-	BankDetailId string `json:"bank_detail_id"`
-	Message 	 string `json:"message"`
 }
 
 // @Summary Get bank detail by ID
@@ -107,7 +87,7 @@ type CreateBankDetailResponse struct {
 // @Accept json
 // @Produce json
 // @Param uuid path string true "bank detail UUID"
-// @Success 200 {object} GetBankDetailByIDResponse
+// @Success 200 {object} bankingResponse.GetBankDetailByIDResponse
 // @Failure 400 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
 // @Router /banking/details/{uuid} [get]
@@ -125,8 +105,8 @@ func (h *BankingHandler) GetBankDetailByID(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, GetBankDetailByIDResponse{
-		BankDetail: BankDetail{
+	c.JSON(http.StatusOK, bankingResponse.GetBankDetailByIDResponse{
+		BankDetail: bankingResponse.BankDetail{
 			ID: response.BankDetail.BankDetailId,
 			TraderID: response.BankDetail.TraderId,
 			Country: response.BankDetail.Country,
@@ -147,69 +127,46 @@ func (h *BankingHandler) GetBankDetailByID(c *gin.Context) {
 	})
 }
 
-type BankDetail struct {
-	ID 						string	`json:"id"`
-	TraderID 				string	`json:"trader_id"`
-	Country 				string	`json:"country"`
-	Currency 				string	`json:"currency"`
-	MinAmount 				float32	`json:"min_amount"`
-	MaxAmount 				float32	`json:"max_amount"`
-	BankName 				string	`json:"bank_name"`
-	PaymentSystem 			string	`json:"payment_system"`
-	Delay					string	`json:"delay"`
-	Enabled 				bool	`json:"enabled"`
-	CardNumber 				string  `json:"card_number"`
-	Phone 					string	`json:"phone"`
-	Owner 					string	`json:"owner"`
-	MaxOrdersSimultaneosly  int32	`json:"max_orders_simultaneosly"`
-	MaxAmountDay			int32	`json:"max_amount_day"`
-	MaxAmountMonth			int32	`json:"max_amount_month"`
-}
-
-type GetBankDetailByIDResponse struct {
-	BankDetail	`json:"bank_detail"`
-}
-
 // @Summary Update bank detail
 // @Description Update bank detail
 // @Tags banking
 // @Accept json
 // @Produce json
-// @Param input body UpdateBankDetailRequest true "New data for bank detail with given ID"
-// @Success 200 {object} UpdateBankDetailResponse
+// @Param input body bankingRequest.UpdateBankDetailRequest true "New data for bank detail with given ID"
+// @Success 200 {object} bankingResponse.UpdateBankDetailResponse
 // @Failure 400 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
 // @Router /banking/details [patch]
 func (h *BankingHandler) UpdateBankDetail(c *gin.Context) {
-	var request UpdateBankDetailRequest
+	var request bankingRequest.UpdateBankDetailRequest
 	if err := c.ShouldBindJSON(&request); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	delay, err := time.ParseDuration(request.Delay)
+	delay, err := time.ParseDuration(request.BankDetail.Delay)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
 	updatedBankDetail := domain.BankDetail{
-		ID: request.ID,
-		TraderID: request.TraderID,
-		Country: request.Country,
-		Currency: request.Currency,
-		MinAmount: request.MinAmount,
-		MaxAmount: request.MaxAmount,
-		BankName: request.BankName,
-		PaymentSystem: request.PaymentSystem,
+		ID: request.BankDetail.ID,
+		TraderID: request.BankDetail.TraderID,
+		Country: request.BankDetail.Country,
+		Currency: request.BankDetail.Currency,
+		MinAmount: request.BankDetail.MinAmount,
+		MaxAmount: request.BankDetail.MaxAmount,
+		BankName: request.BankDetail.BankName,
+		PaymentSystem: request.BankDetail.PaymentSystem,
 		Delay: delay,
-		Enabled: request.Enabled,
-		CardNumber: request.CardNumber,
-		Phone: request.Phone,
-		Owner: request.Owner,
-		MaxOrdersSimultaneosly: request.MaxOrdersSimultaneosly,
-		MaxAmountDay: request.MaxAmountDay,
-		MaxAmountMonth: request.MaxAmountMonth,
+		Enabled: request.BankDetail.Enabled,
+		CardNumber: request.BankDetail.CardNumber,
+		Phone: request.BankDetail.Phone,
+		Owner: request.BankDetail.Owner,
+		MaxOrdersSimultaneosly: request.BankDetail.MaxOrdersSimultaneosly,
+		MaxAmountDay: request.BankDetail.MaxAmountDay,
+		MaxAmountMonth: request.BankDetail.MaxAmountMonth,
 	}
 
 	_, err = h.BankingClient.UpdateBankDetail(&updatedBankDetail)
@@ -218,15 +175,7 @@ func (h *BankingHandler) UpdateBankDetail(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, UpdateBankDetailResponse{})
-}
-
-type UpdateBankDetailRequest struct {
-	BankDetail `json:"bank_detail"`
-}
-
-type UpdateBankDetailResponse struct {
-
+	c.JSON(http.StatusOK, bankingResponse.UpdateBankDetailResponse{})
 }
 
 // @Summary Get bank details by trader ID
@@ -235,7 +184,7 @@ type UpdateBankDetailResponse struct {
 // @Accept json
 // @Produce json
 // @Param trader query string false "trader uuid"
-// @Success 200 {object} GetBankDetailsByTraderIDResponse
+// @Success 200 {object} bankingResponse.GetBankDetailsByTraderIDResponse
 // @Failure 400 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
 // @Router /banking/details/ [get]
@@ -252,9 +201,9 @@ func (h *BankingHandler) GetBankDetailsByTraderID(c *gin.Context) {
 		return
 	}
 
-	bankDetails := make([]BankDetail, len(response.BankDetails))
+	bankDetails := make([]bankingResponse.BankDetail, len(response.BankDetails))
 	for i, bankDetail := range response.BankDetails {
-		bankDetails[i] = BankDetail{
+		bankDetails[i] = bankingResponse.BankDetail{
 			ID: bankDetail.BankDetailId,
 			TraderID: bankDetail.TraderId,
 			Country: bankDetail.Country,
@@ -274,11 +223,7 @@ func (h *BankingHandler) GetBankDetailsByTraderID(c *gin.Context) {
 		}
 	}
 
-	c.JSON(http.StatusOK, GetBankDetailsByTraderIDResponse{
+	c.JSON(http.StatusOK, bankingResponse.GetBankDetailsByTraderIDResponse{
 		BankDetails: bankDetails,
 	})
-}
-
-type GetBankDetailsByTraderIDResponse struct {
-	BankDetails []BankDetail `json:"bank_details"`
 }

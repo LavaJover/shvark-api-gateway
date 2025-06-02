@@ -6,6 +6,7 @@ import (
 	"github.com/LavaJover/shvark-api-gateway/internal/client"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	profileResponse "github.com/LavaJover/shvark-api-gateway/internal/delivery/http/dto/profile/response"
 )
 
 type ProfileHandler struct {
@@ -28,7 +29,7 @@ func NewProfileHandler(addr string) (*ProfileHandler, error) {
 // @Accept json
 // @Produce json
 // @Param uuid path string true "Profile uuid"
-// @Success 200 {object} GetProfileByIDResponse
+// @Success 200 {object} profileResponse.GetProfileByIDResponse
 // @Failure 400 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
 // @Router /profiles/{uuid} [get]
@@ -45,17 +46,10 @@ func (h *ProfileHandler) GetProfileByID(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"profile_id": response.ProfileId,
-		"avatar_url": response.AvatarUrl,
-		"tg_link": response.TgLink,
-		"user_id": response.UserId,
+	c.JSON(http.StatusOK, profileResponse.GetProfileByIDResponse{
+		ProfileID: response.ProfileId,
+		AvatarURL: response.AvatarUrl,
+		TgLink: response.TgLink,
+		UserID: response.UserId,
 	})
-}
-
-type GetProfileByIDResponse struct {
-	ProfileID string `json:"profile_id"`
-	AvatarURL string `json:"avatar_url"`
-	TgLink 	  string `json:"tg_link"`
-	UserID    string `json:"user_id"`
 }

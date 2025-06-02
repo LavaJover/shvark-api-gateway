@@ -6,6 +6,7 @@ import (
 	"github.com/LavaJover/shvark-api-gateway/internal/client"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	userResponse "github.com/LavaJover/shvark-api-gateway/internal/delivery/http/dto/user/response"
 )
 
 type UserHandler struct {
@@ -28,7 +29,7 @@ func NewUserHandler(addr string) (*UserHandler, error) {
 // @Accept json
 // @Produce json
 // @Param id path string true "User ID"
-// @Success 200 {object} GetUserByIDResponse
+// @Success 200 {object} userResponse.GetUserByIDResponse
 // @Failure 400 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
 // @Router /users/{id} [get]
@@ -45,19 +46,12 @@ func (h *UserHandler) GetUserByID(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"user_id": response.UserId,
-		"login": response.Login,
-		"username": response.Username,
-		"password": response.Password,
+	c.JSON(http.StatusOK, userResponse.GetUserByIDResponse{
+		UserID: response.UserId,
+		Login: response.Login,
+		Username: response.Username,
+		Password: response.Password,
 	})
-}
-
-type GetUserByIDResponse struct {
-	UserID string `json:"user_id"`
-	Login string `json:"login"`
-	Username string `json:"username"`
-	Password string `json:"password"`
 }
 
 func (h *UserHandler) CreateUser(c *gin.Context) {

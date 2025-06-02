@@ -5,6 +5,8 @@ import (
 
 	"github.com/LavaJover/shvark-api-gateway/internal/client"
 	"github.com/gin-gonic/gin"
+	authzRequest "github.com/LavaJover/shvark-api-gateway/internal/delivery/http/dto/authz/request"
+	authzResponse "github.com/LavaJover/shvark-api-gateway/internal/delivery/http/dto/authz/response"
 )
 
 type AuthzHandler struct {
@@ -26,13 +28,13 @@ func NewAuthzhandler(addr string) (*AuthzHandler, error) {
 // @Tags RBAC
 // @Accept json
 // @Produce json
-// @Param input body AssignRoleRequest true "Role assigned to user"
-// @Success 200 {object} AssignRoleResponse
+// @Param input body authzRequest.AssignRoleRequest true "Role assigned to user"
+// @Success 200 {object} authzResponse.AssignRoleResponse
 // @Failure 400 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
 // @Router /rbac/roles [post]
 func (h *AuthzHandler) AssignRole(c *gin.Context) {
-	var request AssignRoleRequest
+	var request authzRequest.AssignRoleRequest
 
 	if err := c.ShouldBindJSON(&request); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -45,18 +47,9 @@ func (h *AuthzHandler) AssignRole(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"success": response.Success,
+	c.JSON(http.StatusOK, authzResponse.AssignRoleResponse{
+		Success: response.Success,
 	})
-}
-
-type AssignRoleRequest struct {
-	UserID string `json:"user_id" binding:"required"`
-	Role string `json:"role" binding:"required"`
-}
-
-type AssignRoleResponse struct {
-	Success bool `json:"success" binding:"required"`
 }
 
 // @Summary Revoke role
@@ -64,13 +57,13 @@ type AssignRoleResponse struct {
 // @Tags RBAC
 // @Accept json
 // @Produce json
-// @Param input body RevokeRoleRequest true "Role assigned to user to revoke"
-// @Success 200 {object} RevokeRoleResponse
+// @Param input body authzRequest.RevokeRoleRequest true "Role assigned to user to revoke"
+// @Success 200 {object} authzResponse.RevokeRoleResponse
 // @Failure 400 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
 // @Router /rbac/roles [delete]
 func (h *AuthzHandler) RevokeRole(c *gin.Context) {
-	var request RevokeRoleRequest
+	var request authzRequest.AssignRoleRequest
 
 	if err := c.ShouldBindJSON(&request); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -83,18 +76,9 @@ func (h *AuthzHandler) RevokeRole(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"success": response.Success,
+	c.JSON(http.StatusOK, authzResponse.RevokeRoleResponse{
+		Success: response.Success,
 	})
-}
-
-type RevokeRoleRequest struct {
-	UserID string `json:"user_id" binding:"required"`
-	Role string `json:"role" binding:"required"`
-}
-
-type RevokeRoleResponse struct {
-	Success bool `json:"success" binding:"required"`
 }
 
 // @Summary Add policy
@@ -102,13 +86,13 @@ type RevokeRoleResponse struct {
 // @Tags RBAC
 // @Accept json
 // @Produce json
-// @Param input body AddPolicyRequest true "New policy details"
-// @Success 200 {object} AddPolicyResponse
+// @Param input body authzRequest.AddPolicyRequest true "New policy details"
+// @Success 200 {object} authzResponse.AddPolicyResponse
 // @Failure 400 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
 // @Router /rbac/policies [post]
 func (h *AuthzHandler) AddPolicy(c *gin.Context) {
-	var request AddPolicyRequest
+	var request authzRequest.AddPolicyRequest
 
 	if err := c.ShouldBindJSON(&request); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -121,19 +105,9 @@ func (h *AuthzHandler) AddPolicy(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"success": response.Success,
+	c.JSON(http.StatusOK, authzResponse.AddPolicyResponse{
+		Success: response.Success,
 	})
-}
-
-type AddPolicyRequest struct {
-	Role string `json:"role" binding:"required"`
-	Object string `json:"object" binding:"required"`
-	Action string `json:"action" binding:"required"`
-}
-
-type AddPolicyResponse struct {
-	Success bool `json:"success" binding:"required"`
 }
 
 // @Summary Delete policy
@@ -141,13 +115,13 @@ type AddPolicyResponse struct {
 // @Tags RBAC
 // @Accept json
 // @Produce json
-// @Param input body DeletePolicyRequest true "Policy details to delete"
-// @Success 200 {object} DeletePolicyResponse
+// @Param input body authzRequest.DeletePolicyRequest true "Policy details to delete"
+// @Success 200 {object} authzResponse.DeletePolicyResponse
 // @Failure 400 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
 // @Router /rbac/policies [delete]
 func (h *AuthzHandler) DeletePolicy(c *gin.Context) {
-	var request DeletePolicyRequest
+	var request authzRequest.DeletePolicyRequest
 
 	if err := c.ShouldBindJSON(&request); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -160,19 +134,9 @@ func (h *AuthzHandler) DeletePolicy(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"success": response.Success,
+	c.JSON(http.StatusOK, authzResponse.DeletePolicyResponse{
+		Success: response.Success,
 	})
-}
-
-type DeletePolicyRequest struct {
-	Role string `json:"role" binding:"required"`
-	Object string `json:"object" binding:"required"`
-	Action string `json:"action" binding:"required"`
-}
-
-type DeletePolicyResponse struct {
-	Success bool `json:"success" binding:"required"`
 }
 
 // @Summary Check user permission
@@ -180,13 +144,13 @@ type DeletePolicyResponse struct {
 // @Tags RBAC
 // @Accept json
 // @Produce json
-// @Param input body CheckPermissionRequest true "Permission subject, object, action"
-// @Success 200 {object} CheckPermissionResponse
+// @Param input body authzRequest.CheckPermissionRequest true "Permission subject, object, action"
+// @Success 200 {object} authzResponse.CheckPermissionResponse
 // @Failure 400 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
 // @Router /rbac/permissions [post]
 func (h *AuthzHandler) CheckPermission(c *gin.Context) {
-	var request CheckPermissionRequest
+	var request authzRequest.CheckPermissionRequest
 
 	if err := c.ShouldBindJSON(&request); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -199,17 +163,7 @@ func (h *AuthzHandler) CheckPermission(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"allowed": response.Allowed,
+	c.JSON(http.StatusOK,authzResponse.CheckPermissionResponse{
+		Allowed: response.Allowed,
 	})
-}
-
-type CheckPermissionRequest struct {
-	UserID string `json:"user_id" binding:"required"`
-	Object string `json:"object" binding:"required"`
-	Action string `json:"action" binding:"required"`
-}
-
-type CheckPermissionResponse struct {
-	Allowed bool `json:"allowed" binding:"required"`
 }
