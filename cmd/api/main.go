@@ -52,6 +52,13 @@ func main() {
 		log.Printf("failed to init banking handler")
 	}
 
+	// init orders-client
+	ordersAddr := "localhost:50058"
+	ordersHandler, err := handlers.NewOrderHandler(ordersAddr)
+	if err != nil {
+		log.Printf("failed to init orders handler: %v\n", err)
+	}
+
 	r := gin.Default()
 
 	// use middleware
@@ -87,6 +94,9 @@ func main() {
 	r.GET("/api/v1/banking/details/:uuid", bankingHandler.GetBankDetailByID)
 	r.PATCH("/api/v1/banking/details", bankingHandler.UpdateBankDetail)
 	r.GET("/api/v1/banking/details", bankingHandler.GetBankDetailsByTraderID)
+
+	// orders-service
+	r.POST("/api/v1/orders", ordersHandler.CreateOrder)
 
 	r.Run(":8080")
 }

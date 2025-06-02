@@ -238,6 +238,52 @@ const docTemplate = `{
                 }
             }
         },
+        "/orders": {
+            "post": {
+                "description": "Create new Pay-In order",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "orders"
+                ],
+                "summary": "Create new Pay-In order",
+                "parameters": [
+                    {
+                        "description": "new order details",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handlers.CreateOrderRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.CreateOrderResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/profiles/{uuid}": {
             "get": {
                 "description": "Get profile by uuid",
@@ -846,6 +892,35 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
+        },
+        "handlers.CreateOrderRequest": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "client_email": {
+                    "type": "string"
+                },
+                "country": {
+                    "type": "string"
+                },
+                "currency": {
+                    "type": "string"
+                },
+                "merchant_id": {
+                    "type": "string"
+                },
+                "metadata": {
+                    "type": "string"
+                },
+                "payment_system": {
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.CreateOrderResponse": {
+            "type": "object"
         },
         "handlers.DeletePolicyRequest": {
             "type": "object",

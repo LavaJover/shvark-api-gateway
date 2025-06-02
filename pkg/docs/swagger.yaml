@@ -133,6 +133,25 @@ definitions:
       message:
         type: string
     type: object
+  handlers.CreateOrderRequest:
+    properties:
+      amount:
+        type: number
+      client_email:
+        type: string
+      country:
+        type: string
+      currency:
+        type: string
+      merchant_id:
+        type: string
+      metadata:
+        type: string
+      payment_system:
+        type: string
+    type: object
+  handlers.CreateOrderResponse:
+    type: object
   handlers.DeletePolicyRequest:
     properties:
       action:
@@ -417,6 +436,36 @@ paths:
       summary: User login
       tags:
       - Auth
+  /orders:
+    post:
+      consumes:
+      - application/json
+      description: Create new Pay-In order
+      parameters:
+      - description: new order details
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.CreateOrderRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.CreateOrderResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Create new Pay-In order
+      tags:
+      - orders
   /profiles/{uuid}:
     get:
       consumes:
