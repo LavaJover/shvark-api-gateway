@@ -692,6 +692,11 @@ const docTemplate = `{
         },
         "/wallets/create": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Create new wallet",
                 "consumes": [
                     "application/json"
@@ -738,6 +743,11 @@ const docTemplate = `{
         },
         "/wallets/deposit": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Deposit crypto off chain",
                 "consumes": [
                     "application/json"
@@ -790,6 +800,11 @@ const docTemplate = `{
         },
         "/wallets/freeze": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Freeze crypto",
                 "consumes": [
                     "application/json"
@@ -842,6 +857,11 @@ const docTemplate = `{
         },
         "/wallets/release": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Release crypto",
                 "consumes": [
                     "application/json"
@@ -894,6 +914,11 @@ const docTemplate = `{
         },
         "/wallets/withdraw": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Withdraw crypto",
                 "consumes": [
                     "application/json"
@@ -946,6 +971,11 @@ const docTemplate = `{
         },
         "/wallets/{traderID}/address": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Get trader crypto wallet address",
                 "consumes": [
                     "application/json"
@@ -996,6 +1026,11 @@ const docTemplate = `{
         },
         "/wallets/{traderID}/balance": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Get trader crypto balance",
                 "consumes": [
                     "application/json"
@@ -1046,6 +1081,11 @@ const docTemplate = `{
         },
         "/wallets/{traderID}/history": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Get trader transaction history",
                 "consumes": [
                     "application/json"
@@ -1863,6 +1903,13 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
+        }
+    },
+    "securityDefinitions": {
+        "BearerAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }`

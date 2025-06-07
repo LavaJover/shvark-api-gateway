@@ -16,6 +16,10 @@ import (
 // @description REST API for ShvarkPay
 // @host localhost:8080
 // @BasePath /api/v1
+//
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
 func main() {
 	// init sso-client
 	ssoAddr := "localhost:50051"
@@ -106,7 +110,7 @@ func main() {
 	r.POST("/api/v1/orders", ordersHandler.CreateOrder)
 
 	// wallet-service
-	r.POST("/api/v1/wallets/create", walletHandler.CreateWallet)
+	r.POST("/api/v1/wallets/create", middleware.AuthMiddleware(authHandler.SSOClient), walletHandler.CreateWallet)
 	r.POST("/api/v1/wallets/freeze", walletHandler.Freeze)
 	r.POST("/api/v1/wallets/release", walletHandler.Release)
 	r.POST("/api/v1/wallets/withdraw", walletHandler.Withdraw)

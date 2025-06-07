@@ -23,6 +23,7 @@ func NewWalletHandler() (*WalletHandler, error) {
 // @Summary Create new wallet
 // @Description Create new wallet
 // @Tags wallets
+// @Security BearerAuth
 // @Accept json
 // @Produce json
 // @Param input body walletRequest.CreateWalletRequest true "New wallet data"
@@ -68,6 +69,7 @@ func (h *WalletHandler) CreateWallet(c *gin.Context) {
 // @Summary Freeze crypto
 // @Description Freeze crypto
 // @Tags wallets
+// @Security BearerAuth
 // @Accept json
 // @Produce json
 // @Param imput body walletRequest.FreezeRequest true "wallet data"
@@ -114,6 +116,7 @@ func (h *WalletHandler) Freeze(c *gin.Context) {
 // @Summary Release crypto
 // @Description Release crypto
 // @Tags wallets
+// @Security BearerAuth
 // @Accept json
 // @Produce json
 // @Param input body walletRequest.ReleaseRequest true "wallet data"
@@ -160,6 +163,7 @@ func (h *WalletHandler) Release(c *gin.Context) {
 // @Summary Withdraw crypto
 // @Description Withdraw crypto
 // @Tags wallets
+// @Security BearerAuth
 // @Param input body walletRequest.WithdrawRequest true "wallet data"
 // @Accept json
 // @Produce json
@@ -206,6 +210,7 @@ func (h *WalletHandler) Withdraw(c *gin.Context) {
 // @Summary Deposit crypto off-chain
 // @Description Deposit crypto off chain
 // @Tags wallets
+// @Security BearerAuth
 // @Accept json
 // @Produce json
 // @Param input body walletRequest.DepositRequest true "wallet data"
@@ -252,6 +257,7 @@ func (h *WalletHandler) Deposit(c *gin.Context) {
 // @Summary Get trader transactions history
 // @Description Get trader transaction history
 // @Tags wallets
+// @Security BearerAuth
 // @Accept json
 // @Produce json
 // @Param traderID path string true "TraderID"
@@ -291,6 +297,7 @@ func (h *WalletHandler) GetTraderHistory(c *gin.Context) {
 // @Summary Get trader crypto balance
 // @Description Get trader crypto balance
 // @Tags wallets
+// @Security BearerAuth
 // @Accept json
 // @Produce json
 // @Param traderID path string true "TraderID"
@@ -330,6 +337,7 @@ func (h *WalletHandler) GetTraderBalance(c *gin.Context) {
 // @Summary Get trader crypto wallet address
 // @Description Get trader crypto wallet address
 // @Tags wallets
+// @Security BearerAuth
 // @Accept json
 // @Produce json
 // @Param traderID path string true "TraderID"

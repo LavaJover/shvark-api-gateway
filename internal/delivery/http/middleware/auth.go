@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"log/slog"
 	"net/http"
 	"strings"
 
@@ -11,6 +12,7 @@ import (
 func AuthMiddleware(ssoClient *client.SSOClient) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		tokenHeader := c.GetHeader("Authorization")
+		slog.Info(tokenHeader)
 		if tokenHeader == "" {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "authorization header is required"})
 			return
@@ -22,7 +24,7 @@ func AuthMiddleware(ssoClient *client.SSOClient) gin.HandlerFunc {
 			return
 		}
 
-		token := parts[0]
+		token := parts[1]
 
 		response, err := ssoClient.ValidateToken(token)
 		if err != nil {
@@ -30,7 +32,7 @@ func AuthMiddleware(ssoClient *client.SSOClient) gin.HandlerFunc {
 			return
 		}
 
-		c.Set("user_id", response.UserId)
+		c.Set("userID", response.UserId)
 		c.Next()
 	}
 }

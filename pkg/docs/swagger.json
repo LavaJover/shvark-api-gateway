@@ -686,6 +686,11 @@
         },
         "/wallets/create": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Create new wallet",
                 "consumes": [
                     "application/json"
@@ -732,6 +737,11 @@
         },
         "/wallets/deposit": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Deposit crypto off chain",
                 "consumes": [
                     "application/json"
@@ -784,6 +794,11 @@
         },
         "/wallets/freeze": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Freeze crypto",
                 "consumes": [
                     "application/json"
@@ -836,6 +851,11 @@
         },
         "/wallets/release": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Release crypto",
                 "consumes": [
                     "application/json"
@@ -888,6 +908,11 @@
         },
         "/wallets/withdraw": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Withdraw crypto",
                 "consumes": [
                     "application/json"
@@ -940,6 +965,11 @@
         },
         "/wallets/{traderID}/address": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Get trader crypto wallet address",
                 "consumes": [
                     "application/json"
@@ -990,6 +1020,11 @@
         },
         "/wallets/{traderID}/balance": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Get trader crypto balance",
                 "consumes": [
                     "application/json"
@@ -1040,6 +1075,11 @@
         },
         "/wallets/{traderID}/history": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Get trader transaction history",
                 "consumes": [
                     "application/json"
@@ -1857,6 +1897,13 @@
                     "type": "string"
                 }
             }
+        }
+    },
+    "securityDefinitions": {
+        "BearerAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }
