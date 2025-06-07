@@ -117,9 +117,9 @@ func main() {
 		walletGroup.POST("/release", walletHandler.Release)
 		walletGroup.POST("/withdraw", middleware.RequirePermission(authzHandler.AuthzClient, "wallet", "withdraw"), walletHandler.Withdraw)
 		walletGroup.POST("/deposit", walletHandler.Deposit)
-		walletGroup.GET("/:traderID/history", middleware.RequireSelf("traderID"), walletHandler.GetTraderHistory)
-		walletGroup.GET("/:traderID/balance", middleware.RequireSelf("traderID"), walletHandler.GetTraderBalance)
-		walletGroup.GET("/:traderID/address", middleware.RequireSelf("traderID"), walletHandler.GetTraderWalletAddress)
+		walletGroup.GET("/:traderID/history", middleware.RequireSelfOrAdmin(authzHandler.AuthzClient, "traderID"), walletHandler.GetTraderHistory)
+		walletGroup.GET("/:traderID/balance", middleware.RequireSelfOrAdmin(authzHandler.AuthzClient, "traderID"), walletHandler.GetTraderBalance)
+		walletGroup.GET("/:traderID/address", middleware.RequireSelfOrAdmin(authzHandler.AuthzClient, "traderID"), walletHandler.GetTraderWalletAddress)
 	}
 
 	r.Run(":8080")
