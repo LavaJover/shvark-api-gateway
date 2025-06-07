@@ -59,6 +59,12 @@ func main() {
 		log.Printf("failed to init orders handler: %v\n", err)
 	}
 
+	// init wallet client
+	walletHandler, err := handlers.NewWalletHandler()
+	if err != nil {
+		log.Printf("failed to init wallet client")
+	}
+
 	r := gin.Default()
 
 	// use middleware
@@ -71,6 +77,7 @@ func main() {
 	// define routes
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
+	// auth-service
 	r.POST("/api/v1/register", authHandler.Register)
 	r.POST("/api/v1/login", authHandler.Login)
 	r.POST("/api/v1/validate_token", authHandler.ValidateToken)
@@ -97,6 +104,16 @@ func main() {
 
 	// orders-service
 	r.POST("/api/v1/orders", ordersHandler.CreateOrder)
+
+	// wallet-service
+	r.POST("/api/v1/wallets/create", walletHandler.CreateWallet)
+	r.POST("/api/v1/wallets/freeze", walletHandler.Freeze)
+	r.POST("/api/v1/wallets/release", walletHandler.Release)
+	r.POST("/api/v1/wallets/withdraw", walletHandler.Withdraw)
+	r.POST("/api/v1/wallets/deposit", walletHandler.Deposit)
+	r.GET("/api/v1/wallets/:traderID/history", walletHandler.GetTraderHistory)
+	r.GET("/api/v1/wallets/:traderID/balance", walletHandler.GetTraderBalance)
+	r.GET("/api/v1/wallets/:traderID/address", walletHandler.GetTraderWalletAddress)
 
 	r.Run(":8080")
 }

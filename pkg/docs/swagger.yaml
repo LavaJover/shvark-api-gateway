@@ -186,6 +186,11 @@ definitions:
       payment_system:
         type: string
     type: object
+  request.CreateWalletRequest:
+    properties:
+      traderId:
+        type: string
+    type: object
   request.DeletePolicyRequest:
     properties:
       action:
@@ -198,6 +203,24 @@ definitions:
     - action
     - object
     - role
+    type: object
+  request.DepositRequest:
+    properties:
+      amount:
+        type: number
+      traderId:
+        type: string
+      txHash:
+        type: string
+    type: object
+  request.FreezeRequest:
+    properties:
+      amount:
+        type: number
+      orderId:
+        type: string
+      traderId:
+        type: string
     type: object
   request.LoginRequest:
     properties:
@@ -222,6 +245,15 @@ definitions:
     - password
     - username
     type: object
+  request.ReleaseRequest:
+    properties:
+      orderId:
+        type: string
+      rewardPercent:
+        type: number
+      traderId:
+        type: string
+    type: object
   request.RevokeRoleRequest:
     properties:
       role:
@@ -240,6 +272,15 @@ definitions:
   request.ValidateTokenRequest:
     properties:
       token:
+        type: string
+    type: object
+  request.WithdrawRequest:
+    properties:
+      amount:
+        type: number
+      toAddress:
+        type: string
+      traderId:
         type: string
     type: object
   response.AddPolicyResponse:
@@ -281,12 +322,36 @@ definitions:
       order_status:
         type: string
     type: object
+  response.CreateWalletErrorResponse:
+    type: object
   response.DeletePolicyResponse:
     properties:
       success:
         type: boolean
     required:
     - success
+    type: object
+  response.DepositErrorResponse:
+    properties:
+      error:
+        example: Wallet not found
+        type: string
+    type: object
+  response.DepositResponse:
+    properties:
+      success:
+        type: boolean
+    type: object
+  response.FreezeErrorResponse:
+    properties:
+      error:
+        example: Insufficient balance
+        type: string
+    type: object
+  response.FreezeResponse:
+    properties:
+      frozen:
+        type: number
     type: object
   response.GetBankDetailByIDResponse:
     properties:
@@ -309,6 +374,46 @@ definitions:
       tg_link:
         type: string
       user_id:
+        type: string
+    type: object
+  response.GetTraderBalanceErrorResponse:
+    properties:
+      error:
+        type: string
+    type: object
+  response.GetTraderBalanceResponse:
+    properties:
+      address:
+        type: string
+      balance:
+        type: number
+      currency:
+        type: string
+      frozen:
+        type: number
+      traderId:
+        type: string
+    type: object
+  response.GetTraderHistoryErrorResponse:
+    properties:
+      error:
+        type: string
+    type: object
+  response.GetTraderHistoryResponse:
+    properties:
+      history:
+        items:
+          $ref: '#/definitions/response.Transaction'
+        type: array
+    type: object
+  response.GetTraderWalletAddressErrorResponse:
+    properties:
+      error:
+        type: string
+    type: object
+  response.GetTraderWalletAddressResponse:
+    properties:
+      address:
         type: string
     type: object
   response.GetUserByIDResponse:
@@ -335,12 +440,45 @@ definitions:
         example: 1d6ab366-4fca-4bcc-972d-875c35ea939a
         type: string
     type: object
+  response.ReleaseErrorResponse:
+    properties:
+      error:
+        type: string
+    type: object
+  response.ReleaseResponse:
+    properties:
+      released:
+        type: number
+      reward:
+        type: number
+    type: object
   response.RevokeRoleResponse:
     properties:
       success:
         type: boolean
     required:
     - success
+    type: object
+  response.Transaction:
+    properties:
+      amount:
+        type: number
+      currency:
+        type: string
+      id:
+        type: string
+      metadata:
+        type: string
+      orderId:
+        type: string
+      status:
+        type: string
+      traderId:
+        type: string
+      txHash:
+        type: string
+      type:
+        type: string
     type: object
   response.UpdateBankDetailResponse:
     type: object
@@ -351,6 +489,18 @@ definitions:
         type: string
       valid:
         type: boolean
+    type: object
+  response.WithdrawErrorResponse:
+    properties:
+      details:
+        type: string
+      error:
+        type: string
+    type: object
+  response.WithdrawResponse:
+    properties:
+      txid:
+        type: string
     type: object
 host: localhost:8080
 info:
@@ -801,4 +951,269 @@ paths:
       summary: JWT validation check-point
       tags:
       - Auth
+  /wallets/{traderID}/address:
+    get:
+      consumes:
+      - application/json
+      description: Get trader crypto wallet address
+      parameters:
+      - description: TraderID
+        in: path
+        name: traderID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.GetTraderWalletAddressResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.GetTraderWalletAddressErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.GetTraderWalletAddressErrorResponse'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/response.GetTraderWalletAddressErrorResponse'
+      summary: Get trader crypto wallet address
+      tags:
+      - wallets
+  /wallets/{traderID}/balance:
+    get:
+      consumes:
+      - application/json
+      description: Get trader crypto balance
+      parameters:
+      - description: TraderID
+        in: path
+        name: traderID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.GetTraderBalanceResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.GetTraderBalanceErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.GetTraderBalanceErrorResponse'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/response.GetTraderBalanceErrorResponse'
+      summary: Get trader crypto balance
+      tags:
+      - wallets
+  /wallets/{traderID}/history:
+    get:
+      consumes:
+      - application/json
+      description: Get trader transaction history
+      parameters:
+      - description: TraderID
+        in: path
+        name: traderID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.GetTraderHistoryResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.GetTraderHistoryErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.GetTraderHistoryErrorResponse'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/response.GetTraderHistoryErrorResponse'
+      summary: Get trader transactions history
+      tags:
+      - wallets
+  /wallets/create:
+    post:
+      consumes:
+      - application/json
+      description: Create new wallet
+      parameters:
+      - description: New wallet data
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/request.CreateWalletRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/response.CreateWalletErrorResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.CreateWalletErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.CreateWalletErrorResponse'
+      summary: Create new wallet
+      tags:
+      - wallets
+  /wallets/deposit:
+    post:
+      consumes:
+      - application/json
+      description: Deposit crypto off chain
+      parameters:
+      - description: wallet data
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/request.DepositRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.DepositResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.DepositErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.DepositErrorResponse'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/response.DepositErrorResponse'
+      summary: Deposit crypto off-chain
+      tags:
+      - wallets
+  /wallets/freeze:
+    post:
+      consumes:
+      - application/json
+      description: Freeze crypto
+      parameters:
+      - description: wallet data
+        in: body
+        name: imput
+        required: true
+        schema:
+          $ref: '#/definitions/request.FreezeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.FreezeResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.FreezeErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.FreezeErrorResponse'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/response.FreezeErrorResponse'
+      summary: Freeze crypto
+      tags:
+      - wallets
+  /wallets/release:
+    post:
+      consumes:
+      - application/json
+      description: Release crypto
+      parameters:
+      - description: wallet data
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/request.ReleaseRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.ReleaseResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ReleaseErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ReleaseErrorResponse'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/response.ReleaseErrorResponse'
+      summary: Release crypto
+      tags:
+      - wallets
+  /wallets/withdraw:
+    post:
+      consumes:
+      - application/json
+      description: Withdraw crypto
+      parameters:
+      - description: wallet data
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/request.WithdrawRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.WithdrawResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.WithdrawErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.WithdrawErrorResponse'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/response.WithdrawErrorResponse'
+      summary: Withdraw crypto
+      tags:
+      - wallets
 swagger: "2.0"

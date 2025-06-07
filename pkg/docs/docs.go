@@ -689,6 +689,410 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/wallets/create": {
+            "post": {
+                "description": "Create new wallet",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "wallets"
+                ],
+                "summary": "Create new wallet",
+                "parameters": [
+                    {
+                        "description": "New wallet data",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.CreateWalletRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/response.CreateWalletErrorResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.CreateWalletErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.CreateWalletErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/wallets/deposit": {
+            "post": {
+                "description": "Deposit crypto off chain",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "wallets"
+                ],
+                "summary": "Deposit crypto off-chain",
+                "parameters": [
+                    {
+                        "description": "wallet data",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.DepositRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.DepositResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.DepositErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.DepositErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "Bad Gateway",
+                        "schema": {
+                            "$ref": "#/definitions/response.DepositErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/wallets/freeze": {
+            "post": {
+                "description": "Freeze crypto",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "wallets"
+                ],
+                "summary": "Freeze crypto",
+                "parameters": [
+                    {
+                        "description": "wallet data",
+                        "name": "imput",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.FreezeRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.FreezeResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.FreezeErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.FreezeErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "Bad Gateway",
+                        "schema": {
+                            "$ref": "#/definitions/response.FreezeErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/wallets/release": {
+            "post": {
+                "description": "Release crypto",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "wallets"
+                ],
+                "summary": "Release crypto",
+                "parameters": [
+                    {
+                        "description": "wallet data",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.ReleaseRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.ReleaseResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ReleaseErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ReleaseErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "Bad Gateway",
+                        "schema": {
+                            "$ref": "#/definitions/response.ReleaseErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/wallets/withdraw": {
+            "post": {
+                "description": "Withdraw crypto",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "wallets"
+                ],
+                "summary": "Withdraw crypto",
+                "parameters": [
+                    {
+                        "description": "wallet data",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.WithdrawRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.WithdrawResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.WithdrawErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.WithdrawErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "Bad Gateway",
+                        "schema": {
+                            "$ref": "#/definitions/response.WithdrawErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/wallets/{traderID}/address": {
+            "get": {
+                "description": "Get trader crypto wallet address",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "wallets"
+                ],
+                "summary": "Get trader crypto wallet address",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "TraderID",
+                        "name": "traderID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.GetTraderWalletAddressResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.GetTraderWalletAddressErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.GetTraderWalletAddressErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "Bad Gateway",
+                        "schema": {
+                            "$ref": "#/definitions/response.GetTraderWalletAddressErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/wallets/{traderID}/balance": {
+            "get": {
+                "description": "Get trader crypto balance",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "wallets"
+                ],
+                "summary": "Get trader crypto balance",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "TraderID",
+                        "name": "traderID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.GetTraderBalanceResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.GetTraderBalanceErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.GetTraderBalanceErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "Bad Gateway",
+                        "schema": {
+                            "$ref": "#/definitions/response.GetTraderBalanceErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/wallets/{traderID}/history": {
+            "get": {
+                "description": "Get trader transaction history",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "wallets"
+                ],
+                "summary": "Get trader transactions history",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "TraderID",
+                        "name": "traderID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.GetTraderHistoryResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.GetTraderHistoryErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.GetTraderHistoryErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "Bad Gateway",
+                        "schema": {
+                            "$ref": "#/definitions/response.GetTraderHistoryErrorResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -972,6 +1376,14 @@ const docTemplate = `{
                 }
             }
         },
+        "request.CreateWalletRequest": {
+            "type": "object",
+            "properties": {
+                "traderId": {
+                    "type": "string"
+                }
+            }
+        },
         "request.DeletePolicyRequest": {
             "type": "object",
             "required": [
@@ -987,6 +1399,34 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "role": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.DepositRequest": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "traderId": {
+                    "type": "string"
+                },
+                "txHash": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.FreezeRequest": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "orderId": {
+                    "type": "string"
+                },
+                "traderId": {
                     "type": "string"
                 }
             }
@@ -1024,6 +1464,20 @@ const docTemplate = `{
                 }
             }
         },
+        "request.ReleaseRequest": {
+            "type": "object",
+            "properties": {
+                "orderId": {
+                    "type": "string"
+                },
+                "rewardPercent": {
+                    "type": "number"
+                },
+                "traderId": {
+                    "type": "string"
+                }
+            }
+        },
         "request.RevokeRoleRequest": {
             "type": "object",
             "required": [
@@ -1051,6 +1505,20 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "token": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.WithdrawRequest": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "toAddress": {
+                    "type": "string"
+                },
+                "traderId": {
                     "type": "string"
                 }
             }
@@ -1116,6 +1584,9 @@ const docTemplate = `{
                 }
             }
         },
+        "response.CreateWalletErrorResponse": {
+            "type": "object"
+        },
         "response.DeletePolicyResponse": {
             "type": "object",
             "required": [
@@ -1124,6 +1595,40 @@ const docTemplate = `{
             "properties": {
                 "success": {
                     "type": "boolean"
+                }
+            }
+        },
+        "response.DepositErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "Wallet not found"
+                }
+            }
+        },
+        "response.DepositResponse": {
+            "type": "object",
+            "properties": {
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "response.FreezeErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "Insufficient balance"
+                }
+            }
+        },
+        "response.FreezeResponse": {
+            "type": "object",
+            "properties": {
+                "frozen": {
+                    "type": "number"
                 }
             }
         },
@@ -1159,6 +1664,69 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.GetTraderBalanceErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.GetTraderBalanceResponse": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "balance": {
+                    "type": "number"
+                },
+                "currency": {
+                    "type": "string"
+                },
+                "frozen": {
+                    "type": "number"
+                },
+                "traderId": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.GetTraderHistoryErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.GetTraderHistoryResponse": {
+            "type": "object",
+            "properties": {
+                "history": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/response.Transaction"
+                    }
+                }
+            }
+        },
+        "response.GetTraderWalletAddressErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.GetTraderWalletAddressResponse": {
+            "type": "object",
+            "properties": {
+                "address": {
                     "type": "string"
                 }
             }
@@ -1200,6 +1768,25 @@ const docTemplate = `{
                 }
             }
         },
+        "response.ReleaseErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.ReleaseResponse": {
+            "type": "object",
+            "properties": {
+                "released": {
+                    "type": "number"
+                },
+                "reward": {
+                    "type": "number"
+                }
+            }
+        },
         "response.RevokeRoleResponse": {
             "type": "object",
             "required": [
@@ -1208,6 +1795,38 @@ const docTemplate = `{
             "properties": {
                 "success": {
                     "type": "boolean"
+                }
+            }
+        },
+        "response.Transaction": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "currency": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "metadata": {
+                    "type": "string"
+                },
+                "orderId": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "traderId": {
+                    "type": "string"
+                },
+                "txHash": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
                 }
             }
         },
@@ -1223,6 +1842,25 @@ const docTemplate = `{
                 },
                 "valid": {
                     "type": "boolean"
+                }
+            }
+        },
+        "response.WithdrawErrorResponse": {
+            "type": "object",
+            "properties": {
+                "details": {
+                    "type": "string"
+                },
+                "error": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.WithdrawResponse": {
+            "type": "object",
+            "properties": {
+                "txid": {
+                    "type": "string"
                 }
             }
         }
