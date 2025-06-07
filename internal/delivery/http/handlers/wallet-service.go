@@ -57,13 +57,18 @@ func (h *WalletHandler) CreateWallet(c *gin.Context) {
 		return
 	}
 
-	var response walletResponse.CreateWalletResponse
-	if err = json.Unmarshal(proxyRespBody, &response); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "json unmarshal failed"})
+	if proxyResp.StatusCode >= 200 && proxyResp.StatusCode < 300 {
+		var response walletResponse.CreateWalletResponse
+		if err := json.Unmarshal(proxyRespBody, &response); err != nil {
+			c.Data(proxyResp.StatusCode, "application/json", proxyRespBody)
+			return
+		}
+
+		c.JSON(proxyResp.StatusCode, response)
 		return
 	}
 
-	c.JSON(http.StatusCreated, response)
+	c.Data(proxyResp.StatusCode, "application/json", proxyRespBody)
 }
 
 // @Summary Freeze crypto
@@ -104,13 +109,18 @@ func (h *WalletHandler) Freeze(c *gin.Context) {
 		return
 	}
 
-	var response walletResponse.FreezeResponse
-	if err = json.Unmarshal(proxyRespBody, &response); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "json unmarshal failed"})
+	if proxyResp.StatusCode >= 200 && proxyResp.StatusCode < 300 {
+		var response walletResponse.FreezeResponse
+		if err := json.Unmarshal(proxyRespBody, &response); err != nil {
+			c.Data(proxyResp.StatusCode, "application/json", proxyRespBody)
+			return
+		}
+
+		c.JSON(proxyResp.StatusCode, response)
 		return
 	}
 
-	c.JSON(http.StatusOK, response)
+	c.Data(proxyResp.StatusCode, "application/json", proxyRespBody)
 }
 
 // @Summary Release crypto
@@ -151,13 +161,18 @@ func (h *WalletHandler) Release(c *gin.Context) {
 		return
 	}
 
-	var response walletResponse.ReleaseResponse
-	if err = json.Unmarshal(proxyRespBody, &response); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "json unmarshal failed"})
+	if proxyResp.StatusCode >= 200 && proxyResp.StatusCode < 300 {
+		var response walletResponse.ReleaseResponse
+		if err := json.Unmarshal(proxyRespBody, &response); err != nil {
+			c.Data(proxyResp.StatusCode, "application/json", proxyRespBody)
+			return
+		}
+
+		c.JSON(proxyResp.StatusCode, response)
 		return
 	}
 
-	c.JSON(http.StatusOK, response)
+	c.Data(proxyResp.StatusCode, "application/json", proxyRespBody)
 }
 
 // @Summary Withdraw crypto
@@ -198,13 +213,20 @@ func (h *WalletHandler) Withdraw(c *gin.Context) {
 		return
 	}
 
-	var response walletResponse.WithdrawResponse
-	if err = json.Unmarshal(proxyRespBody, &response); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "json unmarshal failed"})
+
+	if proxyResp.StatusCode >= 200 && proxyResp.StatusCode < 300 {
+		var response walletResponse.WithdrawResponse
+		if err := json.Unmarshal(proxyRespBody, &response); err != nil {
+			// Даже если тело успешное, но не парсится — вернём raw JSON
+			c.Data(proxyResp.StatusCode, "application/json", proxyRespBody)
+			return
+		}
+
+		c.JSON(proxyResp.StatusCode, response)
 		return
 	}
 
-	c.JSON(http.StatusOK, response)
+	c.Data(proxyResp.StatusCode, "application/json", proxyRespBody)
 }
 
 // @Summary Deposit crypto off-chain
@@ -245,13 +267,18 @@ func (h *WalletHandler) Deposit(c *gin.Context) {
 		return
 	}
 
-	var response walletResponse.DepositResponse
-	if err = json.Unmarshal(proxyRespBody, &response); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "json unmarshal failed"})
+	if proxyResp.StatusCode >= 200 && proxyResp.StatusCode < 300 {
+		var response walletResponse.DepositResponse
+		if err := json.Unmarshal(proxyRespBody, &response); err != nil {
+			c.Data(proxyResp.StatusCode, "application/json", proxyRespBody)
+			return
+		}
+
+		c.JSON(proxyResp.StatusCode, response)
 		return
 	}
 
-	c.JSON(http.StatusOK, response)
+	c.Data(proxyResp.StatusCode, "application/json", proxyRespBody)
 }
 
 // @Summary Get trader transactions history
@@ -285,13 +312,18 @@ func (h *WalletHandler) GetTraderHistory(c *gin.Context) {
 		return
 	}
 
-	var response walletResponse.GetTraderHistoryResponse
-	if err := json.Unmarshal(proxyRespBody, &response); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "json unmarshal failed"})
+	if proxyResp.StatusCode >= 200 && proxyResp.StatusCode < 300 {
+		var response walletResponse.GetTraderHistoryResponse
+		if err := json.Unmarshal(proxyRespBody, &response); err != nil {
+			c.Data(proxyResp.StatusCode, "application/json", proxyRespBody)
+			return
+		}
+
+		c.JSON(proxyResp.StatusCode, response)
 		return
 	}
 
-	c.JSON(http.StatusOK, response)
+	c.Data(proxyResp.StatusCode, "application/json", proxyRespBody)
 }
 
 // @Summary Get trader crypto balance
@@ -325,13 +357,18 @@ func (h *WalletHandler) GetTraderBalance(c *gin.Context) {
 		return
 	}
 
-	var response walletResponse.GetTraderBalanceResponse
-	if err := json.Unmarshal(proxyRespBody, &response); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "json unmarshal failed"})
+	if proxyResp.StatusCode >= 200 && proxyResp.StatusCode < 300 {
+		var response walletResponse.GetTraderBalanceResponse
+		if err := json.Unmarshal(proxyRespBody, &response); err != nil {
+			c.Data(proxyResp.StatusCode, "application/json", proxyRespBody)
+			return
+		}
+
+		c.JSON(proxyResp.StatusCode, response)
 		return
 	}
 
-	c.JSON(http.StatusOK, response)
+	c.Data(proxyResp.StatusCode, "application/json", proxyRespBody)
 }
 
 // @Summary Get trader crypto wallet address
@@ -365,11 +402,16 @@ func (h WalletHandler) GetTraderWalletAddress(c *gin.Context) {
 		return
 	}
 
-	var response walletResponse.GetTraderWalletAddressResponse
-	if err := json.Unmarshal(proxyRespBody, &response); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "json unmarshal failed"})
+	if proxyResp.StatusCode >= 200 && proxyResp.StatusCode < 300 {
+		var response walletResponse.GetTraderWalletAddressResponse
+		if err := json.Unmarshal(proxyRespBody, &response); err != nil {
+			c.Data(proxyResp.StatusCode, "application/json", proxyRespBody)
+			return
+		}
+
+		c.JSON(proxyResp.StatusCode, response)
 		return
 	}
 
-	c.JSON(http.StatusOK, response)
+	c.Data(proxyResp.StatusCode, "application/json", proxyRespBody)
 }
