@@ -110,14 +110,17 @@ func main() {
 	r.POST("/api/v1/orders", ordersHandler.CreateOrder)
 
 	// wallet-service
-	r.POST("/api/v1/wallets/create", middleware.AuthMiddleware(authHandler.SSOClient), walletHandler.CreateWallet)
-	r.POST("/api/v1/wallets/freeze", walletHandler.Freeze)
-	r.POST("/api/v1/wallets/release", walletHandler.Release)
-	r.POST("/api/v1/wallets/withdraw", walletHandler.Withdraw)
-	r.POST("/api/v1/wallets/deposit", walletHandler.Deposit)
-	r.GET("/api/v1/wallets/:traderID/history", walletHandler.GetTraderHistory)
-	r.GET("/api/v1/wallets/:traderID/balance", walletHandler.GetTraderBalance)
-	r.GET("/api/v1/wallets/:traderID/address", walletHandler.GetTraderWalletAddress)
+	walletGroup := r.Group("/api/v1/wallets", middleware.AuthMiddleware(authHandler.SSOClient))
+	{
+		walletGroup.POST("/create", walletHandler.CreateWallet)
+		walletGroup.POST("/freeze", walletHandler.Freeze)
+		walletGroup.POST("/release", walletHandler.Release)
+		walletGroup.POST("/withdraw", middleware.RequirePermission(authzHandler.AuthzClient, "wallet", "withdraw"), walletHandler.Withdraw)
+		walletGroup.POST("/deposit", walletHandler.Deposit)
+		walletGroup.GET("/:traderID/history", middleware.RequireSelf("traderID"), walletHandler.GetTraderHistory)
+		walletGroup.GET("/:traderID/balance", middleware.RequireSelf("traderID"), walletHandler.GetTraderBalance)
+		walletGroup.GET("/:traderID/address", middleware.RequireSelf("traderID"), walletHandler.GetTraderWalletAddress)
+	}
 
 	r.Run(":8080")
 }
