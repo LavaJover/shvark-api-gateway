@@ -148,6 +148,57 @@ const docTemplate = `{
                 }
             }
         },
+        "/banking/details/delete": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "banking"
+                ],
+                "summary": "Delete bank detail",
+                "parameters": [
+                    {
+                        "description": "bank detail ID",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.DeleteBankDetailRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.DeleteBankDetailResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "Bad Gateway",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/banking/details/{uuid}": {
             "get": {
                 "description": "Get bank detail by ID",
@@ -1451,6 +1502,14 @@ const docTemplate = `{
                 }
             }
         },
+        "request.DeleteBankDetailRequest": {
+            "type": "object",
+            "properties": {
+                "bank_detail": {
+                    "type": "string"
+                }
+            }
+        },
         "request.DeletePolicyRequest": {
             "type": "object",
             "required": [
@@ -1653,6 +1712,14 @@ const docTemplate = `{
         },
         "response.CreateWalletErrorResponse": {
             "type": "object"
+        },
+        "response.DeleteBankDetailResponse": {
+            "type": "object",
+            "properties": {
+                "bank_detail": {
+                    "$ref": "#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_banking_response.BankDetail"
+                }
+            }
         },
         "response.DeletePolicyResponse": {
             "type": "object",

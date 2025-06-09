@@ -209,6 +209,11 @@ definitions:
       traderId:
         type: string
     type: object
+  request.DeleteBankDetailRequest:
+    properties:
+      bank_detail:
+        type: string
+    type: object
   request.DeletePolicyRequest:
     properties:
       action:
@@ -341,6 +346,11 @@ definitions:
         type: string
     type: object
   response.CreateWalletErrorResponse:
+    type: object
+  response.DeleteBankDetailResponse:
+    properties:
+      bank_detail:
+        $ref: '#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_banking_response.BankDetail'
     type: object
   response.DeletePolicyResponse:
     properties:
@@ -641,6 +651,39 @@ paths:
           schema:
             $ref: '#/definitions/handlers.ErrorResponse'
       summary: Get bank detail by ID
+      tags:
+      - banking
+  /banking/details/delete:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: bank detail ID
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/request.DeleteBankDetailRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.DeleteBankDetailResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Delete bank detail
       tags:
       - banking
   /login:

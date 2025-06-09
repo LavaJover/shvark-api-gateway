@@ -241,3 +241,53 @@ func (h *BankingHandler) GetBankDetailsByTraderID(c *gin.Context) {
 		BankDetails: bankDetails,
 	})
 }
+
+// @Summary Delete bank detail
+// @Descrition Delete bank detail
+// @Tags banking
+// @Accept json
+// @Produce json
+// @Param input body bankingRequest.DeleteBankDetailRequest true "bank detail ID"
+// @Success 200 {object} bankingResponse.DeleteBankDetailResponse
+// @Failure 400 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Failure 502 {object} ErrorResponse
+// @Router /banking/details/delete [post]
+func (h *BankingHandler) DeleteBankDetail(c *gin.Context) {
+	var request bankingRequest.DeleteBankDetailRequest
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	bankDetailID := request.BankDetail
+	response, err := h.BankingClient.DeleteBankDetail(bankDetailID)
+	if err != nil {
+		c.JSON(http.StatusBadGateway, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, bankingResponse.DeleteBankDetailResponse{
+		BankDetail: bankingResponse.BankDetail{
+			ID: response.BankDetail.BankDetailId,
+			TraderID: response.BankDetail.TraderId,
+			Country: response.BankDetail.Country,
+			Currency: response.BankDetail.Currency,
+			MinAmount: float32(response.BankDetail.MinAmount),
+			MaxAmount: float32(response.BankDetail.MaxAmount),
+			BankName: response.BankDetail.BankName,
+			PaymentSystem: response.BankDetail.PaymentSystem,
+			Delay: response.BankDetail.Delay.String(),
+			Enabled: response.BankDetail.Enabled,
+			CardNumber: response.BankDetail.CardNumber,
+			Phone: response.BankDetail.Phone,
+			Owner: response.BankDetail.Owner,
+			MaxOrdersSimultaneosly: response.BankDetail.MaxOrdersSimultaneosly,
+			MaxAmountDay: int32(response.BankDetail.MaxAmountDay),
+			MaxAmountMonth: int32(response.BankDetail.MaxAmountMonth),
+			MaxQuantityDay: int32(response.BankDetail.MaxQuantityDay),
+			MaxQuantityMonth: int32(response.BankDetail.MaxQuantityMonth),
+			DeviceID: response.BankDetail.DeviceId,
+		},
+	})
+}

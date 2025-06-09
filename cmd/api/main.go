@@ -102,6 +102,7 @@ func main() {
 
 	// banking-service
 	r.POST("/api/v1/banking/details", bankingHandler.CreateBankDetail)
+	r.POST("/api/v1/banking/details/delete", bankingHandler.DeleteBankDetail)
 	r.GET("/api/v1/banking/details/:uuid", bankingHandler.GetBankDetailByID)
 	r.PATCH("/api/v1/banking/details", bankingHandler.UpdateBankDetail)
 	r.GET("/api/v1/banking/details", bankingHandler.GetBankDetailsByTraderID)
