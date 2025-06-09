@@ -260,7 +260,7 @@ func (h *BankingHandler) DeleteBankDetail(c *gin.Context) {
 		return
 	}
 
-	bankDetailID := request.BankDetail
+	bankDetailID := request.BankDetailID
 	response, err := h.BankingClient.DeleteBankDetail(bankDetailID)
 	if err != nil {
 		c.JSON(http.StatusBadGateway, gin.H{"error": err.Error()})
