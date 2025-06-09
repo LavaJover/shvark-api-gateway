@@ -1148,6 +1148,9 @@
                 "delay": {
                     "type": "string"
                 },
+                "device_id": {
+                    "type": "string"
+                },
                 "enabled": {
                     "type": "boolean"
                 },
@@ -1164,6 +1167,12 @@
                     "type": "integer"
                 },
                 "max_orders_simultaneosly": {
+                    "type": "integer"
+                },
+                "max_quantity_day": {
+                    "type": "integer"
+                },
+                "max_quantity_month": {
                     "type": "integer"
                 },
                 "min_amount": {
@@ -1279,6 +1288,9 @@
                 "delay": {
                     "type": "string"
                 },
+                "device_id": {
+                    "type": "string"
+                },
                 "enabled": {
                     "type": "boolean"
                 },
@@ -1295,6 +1307,12 @@
                     "type": "integer"
                 },
                 "max_orders_simultaneosly": {
+                    "type": "integer"
+                },
+                "max_quantity_day": {
+                    "type": "integer"
+                },
+                "max_quantity_month": {
                     "type": "integer"
                 },
                 "min_amount": {
@@ -1352,6 +1370,9 @@
                     "type": "string",
                     "example": "100s"
                 },
+                "device_id": {
+                    "type": "string"
+                },
                 "enabled": {
                     "type": "boolean"
                 },
@@ -1365,6 +1386,12 @@
                     "type": "integer"
                 },
                 "max_orders_simultaneosly": {
+                    "type": "integer"
+                },
+                "max_quantity_day": {
+                    "type": "integer"
+                },
+                "max_quantity_month": {
                     "type": "integer"
                 },
                 "min_amount": {

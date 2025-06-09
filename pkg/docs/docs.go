@@ -1154,6 +1154,9 @@ const docTemplate = `{
                 "delay": {
                     "type": "string"
                 },
+                "device_id": {
+                    "type": "string"
+                },
                 "enabled": {
                     "type": "boolean"
                 },
@@ -1170,6 +1173,12 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "max_orders_simultaneosly": {
+                    "type": "integer"
+                },
+                "max_quantity_day": {
+                    "type": "integer"
+                },
+                "max_quantity_month": {
                     "type": "integer"
                 },
                 "min_amount": {
@@ -1285,6 +1294,9 @@ const docTemplate = `{
                 "delay": {
                     "type": "string"
                 },
+                "device_id": {
+                    "type": "string"
+                },
                 "enabled": {
                     "type": "boolean"
                 },
@@ -1301,6 +1313,12 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "max_orders_simultaneosly": {
+                    "type": "integer"
+                },
+                "max_quantity_day": {
+                    "type": "integer"
+                },
+                "max_quantity_month": {
                     "type": "integer"
                 },
                 "min_amount": {
@@ -1358,6 +1376,9 @@ const docTemplate = `{
                     "type": "string",
                     "example": "100s"
                 },
+                "device_id": {
+                    "type": "string"
+                },
                 "enabled": {
                     "type": "boolean"
                 },
@@ -1371,6 +1392,12 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "max_orders_simultaneosly": {
+                    "type": "integer"
+                },
+                "max_quantity_day": {
+                    "type": "integer"
+                },
+                "max_quantity_month": {
                     "type": "integer"
                 },
                 "min_amount": {

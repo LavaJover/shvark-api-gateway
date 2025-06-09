@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 	"time"
 
@@ -40,6 +41,7 @@ func NewBankingHandler(addr string) (*BankingHandler, error) {
 // @Router /banking/details [post]
 func (h *BankingHandler) CreateBankDetail(c *gin.Context) {
 	var request bankingRequest.CreateBankDetailRequest
+	fmt.Println(c.Request.Body)
 	if err := c.ShouldBindJSON(&request); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -67,6 +69,9 @@ func (h *BankingHandler) CreateBankDetail(c *gin.Context) {
 		MaxOrdersSimultaneosly: request.MaxOrdersSimultaneosly,
 		MaxAmountDay: request.MaxAmountDay,
 		MaxAmountMonth: request.MaxAmountMonth,
+		MaxQuantityDay: request.MaxQuantityDay,
+		MaxQuantityMonth: request.MaxQuantityMonth,
+		DeviceID: request.DeviceID,
 	}
 
 	response, err := h.BankingClient.CreateBankDetail(&bankDetail)
@@ -123,6 +128,9 @@ func (h *BankingHandler) GetBankDetailByID(c *gin.Context) {
 			MaxOrdersSimultaneosly: response.BankDetail.MaxOrdersSimultaneosly,
 			MaxAmountDay: int32(response.BankDetail.MaxAmountDay),
 			MaxAmountMonth: int32(response.BankDetail.MaxAmountMonth),
+			MaxQuantityDay: int32(response.BankDetail.MaxQuantityDay),
+			MaxQuantityMonth: int32(response.BankDetail.MaxQuantityMonth),
+			DeviceID: response.BankDetail.DeviceId,
 		},
 	})
 }
@@ -167,6 +175,9 @@ func (h *BankingHandler) UpdateBankDetail(c *gin.Context) {
 		MaxOrdersSimultaneosly: request.BankDetail.MaxOrdersSimultaneosly,
 		MaxAmountDay: request.BankDetail.MaxAmountDay,
 		MaxAmountMonth: request.BankDetail.MaxAmountMonth,
+		MaxQuantityDay: request.BankDetail.MaxQuantityDay,
+		MaxQuantityMonth: request.BankDetail.MaxAmountMonth,
+		DeviceID: request.BankDetail.DeviceID,
 	}
 
 	_, err = h.BankingClient.UpdateBankDetail(&updatedBankDetail)
@@ -220,6 +231,9 @@ func (h *BankingHandler) GetBankDetailsByTraderID(c *gin.Context) {
 			MaxOrdersSimultaneosly: bankDetail.MaxOrdersSimultaneosly,
 			MaxAmountDay: int32(bankDetail.MaxAmountDay),
 			MaxAmountMonth: int32(bankDetail.MaxAmountMonth),
+			MaxQuantityDay: int32(bankDetail.MaxQuantityDay),
+			MaxQuantityMonth: int32(bankDetail.MaxQuantityMonth),
+			DeviceID: bankDetail.DeviceId,
 		}
 	}
 

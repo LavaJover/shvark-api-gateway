@@ -6,6 +6,8 @@ github.com/LavaJover/shvark-banking-service v0.0.3 h1:RZ5njEsOU0yuPYMCvGIBhErqj4
 github.com/LavaJover/shvark-banking-service v0.0.3/go.mod h1:+uNYo5BLNdX9sZQS+viQZp+J508mBM82KE7BkSDdqwk=
 github.com/LavaJover/shvark-banking-service v0.0.4 h1:ZEBGWC+vAfykF/auQpzi2aLTXgt7W5YBlledOBKfrgk=
 github.com/LavaJover/shvark-banking-service v0.0.4/go.mod h1:+uNYo5BLNdX9sZQS+viQZp+J508mBM82KE7BkSDdqwk=
+github.com/LavaJover/shvark-banking-service v0.0.5 h1:3P4TzML9nFl/52aKJMpVGnYkpxTrQ/ZZNoR+Fbt1FYI=
+github.com/LavaJover/shvark-banking-service v0.0.5/go.mod h1:+uNYo5BLNdX9sZQS+viQZp+J508mBM82KE7BkSDdqwk=
 github.com/LavaJover/shvark-order-service v0.0.1 h1:i/Mibdc2gwhZ99AvMh/AUA7NJQDUKs+JkNZCat43z1g=
 github.com/LavaJover/shvark-order-service v0.0.1/go.mod h1:Vv6FVpMnySc2WYBCZGMZB2JnucjedpKZbNabbouDc2Y=
 github.com/LavaJover/shvark-order-service v0.0.2 h1:O3QelirHZG4G90erkdwH3kje38QbzONeOezYJBI2/Eo=

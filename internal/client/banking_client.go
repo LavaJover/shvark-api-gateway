@@ -58,6 +58,9 @@ func (c *BankingClient) CreateBankDetail(bankDetail *domain.BankDetail) (*bankin
 			MaxOrdersSimultaneosly: bankDetail.MaxOrdersSimultaneosly,
 			MaxAmountDay: float64(bankDetail.MaxAmountDay),
 			MaxAmountMonth: float64(bankDetail.MaxAmountMonth),
+			MaxQuantityDay: float64(bankDetail.MaxQuantityDay),
+			MaxQuantityMonth: float64(bankDetail.MaxQuantityMonth),
+			DeviceId: bankDetail.DeviceID,
 		},
 	)
 }
@@ -110,6 +113,9 @@ func (c *BankingClient) UpdateBankDetail(bankDetail *domain.BankDetail) (*bankin
 				MaxOrdersSimultaneosly: bankDetail.MaxOrdersSimultaneosly,
 				MaxAmountDay: float64(bankDetail.MaxAmountDay),
 				MaxAmountMonth: float64(bankDetail.MaxAmountMonth),
+				MaxQuantityDay: float64(bankDetail.MaxQuantityDay),
+				MaxQuantityMonth: float64(bankDetail.MaxQuantityMonth),
+				DeviceId: bankDetail.DeviceID,
 			},
 		},
 	)

@@ -21,4 +21,7 @@ type BankDetail struct {
 	MaxOrdersSimultaneosly  int32	`json:"max_orders_simultaneosly"`
 	MaxAmountDay			int32	`json:"max_amount_day"`
 	MaxAmountMonth			int32	`json:"max_amount_month"`
+	MaxQuantityDay			int32	`json:"max_quantity_day"`
+	MaxQuantityMonth 		int32	`json:"max_quantity_month"`
+	DeviceID				string	`json:"device_id"`
 }
