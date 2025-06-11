@@ -211,7 +211,7 @@ definitions:
     type: object
   request.DeleteBankDetailRequest:
     properties:
-      bank_detail:
+      bank_detail_id:
         type: string
     type: object
   request.DeletePolicyRequest:

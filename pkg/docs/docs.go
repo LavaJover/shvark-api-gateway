@@ -1505,7 +1505,7 @@ const docTemplate = `{
         "request.DeleteBankDetailRequest": {
             "type": "object",
             "properties": {
-                "bank_detail": {
+                "bank_detail_id": {
                     "type": "string"
                 }
             }
