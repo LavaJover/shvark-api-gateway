@@ -94,18 +94,24 @@ func main() {
 	r.GET("/api/v1/profiles/:uuid", profileHandler.GetProfileByID)
 
 	// RBAC-service
-	r.POST("/api/v1/rbac/roles", authzHandler.AssignRole)
-	r.DELETE("/api/v1/rbac/roles", authzHandler.RevokeRole)
-	r.POST("/api/v1/rbac/policies", authzHandler.AddPolicy)
-	r.DELETE("/api/v1/rbac/policies", authzHandler.DeletePolicy)
-	r.POST("/api/v1/rbac/permissions", authzHandler.CheckPermission)
+	rbacGroup := r.Group("/api/v1/rbac", middleware.AuthMiddleware(authHandler.SSOClient))
+	{
+		rbacGroup.POST("/roles", authzHandler.AssignRole)
+		rbacGroup.DELETE("/roles", authzHandler.RevokeRole)
+		rbacGroup.POST("/policies", authzHandler.AddPolicy)
+		rbacGroup.DELETE("/policies", authzHandler.DeletePolicy)
+		rbacGroup.POST("/permissions", authzHandler.CheckPermission)
+	}
 
 	// banking-service
-	r.POST("/api/v1/banking/details", bankingHandler.CreateBankDetail)
-	r.POST("/api/v1/banking/details/delete", bankingHandler.DeleteBankDetail)
-	r.GET("/api/v1/banking/details/:uuid", bankingHandler.GetBankDetailByID)
-	r.PATCH("/api/v1/banking/details", bankingHandler.UpdateBankDetail)
-	r.GET("/api/v1/banking/details", bankingHandler.GetBankDetailsByTraderID)
+	bankingGroup := r.Group("/api/v1/banking", middleware.AuthMiddleware(authHandler.SSOClient))
+	{
+		bankingGroup.POST("/details", bankingHandler.CreateBankDetail)
+		bankingGroup.POST("/details/delete", bankingHandler.DeleteBankDetail)
+		bankingGroup.GET("/details/:uuid", bankingHandler.GetBankDetailByID)
+		bankingGroup.PATCH("/details", bankingHandler.UpdateBankDetail)
+		bankingGroup.GET("/details", bankingHandler.GetBankDetailsByTraderID)	
+	}
 
 	// orders-service
 	orderGroup := r.Group("/api/v1/orders", middleware.AuthMiddleware(authHandler.SSOClient))
