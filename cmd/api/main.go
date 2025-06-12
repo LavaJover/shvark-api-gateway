@@ -110,6 +110,11 @@ func main() {
 	// orders-service
 	r.POST("/api/v1/orders", ordersHandler.CreateOrder)
 	r.GET("/api/v1/orders/:uuid", ordersHandler.GetOrderByID)
+	r.GET("/api/v1/orders/trader/:traderUUID", ordersHandler.GetOrdersByTraderID)
+	r.POST("/api/v1/orders/approve", ordersHandler.ApproveOrder)
+	r.POST("/api/v1/orders/cancel", ordersHandler.CancelOrder)
+	r.POST("/api/v1/orders/disputes/open", ordersHandler.OpenOrderDispute)
+	r.POST("/api/v1/orders/disputes/resolve", ordersHandler.ResolveOrderDispute)
 
 	// wallet-service
 	walletGroup := r.Group("/api/v1/wallets", middleware.AuthMiddleware(authHandler.SSOClient))

@@ -80,3 +80,51 @@ func (c *OrderClient) GetOrdersByTraderID(traderID string) (*orderpb.GetOrdersBy
 		},
 	)
 }
+
+func (c *OrderClient) ApproveOrder(orderID string) (*orderpb.ApproveOrderResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	return c.service.ApproveOrder(
+		ctx,
+		&orderpb.ApproveOrderRequest{
+			OrderId: orderID,
+		},
+	)
+}
+
+func (c *OrderClient) CancelOrder(orderID string) (*orderpb.CancelOrderResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	return c.service.CancelOrder(
+		ctx,
+		&orderpb.CancelOrderRequest{
+			OrderId: orderID,
+		},
+	)
+}
+
+func (c *OrderClient) OpenOrderDispute(orderID string) (*orderpb.OpenOrderDisputeResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	return c.service.OpenOrderDispute(
+		ctx,
+		&orderpb.OpenOrderDisputeRequest{
+			OrderId: orderID,
+		},
+	)
+}
+
+func (c *OrderClient) ResolveOrderDispute(orderID string) (*orderpb.ResolveOrderDisputeResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	return c.service.ResolveOrderDispute(
+		ctx,
+		&orderpb.ResolveOrderDisputeRequest{
+			OrderId: orderID,
+		},
+	)
+}

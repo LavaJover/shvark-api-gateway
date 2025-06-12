@@ -134,3 +134,173 @@ func (h *OrderHandler) GetOrderByID(c *gin.Context) {
 		},
 	})
 }
+
+// @Summary Get orders by trader ID
+// @Description Get orders by trader ID
+// @Tags orders
+// @Accept json
+// @Produce json
+// @Param traderUUID path string true "Trader UUID path param"
+// @Success 200 {object} orderResponse.GetOrdersByTraderIDResponse
+// @Failure 400 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Failure 502 {object} ErrorResponse
+// @Router /orders/trader/{traderUUID} [get]
+func (h *OrderHandler) GetOrdersByTraderID(c *gin.Context) {
+	traderID, err := uuid.Parse(c.Param("traderUUID"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	response, err := h.OrderClient.GetOrdersByTraderID(traderID.String())
+	if err != nil {
+		c.JSON(http.StatusBadGateway, gin.H{"error": err.Error()})
+		return
+	}
+
+	responseOrders := response.Orders
+	orders := make([]orderResponse.Order, len(responseOrders))
+
+	for i, responseOrder := range responseOrders {
+		orders[i] = orderResponse.Order{
+			OrderID: responseOrder.OrderId,
+			Status: responseOrder.Status,
+			AmountFiat: responseOrder.AmountFiat,
+			AmountCrypto: responseOrder.AmountCrypto,
+			ExpiresAt: responseOrder.ExpiresAt.AsTime(),
+			BankDetail: orderResponse.BankDetail{
+				ID: responseOrder.BankDetail.BankDetailId,
+				TraderID: responseOrder.BankDetail.TraderId,
+				Currency: responseOrder.BankDetail.Currency,
+				Country: responseOrder.BankDetail.Country,
+				MinAmount: responseOrder.BankDetail.MinAmount,
+				MaxAmount: responseOrder.BankDetail.MaxAmount,
+				BankName: responseOrder.BankDetail.BankName,
+				PaymentSystem: responseOrder.BankDetail.PaymentSystem,
+				Enabled: responseOrder.BankDetail.Enabled,
+				Delay: responseOrder.BankDetail.Delay.String(),
+			},
+		}
+	}
+
+	c.JSON(http.StatusOK, orderResponse.GetOrdersByTraderIDResponse{
+		Orders: orders,
+	})
+}
+
+// @Summary Approve order by order uuid
+// @Description Approve order by order uuid
+// @Tags orders
+// @Accept json
+// @Produce json
+// @Param input body orderRequest.ApproveOrderRequest true "Order UUID"
+// @Success 200 {object} orderResponse.ApproveOrderResponse
+// @Failure 400 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Failure 502 {object} ErrorResponse
+// @Router /orders/approve [post]
+func (h *OrderHandler) ApproveOrder(c *gin.Context) {
+	var request orderRequest.ApproveOrderRequest
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	orderID := request.OrderID
+	response, err := h.OrderClient.ApproveOrder(orderID)
+	if err != nil {
+		c.JSON(http.StatusBadGateway, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, orderResponse.ApproveOrderResponse{
+		Message: response.Message,
+	})
+}
+
+// @Summary Cancel order by order uuid
+// @Description Cancel order by order uuid
+// @Tags orders
+// @Accept json
+// @Produce json
+// @Param input body orderRequest.CancelOrderRequest true "Order UUID"
+// @Success 200 {object} orderResponse.CancelOrderResponse
+// @Failure 400 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Failure 502 {object} ErrorResponse
+// @Router /orders/cancel [post]
+func (h *OrderHandler) CancelOrder(c *gin.Context) {
+	var request orderRequest.CancelOrderRequest
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	orderID := request.OrderID
+	response, err := h.OrderClient.CancelOrder(orderID)
+	if err != nil {
+		c.JSON(http.StatusBadGateway, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, orderResponse.CancelOrderResponse{
+		Message: response.Message,
+	})
+}
+
+// @Summary Open order dispute by order uuid
+// @Description Open order dispute by order uuid
+// @Tags orders
+// @Accept json
+// @Produce json
+// @Param input body orderRequest.OpenOrderDisputeRequest true "Order UUID"
+// @Success 200 {object} orderResponse.OpenOrderDisputeResponse
+// @Failure 400 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Failure 502 {object} ErrorResponse
+// @Router /orders/disputes/open [post]
+func (h *OrderHandler) OpenOrderDispute(c *gin.Context) {
+	var request orderRequest.OpenOrderDisputeRequest
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	orderID := request.OrderID
+	response, err := h.OrderClient.OpenOrderDispute(orderID)
+	if err != nil {
+		c.JSON(http.StatusBadGateway, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, orderResponse.OpenOrderDisputeResponse{
+		Message: response.Message,
+	})
+}
+
+// @Summary Resolve order dispute by order uuid
+// @Description Resolve order dispute by order uuid
+// @Tags orders
+// @Accept json
+// @Produce json
+// @Param input body orderRequest.ResolveOrderDisputeRequest true "Order UUID"
+// @Success 200 {object} orderResponse.ResolveOrderDisputeResponse
+// @Failure 400 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Failure 502 {object} ErrorResponse
+// @Router /orders/disputes/resolve [post]
+func (h *OrderHandler) ResolveOrderDispute(c *gin.Context) {
+	var request orderRequest.ResolveOrderDisputeRequest
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	orderID := request.OrderID
+	response, err := h.OrderClient.ResolveOrderDispute(orderID)
+	if err != nil {
+		c.JSON(http.StatusBadGateway, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, orderResponse.ResolveOrderDisputeResponse{
+		Message: response.Message,
+	})
+}

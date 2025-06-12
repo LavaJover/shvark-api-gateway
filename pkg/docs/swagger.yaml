@@ -83,6 +83,11 @@ definitions:
     - object
     - role
     type: object
+  request.ApproveOrderRequest:
+    properties:
+      order_id:
+        type: string
+    type: object
   request.AssignRoleRequest:
     properties:
       role:
@@ -132,6 +137,11 @@ definitions:
       phone:
         type: string
       trader_id:
+        type: string
+    type: object
+  request.CancelOrderRequest:
+    properties:
+      order_id:
         type: string
     type: object
   request.CheckPermissionRequest:
@@ -256,6 +266,11 @@ definitions:
         example: securepass123
         type: string
     type: object
+  request.OpenOrderDisputeRequest:
+    properties:
+      order_id:
+        type: string
+    type: object
   request.RegisterRequest:
     properties:
       login:
@@ -277,6 +292,11 @@ definitions:
       rewardPercent:
         type: number
       traderId:
+        type: string
+    type: object
+  request.ResolveOrderDisputeRequest:
+    properties:
+      order_id:
         type: string
     type: object
   request.RevokeRoleRequest:
@@ -315,12 +335,22 @@ definitions:
     required:
     - success
     type: object
+  response.ApproveOrderResponse:
+    properties:
+      message:
+        type: string
+    type: object
   response.AssignRoleResponse:
     properties:
       success:
         type: boolean
     required:
     - success
+    type: object
+  response.CancelOrderResponse:
+    properties:
+      message:
+        type: string
     type: object
   response.CheckPermissionResponse:
     properties:
@@ -402,6 +432,13 @@ definitions:
       order:
         $ref: '#/definitions/response.Order'
     type: object
+  response.GetOrdersByTraderIDResponse:
+    properties:
+      orders:
+        items:
+          $ref: '#/definitions/response.Order'
+        type: array
+    type: object
   response.GetProfileByIDResponse:
     properties:
       avatar_url:
@@ -471,6 +508,11 @@ definitions:
       refresh_token:
         type: string
     type: object
+  response.OpenOrderDisputeResponse:
+    properties:
+      message:
+        type: string
+    type: object
   response.Order:
     properties:
       amount_crypto:
@@ -503,6 +545,11 @@ definitions:
         type: number
       reward:
         type: number
+    type: object
+  response.ResolveOrderDisputeResponse:
+    properties:
+      message:
+        type: string
     type: object
   response.RevokeRoleResponse:
     properties:
@@ -801,6 +848,175 @@ paths:
           schema:
             $ref: '#/definitions/handlers.ErrorResponse'
       summary: Get order by orderID
+      tags:
+      - orders
+  /orders/approve:
+    post:
+      consumes:
+      - application/json
+      description: Approve order by order uuid
+      parameters:
+      - description: Order UUID
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/request.ApproveOrderRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.ApproveOrderResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Approve order by order uuid
+      tags:
+      - orders
+  /orders/cancel:
+    post:
+      consumes:
+      - application/json
+      description: Cancel order by order uuid
+      parameters:
+      - description: Order UUID
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/request.CancelOrderRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.CancelOrderResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Cancel order by order uuid
+      tags:
+      - orders
+  /orders/disputes/open:
+    post:
+      consumes:
+      - application/json
+      description: Open order dispute by order uuid
+      parameters:
+      - description: Order UUID
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/request.OpenOrderDisputeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.OpenOrderDisputeResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Open order dispute by order uuid
+      tags:
+      - orders
+  /orders/disputes/resolve:
+    post:
+      consumes:
+      - application/json
+      description: Resolve order dispute by order uuid
+      parameters:
+      - description: Order UUID
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/request.ResolveOrderDisputeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.ResolveOrderDisputeResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Resolve order dispute by order uuid
+      tags:
+      - orders
+  /orders/trader/{traderUUID}:
+    get:
+      consumes:
+      - application/json
+      description: Get orders by trader ID
+      parameters:
+      - description: Trader UUID path param
+        in: path
+        name: traderUUID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.GetOrdersByTraderIDResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Get orders by trader ID
       tags:
       - orders
   /profiles/{uuid}:
