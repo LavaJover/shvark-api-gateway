@@ -46,12 +46,13 @@ func (h *OrderHandler) CreateOrder(c *gin.Context) {
 
 	orderRequest := domain.Order{
 		MerchantID: request.MerchantID,
-		Amount: float32(request.Amount),
+		AmountFiat: request.AmountFiat,
 		Currency: request.Currency,
 		Country: request.Country,
 		ClientEmail: request.ClientData,
 		MetadataJSON: request.Metadata,
 		PaymentSystem: request.PaymentSystem,
+		ExpiresAt: request.ExpiresAt,
 	}
 
 	response, err := h.OrderClient.CreateOrder(&orderRequest)
@@ -62,7 +63,9 @@ func (h *OrderHandler) CreateOrder(c *gin.Context) {
 
 	c.JSON(http.StatusOK, orderResponse.CreateOrderResponse{
 		OrderID: response.Order.OrderId,
-		OrderStatus: response.Order.Status.String(),
+		OrderStatus: response.Order.Status,
+		AmountFiat: response.Order.AmountFiat,
+		AmountCrypto: response.Order.AmountCrypto,
 		BankDetail: orderResponse.BankDetail{
 			ID: response.Order.BankDetail.BankDetailId,
 			TraderID: response.Order.BankDetail.TraderId,

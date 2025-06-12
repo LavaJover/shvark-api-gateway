@@ -1471,7 +1471,7 @@ const docTemplate = `{
         "request.CreateOrderRequest": {
             "type": "object",
             "properties": {
-                "amount": {
+                "amount_fiat": {
                     "type": "number"
                 },
                 "client_data": {
@@ -1481,6 +1481,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "currency": {
+                    "type": "string"
+                },
+                "expires_at": {
                     "type": "string"
                 },
                 "merchant_id": {
@@ -1696,10 +1699,13 @@ const docTemplate = `{
         "response.CreateOrderResponse": {
             "type": "object",
             "properties": {
-                "amount": {
+                "amount_crypto": {
                     "type": "number"
                 },
-                "bankDetail": {
+                "amount_fiat": {
+                    "type": "number"
+                },
+                "bank_detail": {
                     "$ref": "#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_order_response.BankDetail"
                 },
                 "order_id": {

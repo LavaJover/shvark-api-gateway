@@ -6,6 +6,7 @@ import (
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/protobuf/types/known/timestamppb"
 
 	"github.com/LavaJover/shvark-api-gateway/internal/domain"
 	orderpb "github.com/LavaJover/shvark-order-service/proto/gen"
@@ -45,7 +46,8 @@ func (c *OrderClient) CreateOrder(order *domain.Order) (*orderpb.CreateOrderResp
 		ctx,
 		&orderpb.CreateOrderRequest{
 			MerchantId: order.MerchantID,
-			Amount: float64(order.Amount),
+			AmountFiat: order.AmountFiat,
+			ExpiresAt: timestamppb.New(order.ExpiresAt),
 			Currency: order.Currency,
 			Country: order.Country,
 			ClientEmail: order.ClientEmail,
