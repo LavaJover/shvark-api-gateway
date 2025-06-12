@@ -285,6 +285,11 @@
         },
         "/orders": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Create new Pay-In order",
                 "consumes": [
                     "application/json"
@@ -331,6 +336,11 @@
         },
         "/orders/approve": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Approve order by order uuid",
                 "consumes": [
                     "application/json"
@@ -383,6 +393,11 @@
         },
         "/orders/cancel": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Cancel order by order uuid",
                 "consumes": [
                     "application/json"
@@ -435,6 +450,11 @@
         },
         "/orders/disputes/open": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Open order dispute by order uuid",
                 "consumes": [
                     "application/json"
@@ -487,6 +507,11 @@
         },
         "/orders/disputes/resolve": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Resolve order dispute by order uuid",
                 "consumes": [
                     "application/json"
@@ -539,6 +564,11 @@
         },
         "/orders/trader/{traderUUID}": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Get orders by trader ID",
                 "consumes": [
                     "application/json"
@@ -589,6 +619,11 @@
         },
         "/orders/{uuid}": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Get order by orderID",
                 "consumes": [
                     "application/json"

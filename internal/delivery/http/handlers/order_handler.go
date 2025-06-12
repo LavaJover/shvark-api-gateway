@@ -32,6 +32,7 @@ func NewOrderHandler(addr string) (*OrderHandler, error) {
 // @Summary Create new Pay-In order
 // @Description Create new Pay-In order
 // @Tags orders
+// @Security BearerAuth
 // @Accept json
 // @Produce json
 // @Param input body orderRequest.CreateOrderRequest true "new order details"
@@ -92,6 +93,7 @@ func (h *OrderHandler) CreateOrder(c *gin.Context) {
 // @Summary Get order by orderID
 // @Description Get order by orderID
 // @Tags orders
+// @Security BearerAuth
 // @Accept json
 // @Produce json
 // @Param uuid path string true "order UUID"
@@ -138,6 +140,7 @@ func (h *OrderHandler) GetOrderByID(c *gin.Context) {
 // @Summary Get orders by trader ID
 // @Description Get orders by trader ID
 // @Tags orders
+// @Security BearerAuth
 // @Accept json
 // @Produce json
 // @Param traderUUID path string true "Trader UUID path param"
@@ -192,6 +195,7 @@ func (h *OrderHandler) GetOrdersByTraderID(c *gin.Context) {
 // @Summary Approve order by order uuid
 // @Description Approve order by order uuid
 // @Tags orders
+// @Security BearerAuth
 // @Accept json
 // @Produce json
 // @Param input body orderRequest.ApproveOrderRequest true "Order UUID"
@@ -221,6 +225,7 @@ func (h *OrderHandler) ApproveOrder(c *gin.Context) {
 // @Summary Cancel order by order uuid
 // @Description Cancel order by order uuid
 // @Tags orders
+// @Security BearerAuth
 // @Accept json
 // @Produce json
 // @Param input body orderRequest.CancelOrderRequest true "Order UUID"
@@ -250,6 +255,7 @@ func (h *OrderHandler) CancelOrder(c *gin.Context) {
 // @Summary Open order dispute by order uuid
 // @Description Open order dispute by order uuid
 // @Tags orders
+// @Security BearerAuth
 // @Accept json
 // @Produce json
 // @Param input body orderRequest.OpenOrderDisputeRequest true "Order UUID"
@@ -279,6 +285,7 @@ func (h *OrderHandler) OpenOrderDispute(c *gin.Context) {
 // @Summary Resolve order dispute by order uuid
 // @Description Resolve order dispute by order uuid
 // @Tags orders
+// @Security BearerAuth
 // @Accept json
 // @Produce json
 // @Param input body orderRequest.ResolveOrderDisputeRequest true "Order UUID"

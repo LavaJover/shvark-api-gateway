@@ -291,6 +291,11 @@ const docTemplate = `{
         },
         "/orders": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Create new Pay-In order",
                 "consumes": [
                     "application/json"
@@ -337,6 +342,11 @@ const docTemplate = `{
         },
         "/orders/approve": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Approve order by order uuid",
                 "consumes": [
                     "application/json"
@@ -389,6 +399,11 @@ const docTemplate = `{
         },
         "/orders/cancel": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Cancel order by order uuid",
                 "consumes": [
                     "application/json"
@@ -441,6 +456,11 @@ const docTemplate = `{
         },
         "/orders/disputes/open": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Open order dispute by order uuid",
                 "consumes": [
                     "application/json"
@@ -493,6 +513,11 @@ const docTemplate = `{
         },
         "/orders/disputes/resolve": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Resolve order dispute by order uuid",
                 "consumes": [
                     "application/json"
@@ -545,6 +570,11 @@ const docTemplate = `{
         },
         "/orders/trader/{traderUUID}": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Get orders by trader ID",
                 "consumes": [
                     "application/json"
@@ -595,6 +625,11 @@ const docTemplate = `{
         },
         "/orders/{uuid}": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Get order by orderID",
                 "consumes": [
                     "application/json"

@@ -814,6 +814,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Create new Pay-In order
       tags:
       - orders
@@ -847,6 +849,8 @@ paths:
           description: Bad Gateway
           schema:
             $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Get order by orderID
       tags:
       - orders
@@ -881,6 +885,8 @@ paths:
           description: Bad Gateway
           schema:
             $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Approve order by order uuid
       tags:
       - orders
@@ -915,6 +921,8 @@ paths:
           description: Bad Gateway
           schema:
             $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Cancel order by order uuid
       tags:
       - orders
@@ -949,6 +957,8 @@ paths:
           description: Bad Gateway
           schema:
             $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Open order dispute by order uuid
       tags:
       - orders
@@ -983,6 +993,8 @@ paths:
           description: Bad Gateway
           schema:
             $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Resolve order dispute by order uuid
       tags:
       - orders
@@ -1016,6 +1028,8 @@ paths:
           description: Bad Gateway
           schema:
             $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Get orders by trader ID
       tags:
       - orders

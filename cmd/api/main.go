@@ -108,13 +108,16 @@ func main() {
 	r.GET("/api/v1/banking/details", bankingHandler.GetBankDetailsByTraderID)
 
 	// orders-service
-	r.POST("/api/v1/orders", ordersHandler.CreateOrder)
-	r.GET("/api/v1/orders/:uuid", ordersHandler.GetOrderByID)
-	r.GET("/api/v1/orders/trader/:traderUUID", ordersHandler.GetOrdersByTraderID)
-	r.POST("/api/v1/orders/approve", ordersHandler.ApproveOrder)
-	r.POST("/api/v1/orders/cancel", ordersHandler.CancelOrder)
-	r.POST("/api/v1/orders/disputes/open", ordersHandler.OpenOrderDispute)
-	r.POST("/api/v1/orders/disputes/resolve", ordersHandler.ResolveOrderDispute)
+	orderGroup := r.Group("/api/v1/orders", middleware.AuthMiddleware(authHandler.SSOClient))
+	{
+		orderGroup.POST("/", ordersHandler.CreateOrder)
+		orderGroup.GET("/:uuid", ordersHandler.GetOrderByID)
+		orderGroup.GET("/trader/:traderUUID", ordersHandler.GetOrdersByTraderID)
+		orderGroup.POST("/approve", ordersHandler.ApproveOrder)
+		orderGroup.POST("/cancel", ordersHandler.CancelOrder)
+		orderGroup.POST("/disputes/open", ordersHandler.OpenOrderDispute)
+		orderGroup.POST("/disputes/resolve", ordersHandler.ResolveOrderDispute)	
+	}
 
 	// wallet-service
 	walletGroup := r.Group("/api/v1/wallets", middleware.AuthMiddleware(authHandler.SSOClient))
