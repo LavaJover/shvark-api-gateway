@@ -329,6 +329,56 @@
                 }
             }
         },
+        "/orders/{uuid}": {
+            "get": {
+                "description": "Get order by orderID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "orders"
+                ],
+                "summary": "Get order by orderID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "order UUID",
+                        "name": "uuid",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.GetOrderByIDResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "Bad Gateway",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/profiles/{uuid}": {
             "get": {
                 "description": "Get profile by uuid",
@@ -1477,9 +1527,6 @@
                 "currency": {
                     "type": "string"
                 },
-                "expires_at": {
-                    "type": "string"
-                },
                 "merchant_id": {
                     "type": "string"
                 },
@@ -1487,6 +1534,9 @@
                     "type": "string"
                 },
                 "payment_system": {
+                    "type": "string"
+                },
+                "ttl": {
                     "type": "string"
                 }
             }
@@ -1785,6 +1835,14 @@
                 }
             }
         },
+        "response.GetOrderByIDResponse": {
+            "type": "object",
+            "properties": {
+                "order": {
+                    "$ref": "#/definitions/response.Order"
+                }
+            }
+        },
         "response.GetProfileByIDResponse": {
             "type": "object",
             "properties": {
@@ -1889,6 +1947,29 @@
                     "type": "string"
                 },
                 "refresh_token": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.Order": {
+            "type": "object",
+            "properties": {
+                "amount_crypto": {
+                    "type": "number"
+                },
+                "amount_fiat": {
+                    "type": "number"
+                },
+                "bank_detail": {
+                    "$ref": "#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_order_response.BankDetail"
+                },
+                "expires_at": {
+                    "type": "string"
+                },
+                "order_id": {
+                    "type": "string"
+                },
+                "status": {
                     "type": "string"
                 }
             }

@@ -197,13 +197,13 @@ definitions:
         type: string
       currency:
         type: string
-      expires_at:
-        type: string
       merchant_id:
         type: string
       metadata:
         type: string
       payment_system:
+        type: string
+      ttl:
         type: string
     type: object
   request.CreateWalletRequest:
@@ -397,6 +397,11 @@ definitions:
           $ref: '#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_banking_response.BankDetail'
         type: array
     type: object
+  response.GetOrderByIDResponse:
+    properties:
+      order:
+        $ref: '#/definitions/response.Order'
+    type: object
   response.GetProfileByIDResponse:
     properties:
       avatar_url:
@@ -464,6 +469,21 @@ definitions:
       access_token:
         type: string
       refresh_token:
+        type: string
+    type: object
+  response.Order:
+    properties:
+      amount_crypto:
+        type: number
+      amount_fiat:
+        type: number
+      bank_detail:
+        $ref: '#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_order_response.BankDetail'
+      expires_at:
+        type: string
+      order_id:
+        type: string
+      status:
         type: string
     type: object
   response.RegisterResponse:
@@ -748,6 +768,39 @@ paths:
           schema:
             $ref: '#/definitions/handlers.ErrorResponse'
       summary: Create new Pay-In order
+      tags:
+      - orders
+  /orders/{uuid}:
+    get:
+      consumes:
+      - application/json
+      description: Get order by orderID
+      parameters:
+      - description: order UUID
+        in: path
+        name: uuid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.GetOrderByIDResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Get order by orderID
       tags:
       - orders
   /profiles/{uuid}:

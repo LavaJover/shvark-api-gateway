@@ -1,11 +1,13 @@
 package response
 
+import "time"
+
 type CreateOrderResponse struct {
-	OrderID			string 		`json:"order_id"`
-	OrderStatus 	string 		`json:"order_status"`
-	BankDetail  	BankDetail	`json:"bank_detail"`
-	AmountFiat 		float64 	`json:"amount_fiat"`
-	AmountCrypto    float64  	`json:"amount_crypto"`
+	OrderID			string 			`json:"order_id"`
+	OrderStatus 	string 			`json:"order_status"`
+	BankDetail  	BankDetail		`json:"bank_detail"`
+	AmountFiat 		float64 		`json:"amount_fiat"`
+	AmountCrypto    float64  		`json:"amount_crypto"`
 }
 
 type BankDetail struct {
@@ -19,4 +21,13 @@ type BankDetail struct {
 	PaymentSystem 	string   `json:"payment_system"`
 	Enabled 		bool 	 `json:"enabled"`
 	Delay 			string 	 `json:"delay"`
+}
+
+type Order struct {
+	OrderID 	 string     `json:"order_id"`
+	Status  	 string     `json:"status"`
+	AmountFiat 	 float64    `json:"amount_fiat"`
+	AmountCrypto float64    `json:"amount_crypto"`
+	ExpiresAt    time.Time  `json:"expires_at"`
+	BankDetail   BankDetail `json:"bank_detail"`
 }

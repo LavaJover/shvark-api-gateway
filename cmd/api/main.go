@@ -109,6 +109,7 @@ func main() {
 
 	// orders-service
 	r.POST("/api/v1/orders", ordersHandler.CreateOrder)
+	r.GET("/api/v1/orders/:uuid", ordersHandler.GetOrderByID)
 
 	// wallet-service
 	walletGroup := r.Group("/api/v1/wallets", middleware.AuthMiddleware(authHandler.SSOClient))

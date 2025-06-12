@@ -2,16 +2,8 @@ github.com/KyleBanks/depth v1.2.1 h1:5h8fQADFrWtarTdtDudMmGsC7GPbOAu6RVB3ffsVFHc
 github.com/KyleBanks/depth v1.2.1/go.mod h1:jzSb9d0L43HxTQfT+oSA1EEp2q+ne2uh6XgeJcm8brE=
 github.com/LavaJover/shvark-authz-service v0.0.0-20250518135159-e47df48e9c1c h1:g3Hjy4UKEdKlaTQ5b0hJYzm1TJocw0gNEIPqg2GLrqY=
 github.com/LavaJover/shvark-authz-service v0.0.0-20250518135159-e47df48e9c1c/go.mod h1:NE4VB+lZVeHvJJGRxGj6eeG6gxF9bcTQl5PViZQfOBI=
-github.com/LavaJover/shvark-banking-service v0.0.3 h1:RZ5njEsOU0yuPYMCvGIBhErqj4jMhG4pEPefoPU3VB0=
-github.com/LavaJover/shvark-banking-service v0.0.3/go.mod h1:+uNYo5BLNdX9sZQS+viQZp+J508mBM82KE7BkSDdqwk=
-github.com/LavaJover/shvark-banking-service v0.0.4 h1:ZEBGWC+vAfykF/auQpzi2aLTXgt7W5YBlledOBKfrgk=
-github.com/LavaJover/shvark-banking-service v0.0.4/go.mod h1:+uNYo5BLNdX9sZQS+viQZp+J508mBM82KE7BkSDdqwk=
 github.com/LavaJover/shvark-banking-service v0.0.5 h1:3P4TzML9nFl/52aKJMpVGnYkpxTrQ/ZZNoR+Fbt1FYI=
 github.com/LavaJover/shvark-banking-service v0.0.5/go.mod h1:+uNYo5BLNdX9sZQS+viQZp+J508mBM82KE7BkSDdqwk=
-github.com/LavaJover/shvark-order-service v0.0.1 h1:i/Mibdc2gwhZ99AvMh/AUA7NJQDUKs+JkNZCat43z1g=
-github.com/LavaJover/shvark-order-service v0.0.1/go.mod h1:Vv6FVpMnySc2WYBCZGMZB2JnucjedpKZbNabbouDc2Y=
-github.com/LavaJover/shvark-order-service v0.0.2 h1:O3QelirHZG4G90erkdwH3kje38QbzONeOezYJBI2/Eo=
-github.com/LavaJover/shvark-order-service v0.0.2/go.mod h1:yjFI05JTd4A10kUFtwh4iGzlRZCKNbfLDJRWvKMZtcA=
 github.com/LavaJover/shvark-order-service v0.0.3 h1:iRNkkcuTnWtihiGYT81Fhl+6EgfKmJnBaqHR8E1Gpfw=
 github.com/LavaJover/shvark-order-service v0.0.3/go.mod h1:yjFI05JTd4A10kUFtwh4iGzlRZCKNbfLDJRWvKMZtcA=
 github.com/LavaJover/shvark-profile-service v0.0.0-20250519161935-955e6b16225d h1:xuRct1ICwKAOcrXokgOy2AF1YdvKl0ku9GIqAZLyGsc=
