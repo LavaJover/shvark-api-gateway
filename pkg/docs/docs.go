@@ -1598,6 +1598,9 @@ const docTemplate = `{
                 "bank_name": {
                     "type": "string"
                 },
+                "card_number": {
+                    "type": "string"
+                },
                 "country": {
                     "type": "string"
                 },
@@ -1619,7 +1622,13 @@ const docTemplate = `{
                 "min_amount": {
                     "type": "number"
                 },
+                "owner": {
+                    "type": "string"
+                },
                 "payment_system": {
+                    "type": "string"
+                },
+                "phone": {
                     "type": "string"
                 },
                 "trader_id": {

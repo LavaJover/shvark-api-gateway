@@ -45,6 +45,8 @@ definitions:
     properties:
       bank_name:
         type: string
+      card_number:
+        type: string
       country:
         type: string
       currency:
@@ -59,7 +61,11 @@ definitions:
         type: number
       min_amount:
         type: number
+      owner:
+        type: string
       payment_system:
+        type: string
+      phone:
         type: string
       trader_id:
         type: string

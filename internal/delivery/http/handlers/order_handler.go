@@ -132,6 +132,9 @@ func (h *OrderHandler) GetOrderByID(c *gin.Context) {
 				PaymentSystem: response.Order.BankDetail.PaymentSystem,
 				Enabled: response.Order.BankDetail.Enabled,
 				Delay: response.Order.BankDetail.Delay.String(),
+				Owner: response.Order.BankDetail.Owner,
+				CardNumber: response.Order.BankDetail.CardNumber,
+				Phone: response.Order.BankDetail.Phone,
 			},
 		},
 	})
@@ -183,6 +186,9 @@ func (h *OrderHandler) GetOrdersByTraderID(c *gin.Context) {
 				PaymentSystem: responseOrder.BankDetail.PaymentSystem,
 				Enabled: responseOrder.BankDetail.Enabled,
 				Delay: responseOrder.BankDetail.Delay.String(),
+				Owner: responseOrder.BankDetail.Owner,
+				CardNumber: responseOrder.BankDetail.CardNumber,
+				Phone: responseOrder.BankDetail.Phone,
 			},
 		}
 	}

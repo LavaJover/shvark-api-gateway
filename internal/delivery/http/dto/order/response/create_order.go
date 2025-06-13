@@ -21,6 +21,9 @@ type BankDetail struct {
 	PaymentSystem 	string   `json:"payment_system"`
 	Enabled 		bool 	 `json:"enabled"`
 	Delay 			string 	 `json:"delay"`
+	Owner			string   `json:"owner"`
+	CardNumber      string   `json:"card_number"`
+	Phone 			string   `json:"phone"`
 }
 
 type Order struct {
