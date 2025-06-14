@@ -10,7 +10,7 @@ type CreateH2HPayInResponse struct {
 	MerchantOrderID	string		   `json:"merchant_order_id"`
 	CallbackURL		string		   `json:"callback_url"`
 	PaymentDetails 	PaymentDetails `json:"payment_details"`
-	ExpiresAt 		string 		   `json:"expires_at"`
+	ExpiresAt 		int64 		   `json:"expires_at"`
 	TPayLink 		string 		   `json:"tpay_link"`
 }
 

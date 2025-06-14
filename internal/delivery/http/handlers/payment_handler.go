@@ -77,7 +77,7 @@ func (h *PaymentHandler) CreateH2HPayIn(c *gin.Context) {
 			Bank: "user-friendly-bank",
 			BankName: response.Order.BankDetail.BankName,
 		},
-		ExpiresAt: response.Order.ExpiresAt.String(),
+		ExpiresAt: response.Order.ExpiresAt.Seconds,
 	})
 }
 
