@@ -17,6 +17,11 @@ const docTemplate = `{
     "paths": {
         "/banking/details": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Create new bank detail",
                 "consumes": [
                     "application/json"
@@ -61,6 +66,11 @@ const docTemplate = `{
                 }
             },
             "patch": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Update bank detail",
                 "consumes": [
                     "application/json"
@@ -107,6 +117,11 @@ const docTemplate = `{
         },
         "/banking/details/": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Get bank details by trader ID",
                 "consumes": [
                     "application/json"
@@ -150,6 +165,11 @@ const docTemplate = `{
         },
         "/banking/details/delete": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "consumes": [
                     "application/json"
                 ],
@@ -201,6 +221,11 @@ const docTemplate = `{
         },
         "/banking/details/{uuid}": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Get bank detail by ID",
                 "consumes": [
                     "application/json"
@@ -673,6 +698,52 @@ const docTemplate = `{
                         "description": "Bad Gateway",
                         "schema": {
                             "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/payments/in/h2h": {
+            "post": {
+                "description": "Create new Pay-In using host-to-host method",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "payments"
+                ],
+                "summary": "Create new H2H Pay-In",
+                "parameters": [
+                    {
+                        "description": "pay-in info",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.CreateH2HPayInRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.CreateH2HPayInResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.BadRequestErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "Bad Gateway",
+                        "schema": {
+                            "$ref": "#/definitions/response.NoBankDetailsErrorResponse"
                         }
                     }
                 }
@@ -1546,7 +1617,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "delay": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "device_id": {
                     "type": "string"
@@ -1836,13 +1907,48 @@ const docTemplate = `{
                 }
             }
         },
+        "request.CreateH2HPayInRequest": {
+            "type": "object",
+            "properties": {
+                "amount_fiat": {
+                    "type": "number"
+                },
+                "callback_url": {
+                    "type": "string"
+                },
+                "client_id": {
+                    "type": "string"
+                },
+                "currency": {
+                    "type": "string"
+                },
+                "ftd": {
+                    "type": "boolean"
+                },
+                "merchant_id": {
+                    "type": "string"
+                },
+                "merchant_order_id": {
+                    "type": "string"
+                },
+                "payment_system": {
+                    "type": "string"
+                },
+                "shuffle": {
+                    "type": "integer"
+                },
+                "ttl": {
+                    "type": "string"
+                }
+            }
+        },
         "request.CreateOrderRequest": {
             "type": "object",
             "properties": {
                 "amount_fiat": {
                     "type": "number"
                 },
-                "client_data": {
+                "client_id": {
                     "type": "string"
                 },
                 "country": {
@@ -1854,11 +1960,14 @@ const docTemplate = `{
                 "merchant_id": {
                     "type": "string"
                 },
-                "metadata": {
+                "merchant_order_id": {
                     "type": "string"
                 },
                 "payment_system": {
                     "type": "string"
+                },
+                "shuffle": {
+                    "type": "integer"
                 },
                 "ttl": {
                     "type": "string"
@@ -2066,6 +2175,14 @@ const docTemplate = `{
                 }
             }
         },
+        "response.BadRequestErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                }
+            }
+        },
         "response.CancelOrderResponse": {
             "type": "object",
             "properties": {
@@ -2092,6 +2209,44 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.CreateH2HPayInResponse": {
+            "type": "object",
+            "properties": {
+                "amount_crypto": {
+                    "type": "number"
+                },
+                "amount_fiat": {
+                    "type": "number"
+                },
+                "callback_url": {
+                    "type": "string"
+                },
+                "currency": {
+                    "type": "string"
+                },
+                "expires_at": {
+                    "type": "string"
+                },
+                "merchant_order_id": {
+                    "type": "string"
+                },
+                "order_id": {
+                    "type": "string"
+                },
+                "payment_details": {
+                    "$ref": "#/definitions/response.PaymentDetails"
+                },
+                "payment_system": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "tpay_link": {
                     "type": "string"
                 }
             }
@@ -2318,6 +2473,14 @@ const docTemplate = `{
                 }
             }
         },
+        "response.NoBankDetailsErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                }
+            }
+        },
         "response.OpenOrderDisputeResponse": {
             "type": "object",
             "properties": {
@@ -2345,6 +2508,31 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.PaymentDetails": {
+            "type": "object",
+            "properties": {
+                "bank": {
+                    "description": "User-friendly",
+                    "type": "string"
+                },
+                "bank_id": {
+                    "description": "In SBP system",
+                    "type": "string"
+                },
+                "bank_name": {
+                    "type": "string"
+                },
+                "card_number": {
+                    "type": "string"
+                },
+                "owner": {
+                    "type": "string"
+                },
+                "phone": {
                     "type": "string"
                 }
             }

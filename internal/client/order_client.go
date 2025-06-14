@@ -6,9 +6,7 @@ import (
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
-	"google.golang.org/protobuf/types/known/timestamppb"
 
-	"github.com/LavaJover/shvark-api-gateway/internal/domain"
 	orderpb "github.com/LavaJover/shvark-order-service/proto/gen"
 )
 
@@ -38,22 +36,13 @@ func NewOrderClient(addr string) (*OrderClient, error) {
 	}, nil
 }
 
-func (c *OrderClient) CreateOrder(order *domain.Order) (*orderpb.CreateOrderResponse, error) {
+func (c *OrderClient) CreateOrder(orderRequest *orderpb.CreateOrderRequest) (*orderpb.CreateOrderResponse, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
 	return c.service.CreateOrder(
 		ctx,
-		&orderpb.CreateOrderRequest{
-			MerchantId: order.MerchantID,
-			AmountFiat: order.AmountFiat,
-			ExpiresAt: timestamppb.New(order.ExpiresAt),
-			Currency: order.Currency,
-			Country: order.Country,
-			ClientEmail: order.ClientEmail,
-			MetadataJson: order.MetadataJSON,
-			PaymentSystem: order.PaymentSystem,
-		},
+		orderRequest,
 	)
 }
 

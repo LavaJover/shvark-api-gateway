@@ -1,12 +1,13 @@
 package request
 
 type CreateOrderRequest struct {
-	MerchantID	  string 		`json:"merchant_id"`
-	AmountFiat    float64 		`json:"amount_fiat"`
-	Currency	  string		`json:"currency"`
-	Country		  string		`json:"country"`
-	ClientData	  string 		`json:"client_data"`
-	PaymentSystem string 		`json:"payment_system"`
-	Metadata      string 		`json:"metadata"`
-	TTL 		  string 		`json:"ttl"`
+	MerchantOrderID string      `json:"merchant_order_id"`
+	MerchantID		string		`json:"merchant_id"`
+	AmountFiat    	float64 	`json:"amount_fiat"`
+	Currency	  	string		`json:"currency"`
+	Country		  	string		`json:"country"`
+	ClientID	  	string 		`json:"client_id"`
+	PaymentSystem 	string 		`json:"payment_system"`
+	TTL 		  	string 		`json:"ttl"`
+	Shuffle 		int32		`json:"shuffle"`
 }

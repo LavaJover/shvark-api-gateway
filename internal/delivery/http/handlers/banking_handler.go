@@ -32,6 +32,7 @@ func NewBankingHandler(addr string) (*BankingHandler, error) {
 // @Summary Create new bank detail
 // @Description Create new bank detail
 // @Tags banking
+// @Security BearerAuth
 // @Accept json
 // @Produce json
 // @Param input body bankingRequest.CreateBankDetailRequest true "New bank details"
@@ -89,6 +90,7 @@ func (h *BankingHandler) CreateBankDetail(c *gin.Context) {
 // @Summary Get bank detail by ID
 // @Description Get bank detail by ID
 // @Tags banking
+// @Security BearerAuth
 // @Accept json
 // @Produce json
 // @Param uuid path string true "bank detail UUID"
@@ -120,7 +122,7 @@ func (h *BankingHandler) GetBankDetailByID(c *gin.Context) {
 			MaxAmount: float32(response.BankDetail.MaxAmount),
 			BankName: response.BankDetail.BankName,
 			PaymentSystem: response.BankDetail.PaymentSystem,
-			Delay: response.BankDetail.Delay.String(),
+			Delay: response.BankDetail.Delay.AsDuration().Milliseconds(),
 			Enabled: response.BankDetail.Enabled,
 			CardNumber: response.BankDetail.CardNumber,
 			Phone: response.BankDetail.Phone,
@@ -138,6 +140,7 @@ func (h *BankingHandler) GetBankDetailByID(c *gin.Context) {
 // @Summary Update bank detail
 // @Description Update bank detail
 // @Tags banking
+// @Security BearerAuth
 // @Accept json
 // @Produce json
 // @Param input body bankingRequest.UpdateBankDetailRequest true "New data for bank detail with given ID"
@@ -192,6 +195,7 @@ func (h *BankingHandler) UpdateBankDetail(c *gin.Context) {
 // @Summary Get bank details by trader ID
 // @Description Get bank details by trader ID
 // @Tags banking
+// @Security BearerAuth
 // @Accept json
 // @Produce json
 // @Param trader query string false "trader uuid"
@@ -223,7 +227,7 @@ func (h *BankingHandler) GetBankDetailsByTraderID(c *gin.Context) {
 			MaxAmount: float32(bankDetail.MaxAmount),
 			BankName: bankDetail.BankName,
 			PaymentSystem: bankDetail.PaymentSystem,
-			Delay: bankDetail.Delay.String(),
+			Delay: bankDetail.Delay.AsDuration().Milliseconds(),
 			Enabled: bankDetail.Enabled,
 			CardNumber: bankDetail.CardNumber,
 			Phone: bankDetail.Phone,
@@ -245,6 +249,7 @@ func (h *BankingHandler) GetBankDetailsByTraderID(c *gin.Context) {
 // @Summary Delete bank detail
 // @Descrition Delete bank detail
 // @Tags banking
+// @Security BearerAuth
 // @Accept json
 // @Produce json
 // @Param input body bankingRequest.DeleteBankDetailRequest true "bank detail ID"
@@ -277,7 +282,7 @@ func (h *BankingHandler) DeleteBankDetail(c *gin.Context) {
 			MaxAmount: float32(response.BankDetail.MaxAmount),
 			BankName: response.BankDetail.BankName,
 			PaymentSystem: response.BankDetail.PaymentSystem,
-			Delay: response.BankDetail.Delay.String(),
+			Delay: response.BankDetail.Delay.AsDuration().Milliseconds(),
 			Enabled: response.BankDetail.Enabled,
 			CardNumber: response.BankDetail.CardNumber,
 			Phone: response.BankDetail.Phone,

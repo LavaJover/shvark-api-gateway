@@ -13,7 +13,7 @@ type BankDetail struct {
 	MaxAmount 				float32	`json:"max_amount"`
 	BankName 				string	`json:"bank_name"`
 	PaymentSystem 			string	`json:"payment_system"`
-	Delay					string	`json:"delay"`
+	Delay					int64	`json:"delay"`
 	Enabled 				bool	`json:"enabled"`
 	CardNumber 				string  `json:"card_number"`
 	Phone 					string	`json:"phone"`

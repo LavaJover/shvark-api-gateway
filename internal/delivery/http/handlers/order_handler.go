@@ -7,9 +7,10 @@ import (
 	"github.com/LavaJover/shvark-api-gateway/internal/client"
 	orderRequest "github.com/LavaJover/shvark-api-gateway/internal/delivery/http/dto/order/request"
 	orderResponse "github.com/LavaJover/shvark-api-gateway/internal/delivery/http/dto/order/response"
-	"github.com/LavaJover/shvark-api-gateway/internal/domain"
+	orderpb "github.com/LavaJover/shvark-order-service/proto/gen"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 var _ = orderRequest.CreateOrderRequest{}
@@ -53,15 +54,16 @@ func (h *OrderHandler) CreateOrder(c *gin.Context) {
 		return
 	}
 
-	orderRequest := domain.Order{
-		MerchantID: request.MerchantID,
+	orderRequest := orderpb.CreateOrderRequest{
+		Shuffle: request.Shuffle,
+		MerchantId: request.MerchantID,
+		ClientId: request.ClientID,
+		MerchantOrderId: request.MerchantOrderID,
 		AmountFiat: request.AmountFiat,
 		Currency: request.Currency,
 		Country: request.Country,
-		ClientEmail: request.ClientData,
-		MetadataJSON: request.Metadata,
 		PaymentSystem: request.PaymentSystem,
-		ExpiresAt: time.Now().Add(ttl),
+		ExpiresAt: timestamppb.New(time.Now().Add(ttl)),
 	}
 
 	response, err := h.OrderClient.CreateOrder(&orderRequest)

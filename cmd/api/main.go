@@ -69,6 +69,12 @@ func main() {
 		log.Printf("failed to init wallet client")
 	}
 
+	// init payments handlet
+	paymentHandler, err := handlers.NewPaymentHandler(ordersHandler.OrderClient)
+	if err != nil {
+		log.Printf("failed to init payment handler")
+	}
+
 	r := gin.Default()
 
 	// use middleware
@@ -136,6 +142,12 @@ func main() {
 		walletGroup.GET("/:traderID/history", middleware.RequireSelfOrAdmin(authzHandler.AuthzClient, "traderID"), walletHandler.GetTraderHistory)
 		walletGroup.GET("/:traderID/balance", middleware.RequireSelfOrAdmin(authzHandler.AuthzClient, "traderID"), walletHandler.GetTraderBalance)
 		walletGroup.GET("/:traderID/address", middleware.RequireSelfOrAdmin(authzHandler.AuthzClient, "traderID"), walletHandler.GetTraderWalletAddress)
+	}
+
+	// payments for merchant
+	paymentsGroup := r.Group("/api/v1/payments")
+	{
+		paymentsGroup.POST("/in/h2h", paymentHandler.CreateH2HPayIn)
 	}
 
 	r.Run(":8080")
