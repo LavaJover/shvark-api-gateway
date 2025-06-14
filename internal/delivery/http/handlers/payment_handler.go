@@ -30,7 +30,7 @@ func NewPaymentHandler(orderClient *client.OrderClient) (*PaymentHandler, error)
 // @Accept json
 // @Produce json
 // @Param input body paymentRequest.CreateH2HPayInRequest true "pay-in info"
-// @Success 200 {object} paymentResponse.CreateH2HPayInResponse
+// @Success 201 {object} paymentResponse.CreateH2HPayInResponse
 // @Failure 400 {object} paymentResponse.BadRequestErrorResponse
 // @Failure 502 {object} paymentResponse.NoBankDetailsErrorResponse
 // @Router /payments/in/h2h [post]
@@ -54,6 +54,7 @@ func (h *PaymentHandler) CreateH2HPayIn(c *gin.Context) {
 		ExpiresAt: timestamppb.New(time.Now().Add(ttl)),
 		MerchantOrderId: payInRequest.MerchantOrderID,
 		Shuffle: payInRequest.Shuffle,
+		CallbackUrl: payInRequest.CallbackURL,
 	})
 	if err != nil {
 		c.JSON(http.StatusBadGateway, paymentResponse.NoBankDetailsErrorResponse{Error: "No available bank details"})
@@ -68,7 +69,8 @@ func (h *PaymentHandler) CreateH2HPayIn(c *gin.Context) {
 		PaymentSystem: response.Order.BankDetail.PaymentSystem,
 		Status: response.Order.Status,
 		MerchantOrderID: response.Order.MerchantOrderId,
-		CallbackURL: "http://callback/url",
+		CallbackURL: response.Order.CallbackUrl,
+		TPayLink: "tpay/link",
 		PaymentDetails: paymentResponse.PaymentDetails{
 			CardNumber: response.Order.BankDetail.CardNumber,
 			Owner: response.Order.BankDetail.Owner,
@@ -81,7 +83,49 @@ func (h *PaymentHandler) CreateH2HPayIn(c *gin.Context) {
 	})
 }
 
+// @Summary Get H2h Pay-in info
+// @Description Get host-to-host pay-in order info
+// @Tags payments
+// @Accept json
+// @Produce json
+// @Param id path string true "order id"
+// @Success 200 {object} paymentResponse.GetH2HPayInInfoResponse
+// @Failure 400 {object} paymentResponse.BadRequestErrorResponse
+// @Failure 502 {object} paymentResponse.ErrorResponse
+// @Router /payments/in/h2h/{id} [get]
 func (h *PaymentHandler) GetH2HPayInInfo(c *gin.Context) {
+	orderID := c.Param("id")
+	if orderID == "" {
+		c.JSON(http.StatusBadRequest, paymentResponse.BadRequestErrorResponse{Error: "id path param missed"})
+		return
+	}
+
+	response, err := h.OrderClient.GetOrderByID(orderID)
+	if err != nil {
+		c.JSON(http.StatusBadGateway, paymentResponse.ErrorResponse{Error: "Order info is unavailable now"})
+		return
+	}
+
+	c.JSON(http.StatusOK, paymentResponse.GetH2HPayInInfoResponse{
+		OrderID: response.Order.OrderId,
+		AmountFiat: response.Order.AmountFiat,
+		AmountCrypto: response.Order.AmountCrypto,
+		Currency: response.Order.BankDetail.Currency,
+		PaymentSystem: response.Order.BankDetail.PaymentSystem,
+		Status: response.Order.Status,
+		MerchantOrderID: response.Order.MerchantOrderId,
+		CallbackURL: response.Order.CallbackUrl,
+		PaymentDetails: paymentResponse.PaymentDetails{
+			CardNumber: response.Order.BankDetail.CardNumber,
+			Owner: response.Order.BankDetail.Owner,
+			Phone: response.Order.BankDetail.Phone,
+			BankID: "bank id in sbp",
+			Bank: "user-friendly",
+			BankName: response.Order.BankDetail.BankName,
+		},
+		ExpiresAt: response.Order.ExpiresAt.Seconds,
+		TPayLink: "tpay-link",
+	})
 
 }
 

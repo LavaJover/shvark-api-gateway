@@ -1,6 +1,6 @@
 package response
 
-type CreateH2HPayInResponse struct {
+type GetH2HPayInInfoResponse struct {
 	OrderID 		string  	   `json:"order_id"`
 	AmountFiat 		float64		   `json:"amount_fiat"`
 	AmountCrypto 	float64		   `json:"amount_crypto"`
@@ -14,10 +14,6 @@ type CreateH2HPayInResponse struct {
 	TPayLink 		string 		   `json:"tpay_link"`
 }
 
-type NoBankDetailsErrorResponse struct {
-	Error string `json:"error"`
-}
-
-type BadRequestErrorResponse struct {
+type ErrorResponse struct {
 	Error string `json:"error"`
 }

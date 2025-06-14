@@ -722,8 +722,8 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "201": {
+                        "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/response.CreateH2HPayInResponse"
                         }
@@ -738,6 +738,50 @@
                         "description": "Bad Gateway",
                         "schema": {
                             "$ref": "#/definitions/response.NoBankDetailsErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/payments/in/h2h/{id}": {
+            "get": {
+                "description": "Get host-to-host pay-in order info",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "payments"
+                ],
+                "summary": "Get H2h Pay-in info",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "order id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.GetH2HPayInInfoResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.BadRequestErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "Bad Gateway",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     }
                 }
@@ -2223,7 +2267,7 @@
                     "type": "string"
                 },
                 "expires_at": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "merchant_order_id": {
                     "type": "string"
@@ -2304,6 +2348,14 @@
                 }
             }
         },
+        "response.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                }
+            }
+        },
         "response.FreezeErrorResponse": {
             "type": "object",
             "properties": {
@@ -2337,6 +2389,44 @@
                     "items": {
                         "$ref": "#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_banking_response.BankDetail"
                     }
+                }
+            }
+        },
+        "response.GetH2HPayInInfoResponse": {
+            "type": "object",
+            "properties": {
+                "amount_crypto": {
+                    "type": "number"
+                },
+                "amount_fiat": {
+                    "type": "number"
+                },
+                "callback_url": {
+                    "type": "string"
+                },
+                "currency": {
+                    "type": "string"
+                },
+                "expires_at": {
+                    "type": "integer"
+                },
+                "merchant_order_id": {
+                    "type": "string"
+                },
+                "order_id": {
+                    "type": "string"
+                },
+                "payment_details": {
+                    "$ref": "#/definitions/response.PaymentDetails"
+                },
+                "payment_system": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "tpay_link": {
+                    "type": "string"
                 }
             }
         },

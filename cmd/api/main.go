@@ -148,6 +148,7 @@ func main() {
 	paymentsGroup := r.Group("/api/v1/payments")
 	{
 		paymentsGroup.POST("/in/h2h", paymentHandler.CreateH2HPayIn)
+		paymentsGroup.GET("/in/h2h/:id", paymentHandler.GetH2HPayInInfo)
 	}
 
 	r.Run(":8080")
