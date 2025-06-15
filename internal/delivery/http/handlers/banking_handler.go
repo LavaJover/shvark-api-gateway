@@ -6,9 +6,10 @@ import (
 	"time"
 
 	"github.com/LavaJover/shvark-api-gateway/internal/client"
-	"github.com/LavaJover/shvark-api-gateway/internal/domain"
+	bankingpb "github.com/LavaJover/shvark-banking-service/proto/gen"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"google.golang.org/protobuf/types/known/durationpb"
 
 	bankingRequest "github.com/LavaJover/shvark-api-gateway/internal/delivery/http/dto/banking/request"
 	bankingResponse "github.com/LavaJover/shvark-api-gateway/internal/delivery/http/dto/banking/response"
@@ -54,15 +55,16 @@ func (h *BankingHandler) CreateBankDetail(c *gin.Context) {
 		return
 	}
 
-	bankDetail := domain.BankDetail{
-		TraderID: request.TraderID,
+	bankDetailRequest := bankingpb.CreateBankDetailRequest{
+		TraderId: request.TraderID,
 		Country: request.Country,
 		Currency: request.Currency,
+		InflowCurrency: request.InflowCurrency,
 		MinAmount: request.MinAmount,
 		MaxAmount: request.MaxAmount,
 		BankName: request.BankName,
 		PaymentSystem: request.PaymentSystem,
-		Delay: delay,
+		Delay: durationpb.New(delay),
 		Enabled: request.Enabled,
 		CardNumber: request.CardNumber,
 		Phone: request.Phone,
@@ -70,12 +72,12 @@ func (h *BankingHandler) CreateBankDetail(c *gin.Context) {
 		MaxOrdersSimultaneosly: request.MaxOrdersSimultaneosly,
 		MaxAmountDay: request.MaxAmountDay,
 		MaxAmountMonth: request.MaxAmountMonth,
-		MaxQuantityDay: request.MaxQuantityDay,
-		MaxQuantityMonth: request.MaxQuantityMonth,
-		DeviceID: request.DeviceID,
+		MaxQuantityDay: float64(request.MaxQuantityDay),
+		MaxQuantityMonth: float64(request.MaxQuantityMonth),
+		DeviceId: request.DeviceID,
 	}
 
-	response, err := h.BankingClient.CreateBankDetail(&bankDetail)
+	response, err := h.BankingClient.CreateBankDetail(&bankDetailRequest)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -118,8 +120,8 @@ func (h *BankingHandler) GetBankDetailByID(c *gin.Context) {
 			TraderID: response.BankDetail.TraderId,
 			Country: response.BankDetail.Country,
 			Currency: response.BankDetail.Currency,
-			MinAmount: float32(response.BankDetail.MinAmount),
-			MaxAmount: float32(response.BankDetail.MaxAmount),
+			MinAmount: response.BankDetail.MinAmount,
+			MaxAmount: response.BankDetail.MaxAmount,
 			BankName: response.BankDetail.BankName,
 			PaymentSystem: response.BankDetail.PaymentSystem,
 			Delay: response.BankDetail.Delay.AsDuration().Milliseconds(),
@@ -128,11 +130,12 @@ func (h *BankingHandler) GetBankDetailByID(c *gin.Context) {
 			Phone: response.BankDetail.Phone,
 			Owner: response.BankDetail.Owner,
 			MaxOrdersSimultaneosly: response.BankDetail.MaxOrdersSimultaneosly,
-			MaxAmountDay: int32(response.BankDetail.MaxAmountDay),
-			MaxAmountMonth: int32(response.BankDetail.MaxAmountMonth),
+			MaxAmountDay: response.BankDetail.MaxAmountDay,
+			MaxAmountMonth: response.BankDetail.MaxAmountMonth,
 			MaxQuantityDay: int32(response.BankDetail.MaxQuantityDay),
 			MaxQuantityMonth: int32(response.BankDetail.MaxQuantityMonth),
 			DeviceID: response.BankDetail.DeviceId,
+			InflowCurrency: response.BankDetail.InflowCurrency,
 		},
 	})
 }
@@ -161,29 +164,32 @@ func (h *BankingHandler) UpdateBankDetail(c *gin.Context) {
 		return
 	}
 
-	updatedBankDetail := domain.BankDetail{
-		ID: request.BankDetail.ID,
-		TraderID: request.BankDetail.TraderID,
-		Country: request.BankDetail.Country,
-		Currency: request.BankDetail.Currency,
-		MinAmount: request.BankDetail.MinAmount,
-		MaxAmount: request.BankDetail.MaxAmount,
-		BankName: request.BankDetail.BankName,
-		PaymentSystem: request.BankDetail.PaymentSystem,
-		Delay: delay,
-		Enabled: request.BankDetail.Enabled,
-		CardNumber: request.BankDetail.CardNumber,
-		Phone: request.BankDetail.Phone,
-		Owner: request.BankDetail.Owner,
-		MaxOrdersSimultaneosly: request.BankDetail.MaxOrdersSimultaneosly,
-		MaxAmountDay: request.BankDetail.MaxAmountDay,
-		MaxAmountMonth: request.BankDetail.MaxAmountMonth,
-		MaxQuantityDay: request.BankDetail.MaxQuantityDay,
-		MaxQuantityMonth: request.BankDetail.MaxAmountMonth,
-		DeviceID: request.BankDetail.DeviceID,
+	bankDetailRequest := bankingpb.UpdateBankDetailRequest{
+		BankDetail: &bankingpb.BankDetail{
+			BankDetailId: request.BankDetail.ID,
+			TraderId: request.BankDetail.TraderID,
+			Currency: request.BankDetail.Currency,
+			Country: request.BankDetail.Country,
+			MinAmount: request.BankDetail.MinAmount,
+			MaxAmount: request.BankDetail.MaxAmount,
+			BankName: request.BankDetail.BankName,
+			PaymentSystem: request.BankDetail.PaymentSystem,
+			Enabled: request.BankDetail.Enabled,
+			Delay: durationpb.New(delay),
+			CardNumber: request.BankDetail.CardNumber,
+			Phone: request.BankDetail.Phone,
+			Owner: request.BankDetail.Owner,
+			MaxOrdersSimultaneosly: request.BankDetail.MaxOrdersSimultaneosly,
+			MaxAmountDay: request.BankDetail.MaxAmountDay,
+			MaxAmountMonth: request.BankDetail.MaxAmountMonth,
+			MaxQuantityDay: float64(request.BankDetail.MaxQuantityDay),
+			MaxQuantityMonth: float64(request.BankDetail.MaxQuantityMonth),
+			DeviceId: request.BankDetail.DeviceID,
+			InflowCurrency: request.BankDetail.InflowCurrency,
+		},
 	}
 
-	_, err = h.BankingClient.UpdateBankDetail(&updatedBankDetail)
+	_, err = h.BankingClient.UpdateBankDetail(&bankDetailRequest)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -223,8 +229,8 @@ func (h *BankingHandler) GetBankDetailsByTraderID(c *gin.Context) {
 			TraderID: bankDetail.TraderId,
 			Country: bankDetail.Country,
 			Currency: bankDetail.Currency,
-			MinAmount: float32(bankDetail.MinAmount),
-			MaxAmount: float32(bankDetail.MaxAmount),
+			MinAmount: bankDetail.MinAmount,
+			MaxAmount: bankDetail.MaxAmount,
 			BankName: bankDetail.BankName,
 			PaymentSystem: bankDetail.PaymentSystem,
 			Delay: bankDetail.Delay.AsDuration().Milliseconds(),
@@ -233,11 +239,12 @@ func (h *BankingHandler) GetBankDetailsByTraderID(c *gin.Context) {
 			Phone: bankDetail.Phone,
 			Owner: bankDetail.Owner,
 			MaxOrdersSimultaneosly: bankDetail.MaxOrdersSimultaneosly,
-			MaxAmountDay: int32(bankDetail.MaxAmountDay),
-			MaxAmountMonth: int32(bankDetail.MaxAmountMonth),
+			MaxAmountDay: bankDetail.MaxAmountDay,
+			MaxAmountMonth: bankDetail.MaxAmountMonth,
 			MaxQuantityDay: int32(bankDetail.MaxQuantityDay),
 			MaxQuantityMonth: int32(bankDetail.MaxQuantityMonth),
 			DeviceID: bankDetail.DeviceId,
+			InflowCurrency: bankDetail.InflowCurrency,
 		}
 	}
 
@@ -278,8 +285,8 @@ func (h *BankingHandler) DeleteBankDetail(c *gin.Context) {
 			TraderID: response.BankDetail.TraderId,
 			Country: response.BankDetail.Country,
 			Currency: response.BankDetail.Currency,
-			MinAmount: float32(response.BankDetail.MinAmount),
-			MaxAmount: float32(response.BankDetail.MaxAmount),
+			MinAmount: response.BankDetail.MinAmount,
+			MaxAmount: response.BankDetail.MaxAmount,
 			BankName: response.BankDetail.BankName,
 			PaymentSystem: response.BankDetail.PaymentSystem,
 			Delay: response.BankDetail.Delay.AsDuration().Milliseconds(),
@@ -288,11 +295,12 @@ func (h *BankingHandler) DeleteBankDetail(c *gin.Context) {
 			Phone: response.BankDetail.Phone,
 			Owner: response.BankDetail.Owner,
 			MaxOrdersSimultaneosly: response.BankDetail.MaxOrdersSimultaneosly,
-			MaxAmountDay: int32(response.BankDetail.MaxAmountDay),
-			MaxAmountMonth: int32(response.BankDetail.MaxAmountMonth),
+			MaxAmountDay: response.BankDetail.MaxAmountDay,
+			MaxAmountMonth: response.BankDetail.MaxAmountMonth,
 			MaxQuantityDay: int32(response.BankDetail.MaxQuantityDay),
 			MaxQuantityMonth: int32(response.BankDetail.MaxQuantityMonth),
 			DeviceID: response.BankDetail.DeviceId,
+			InflowCurrency: response.BankDetail.InflowCurrency,
 		},
 	})
 }

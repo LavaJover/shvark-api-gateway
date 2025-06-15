@@ -9,8 +9,9 @@ type BankDetail struct {
 	TraderID 				string	`json:"trader_id"`
 	Country 				string	`json:"country"`
 	Currency 				string	`json:"currency"`
-	MinAmount 				float32	`json:"min_amount"`
-	MaxAmount 				float32	`json:"max_amount"`
+	InflowCurrency 			string		`json:"inflow_currency"`
+	MinAmount 				float64	`json:"min_amount"`
+	MaxAmount 				float64	`json:"max_amount"`
 	BankName 				string	`json:"bank_name"`
 	PaymentSystem 			string	`json:"payment_system"`
 	Delay					int64	`json:"delay"`
@@ -19,8 +20,8 @@ type BankDetail struct {
 	Phone 					string	`json:"phone"`
 	Owner 					string	`json:"owner"`
 	MaxOrdersSimultaneosly  int32	`json:"max_orders_simultaneosly"`
-	MaxAmountDay			int32	`json:"max_amount_day"`
-	MaxAmountMonth			int32	`json:"max_amount_month"`
+	MaxAmountDay			float64	`json:"max_amount_day"`
+	MaxAmountMonth			float64	`json:"max_amount_month"`
 	MaxQuantityDay			int32	`json:"max_quantity_day"`
 	MaxQuantityMonth 		int32	`json:"max_quantity_month"`
 	DeviceID				string	`json:"device_id"`
