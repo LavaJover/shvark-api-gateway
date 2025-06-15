@@ -793,6 +793,50 @@ const docTemplate = `{
                 }
             }
         },
+        "/payments/in/h2h/{id}/cancel": {
+            "post": {
+                "description": "Cancel Pay in order",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "payments"
+                ],
+                "summary": "Cancel Pay In order",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "order ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.CancelPayInResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "Bad Gateway",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/profiles/{uuid}": {
             "get": {
                 "description": "Get profile by uuid",
@@ -2228,6 +2272,14 @@ const docTemplate = `{
             }
         },
         "response.CancelOrderResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.CancelPayInResponse": {
             "type": "object",
             "properties": {
                 "message": {

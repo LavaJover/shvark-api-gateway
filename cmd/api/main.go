@@ -149,6 +149,7 @@ func main() {
 	{
 		paymentsGroup.POST("/in/h2h", paymentHandler.CreateH2HPayIn)
 		paymentsGroup.GET("/in/h2h/:id", paymentHandler.GetH2HPayInInfo)
+		paymentsGroup.POST("/in/h2h/:id/cancel", paymentHandler.CancelPayIn)
 	}
 
 	r.Run(":8080")

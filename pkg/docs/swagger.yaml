@@ -388,6 +388,11 @@ definitions:
       message:
         type: string
     type: object
+  response.CancelPayInResponse:
+    properties:
+      message:
+        type: string
+    type: object
   response.CheckPermissionResponse:
     properties:
       allowed:
@@ -1213,6 +1218,35 @@ paths:
           schema:
             $ref: '#/definitions/response.ErrorResponse'
       summary: Get H2h Pay-in info
+      tags:
+      - payments
+  /payments/in/h2h/{id}/cancel:
+    post:
+      consumes:
+      - application/json
+      description: Cancel Pay in order
+      parameters:
+      - description: order ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.CancelPayInResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      summary: Cancel Pay In order
       tags:
       - payments
   /profiles/{uuid}:

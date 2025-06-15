@@ -129,12 +129,36 @@ func (h *PaymentHandler) GetH2HPayInInfo(c *gin.Context) {
 
 }
 
+// @Summary Cancel Pay In order
+// @Description Cancel Pay in order
+// @Tags payments
+// @Accept json
+// @Produce json
+// @Param id path string true "order ID"
+// @Success 200 {object} paymentResponse.CancelPayInResponse
+// @Failure 400 {object} paymentResponse.ErrorResponse
+// @Failure 502 {object} paymentResponse.ErrorResponse
+// @Router /payments/in/h2h/{id}/cancel [post]
 func (h *PaymentHandler) CancelPayIn(c *gin.Context) {
+	orderID := c.Param("id")
+	if orderID == "" {
+		c.JSON(http.StatusBadRequest, paymentResponse.ErrorResponse{Error: "order id path param missed"})
+		return
+	}
 
+	response, err := h.OrderClient.CancelOrder(orderID)
+	if err != nil {
+		c.JSON(http.StatusBadGateway, paymentResponse.ErrorResponse{Error: "order with given ID was not found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, paymentResponse.CancelPayInResponse{
+		Message: response.Message,
+	})
 }
 
 func (h *PaymentHandler) OpenPayInArbitrage(c *gin.Context) {
-
+	
 }
 
 func (h *PaymentHandler) CreateRedirectPayIn(c *gin.Context) {
