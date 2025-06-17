@@ -18,12 +18,14 @@ definitions:
         type: boolean
       id:
         type: string
+      inflow_currency:
+        type: string
       max_amount:
         type: number
       max_amount_day:
-        type: integer
+        type: number
       max_amount_month:
-        type: integer
+        type: number
       max_orders_simultaneosly:
         type: integer
       max_quantity_day:
@@ -122,12 +124,14 @@ definitions:
         type: boolean
       id:
         type: string
+      inflow_currency:
+        type: string
       max_amount:
         type: number
       max_amount_day:
-        type: integer
+        type: number
       max_amount_month:
-        type: integer
+        type: number
       max_orders_simultaneosly:
         type: integer
       max_quantity_day:
@@ -180,12 +184,14 @@ definitions:
         type: string
       enabled:
         type: boolean
+      inflow_currency:
+        type: string
       max_amount:
         type: number
       max_amount_day:
-        type: integer
+        type: number
       max_amount_month:
-        type: integer
+        type: number
       max_orders_simultaneosly:
         type: integer
       max_quantity_day:
@@ -1305,6 +1311,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Check user permission
       tags:
       - RBAC
@@ -1335,6 +1343,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Delete policy
       tags:
       - RBAC
@@ -1364,6 +1374,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Add policy
       tags:
       - RBAC
@@ -1394,6 +1406,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Revoke role
       tags:
       - RBAC
@@ -1423,6 +1437,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Assign role
       tags:
       - RBAC

@@ -26,6 +26,7 @@ func NewAuthzhandler(addr string) (*AuthzHandler, error) {
 // @Summary Assign role
 // @Description Assign role
 // @Tags RBAC
+// @Security BearerAuth
 // @Accept json
 // @Produce json
 // @Param input body authzRequest.AssignRoleRequest true "Role assigned to user"
@@ -55,6 +56,7 @@ func (h *AuthzHandler) AssignRole(c *gin.Context) {
 // @Summary Revoke role
 // @Description Revoke role
 // @Tags RBAC
+// @Security BearerAuth
 // @Accept json
 // @Produce json
 // @Param input body authzRequest.RevokeRoleRequest true "Role assigned to user to revoke"
@@ -84,6 +86,7 @@ func (h *AuthzHandler) RevokeRole(c *gin.Context) {
 // @Summary Add policy
 // @Description Add policy
 // @Tags RBAC
+// @Security BearerAuth
 // @Accept json
 // @Produce json
 // @Param input body authzRequest.AddPolicyRequest true "New policy details"
@@ -113,6 +116,7 @@ func (h *AuthzHandler) AddPolicy(c *gin.Context) {
 // @Summary Delete policy
 // @Description Delete policy
 // @Tags RBAC
+// @Security BearerAuth
 // @Accept json
 // @Produce json
 // @Param input body authzRequest.DeletePolicyRequest true "Policy details to delete"
@@ -142,6 +146,7 @@ func (h *AuthzHandler) DeletePolicy(c *gin.Context) {
 // @Summary Check user permission
 // @Description Check user permission
 // @Tags RBAC
+// @Security BearerAuth
 // @Accept json
 // @Produce json
 // @Param input body authzRequest.CheckPermissionRequest true "Permission subject, object, action"

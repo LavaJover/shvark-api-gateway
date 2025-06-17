@@ -883,6 +883,11 @@ const docTemplate = `{
         },
         "/rbac/permissions": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Check user permission",
                 "consumes": [
                     "application/json"
@@ -929,6 +934,11 @@ const docTemplate = `{
         },
         "/rbac/policies": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Add policy",
                 "consumes": [
                     "application/json"
@@ -973,6 +983,11 @@ const docTemplate = `{
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Delete policy",
                 "consumes": [
                     "application/json"
@@ -1019,6 +1034,11 @@ const docTemplate = `{
         },
         "/rbac/roles": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Assign role",
                 "consumes": [
                     "application/json"
@@ -1063,6 +1083,11 @@ const docTemplate = `{
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Revoke role",
                 "consumes": [
                     "application/json"
@@ -1716,14 +1741,17 @@ const docTemplate = `{
                 "id": {
                     "type": "string"
                 },
+                "inflow_currency": {
+                    "type": "string"
+                },
                 "max_amount": {
                     "type": "number"
                 },
                 "max_amount_day": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "max_amount_month": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "max_orders_simultaneosly": {
                     "type": "integer"
@@ -1873,14 +1901,17 @@ const docTemplate = `{
                 "id": {
                     "type": "string"
                 },
+                "inflow_currency": {
+                    "type": "string"
+                },
                 "max_amount": {
                     "type": "number"
                 },
                 "max_amount_day": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "max_amount_month": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "max_orders_simultaneosly": {
                     "type": "integer"
@@ -1960,14 +1991,17 @@ const docTemplate = `{
                 "enabled": {
                     "type": "boolean"
                 },
+                "inflow_currency": {
+                    "type": "string"
+                },
                 "max_amount": {
                     "type": "number"
                 },
                 "max_amount_day": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "max_amount_month": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "max_orders_simultaneosly": {
                     "type": "integer"

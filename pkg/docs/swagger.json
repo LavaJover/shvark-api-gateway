@@ -877,6 +877,11 @@
         },
         "/rbac/permissions": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Check user permission",
                 "consumes": [
                     "application/json"
@@ -923,6 +928,11 @@
         },
         "/rbac/policies": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Add policy",
                 "consumes": [
                     "application/json"
@@ -967,6 +977,11 @@
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Delete policy",
                 "consumes": [
                     "application/json"
@@ -1013,6 +1028,11 @@
         },
         "/rbac/roles": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Assign role",
                 "consumes": [
                     "application/json"
@@ -1057,6 +1077,11 @@
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Revoke role",
                 "consumes": [
                     "application/json"
@@ -1710,14 +1735,17 @@
                 "id": {
                     "type": "string"
                 },
+                "inflow_currency": {
+                    "type": "string"
+                },
                 "max_amount": {
                     "type": "number"
                 },
                 "max_amount_day": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "max_amount_month": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "max_orders_simultaneosly": {
                     "type": "integer"
@@ -1867,14 +1895,17 @@
                 "id": {
                     "type": "string"
                 },
+                "inflow_currency": {
+                    "type": "string"
+                },
                 "max_amount": {
                     "type": "number"
                 },
                 "max_amount_day": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "max_amount_month": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "max_orders_simultaneosly": {
                     "type": "integer"
@@ -1954,14 +1985,17 @@
                 "enabled": {
                     "type": "boolean"
                 },
+                "inflow_currency": {
+                    "type": "string"
+                },
                 "max_amount": {
                     "type": "number"
                 },
                 "max_amount_day": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "max_amount_month": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "max_orders_simultaneosly": {
                     "type": "integer"

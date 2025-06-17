@@ -9,7 +9,7 @@ type BankDetail struct {
 	TraderID 				string	`json:"trader_id"`
 	Country 				string	`json:"country"`
 	Currency 				string	`json:"currency"`
-	InflowCurrency 			string		`json:"inflow_currency"`
+	InflowCurrency 			string	`json:"inflow_currency"`
 	MinAmount 				float64	`json:"min_amount"`
 	MaxAmount 				float64	`json:"max_amount"`
 	BankName 				string	`json:"bank_name"`
