@@ -540,6 +540,8 @@ definitions:
         items:
           $ref: '#/definitions/response.Order'
         type: array
+      pagination:
+        $ref: '#/definitions/response.Pagination'
     type: object
   response.GetProfileByIDResponse:
     properties:
@@ -628,12 +630,29 @@ definitions:
         type: number
       bank_detail:
         $ref: '#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_order_response.BankDetail'
+      created_at:
+        type: string
       expires_at:
         type: string
       order_id:
         type: string
       status:
         type: string
+      trader_reward:
+        type: number
+      updated_at:
+        type: string
+    type: object
+  response.Pagination:
+    properties:
+      current_page:
+        type: integer
+      items_per_page:
+        type: integer
+      total_items:
+        type: integer
+      total_pages:
+        type: integer
     type: object
   response.PaymentDetails:
     properties:
@@ -1143,6 +1162,56 @@ paths:
         name: traderUUID
         required: true
         type: string
+      - default: 1
+        description: Page number
+        in: query
+        minimum: 1
+        name: page
+        type: integer
+      - default: 10
+        description: Items per page
+        in: query
+        maximum: 100
+        minimum: 1
+        name: limit
+        type: integer
+      - default: expires_at
+        description: Sort field (amount_fiat, expires_at)
+        in: query
+        name: sort_by
+        type: string
+      - default: desc
+        description: Sort order (asc, desc)
+        in: query
+        name: sort_order
+        type: string
+      - collectionFormat: multi
+        description: Filter by status
+        in: query
+        items:
+          type: string
+        name: status
+        type: array
+      - description: Minimum amount
+        in: query
+        name: min_amount
+        type: number
+      - description: Maximum amount
+        in: query
+        name: max_amount
+        type: number
+      - description: Date from (YYYY-MM-DD)
+        in: query
+        name: date_from
+        type: string
+      - description: Date to (YYYY-MM-DD)
+        in: query
+        name: date_to
+        type: string
+      - description: Currency code
+        in: query
+        name: currency
+        type: string
       produces:
       - application/json
       responses:
@@ -1190,8 +1259,8 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/response.BadRequestErrorResponse'
-        "502":
-          description: Bad Gateway
+        "404":
+          description: Not Found
           schema:
             $ref: '#/definitions/response.NoBankDetailsErrorResponse'
       summary: Create new H2H Pay-In
@@ -1219,8 +1288,8 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/response.BadRequestErrorResponse'
-        "502":
-          description: Bad Gateway
+        "404":
+          description: Not Found
           schema:
             $ref: '#/definitions/response.ErrorResponse'
       summary: Get H2h Pay-in info

@@ -123,6 +123,7 @@ func (h *OrderHandler) GetOrderByID(c *gin.Context) {
 			AmountFiat: response.Order.AmountFiat,
 			AmountCrypto: response.Order.AmountCrypto,
 			ExpiresAt: response.Order.ExpiresAt.AsTime(),
+			TraderReward: response.Order.TraderRewardPercent,
 			BankDetail: orderResponse.BankDetail{
 				ID: response.Order.BankDetail.BankDetailId,
 				TraderID: response.Order.BankDetail.TraderId,
@@ -149,6 +150,16 @@ func (h *OrderHandler) GetOrderByID(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param traderUUID path string true "Trader UUID path param"
+// @Param page query int false "Page number" default(1) minimum(1)
+// @Param limit query int false "Items per page" default(10) minimum(1) maximum(100)
+// @Param sort_by query string false "Sort field (amount_fiat, expires_at)" default(expires_at)
+// @Param sort_order query string false "Sort order (asc, desc)" default(desc)
+// @Param status query []string false "Filter by status" collectionFormat(multi)
+// @Param min_amount query number false "Minimum amount"
+// @Param max_amount query number false "Maximum amount"
+// @Param date_from query string false "Date from (YYYY-MM-DD)"
+// @Param date_to query string false "Date to (YYYY-MM-DD)"
+// @Param currency query string false "Currency code"
 // @Success 200 {object} orderResponse.GetOrdersByTraderIDResponse
 // @Failure 400 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
@@ -160,8 +171,37 @@ func (h *OrderHandler) GetOrdersByTraderID(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	var request orderRequest.OrderQueryParams
+	if err := c.ShouldBindQuery(&request); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 
-	response, err := h.OrderClient.GetOrdersByTraderID(traderID.String())
+	var dateFrom, dateTo time.Time
+    if request.DateFrom != "" {
+        dateFrom, _ = time.Parse("2006-01-02", request.DateFrom)
+    }
+    if request.DateTo != "" {
+        dateTo, _ = time.Parse("2006-01-02", request.DateTo)
+    }
+
+	response, err := h.OrderClient.GetOrdersByTraderID(
+		&orderpb.GetOrdersByTraderIDRequest{
+			TraderId: traderID.String(),
+			Page: request.Page,
+			Limit: request.Limit,
+			SortBy: request.SortBy,
+			SortOrder: request.SortOrder,
+			Filters: &orderpb.OrderFilters{
+				Statuses: request.Status,
+				MinAmountFiat: request.MinAmount,
+				MaxAmountFiat: request.MaxAmount,
+				DateFrom: timestamppb.New(dateFrom),
+				DateTo: timestamppb.New(dateTo),
+				Currency: request.Currency,
+			},
+		},
+	)
 	if err != nil {
 		c.JSON(http.StatusBadGateway, gin.H{"error": err.Error()})
 		return
@@ -177,6 +217,7 @@ func (h *OrderHandler) GetOrdersByTraderID(c *gin.Context) {
 			AmountFiat: responseOrder.AmountFiat,
 			AmountCrypto: responseOrder.AmountCrypto,
 			ExpiresAt: responseOrder.ExpiresAt.AsTime(),
+			TraderReward: responseOrder.TraderRewardPercent,
 			BankDetail: orderResponse.BankDetail{
 				ID: responseOrder.BankDetail.BankDetailId,
 				TraderID: responseOrder.BankDetail.TraderId,
@@ -197,6 +238,12 @@ func (h *OrderHandler) GetOrdersByTraderID(c *gin.Context) {
 
 	c.JSON(http.StatusOK, orderResponse.GetOrdersByTraderIDResponse{
 		Orders: orders,
+		Pagination: orderResponse.Pagination{
+			CurrentPage: response.Pagination.CurrentPage,
+			TotalPages: response.Pagination.TotalPages,
+			TotalItems: response.Pagination.TotalItems,
+			ItemsPerPage: response.Pagination.ItemsPerPage,
+		},
 	})
 }
 

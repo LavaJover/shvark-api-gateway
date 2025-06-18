@@ -58,15 +58,13 @@ func (c *OrderClient) GetOrderByID(orderID string) (*orderpb.GetOrderByIDRespons
 	)
 }
 
-func (c *OrderClient) GetOrdersByTraderID(traderID string) (*orderpb.GetOrdersByTraderIDResponse, error) {
+func (c *OrderClient) GetOrdersByTraderID(request *orderpb.GetOrdersByTraderIDRequest) (*orderpb.GetOrdersByTraderIDResponse, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
 	return c.service.GetOrdersByTraderID(
 		ctx,
-		&orderpb.GetOrdersByTraderIDRequest{
-			TraderId: traderID,
-		},
+		request,
 	)
 }
 

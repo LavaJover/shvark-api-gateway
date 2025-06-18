@@ -618,6 +618,77 @@ const docTemplate = `{
                         "name": "traderUUID",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "minimum": 1,
+                        "type": "integer",
+                        "default": 1,
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "maximum": 100,
+                        "minimum": 1,
+                        "type": "integer",
+                        "default": 10,
+                        "description": "Items per page",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "default": "expires_at",
+                        "description": "Sort field (amount_fiat, expires_at)",
+                        "name": "sort_by",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "default": "desc",
+                        "description": "Sort order (asc, desc)",
+                        "name": "sort_order",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "multi",
+                        "description": "Filter by status",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "number",
+                        "description": "Minimum amount",
+                        "name": "min_amount",
+                        "in": "query"
+                    },
+                    {
+                        "type": "number",
+                        "description": "Maximum amount",
+                        "name": "max_amount",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Date from (YYYY-MM-DD)",
+                        "name": "date_from",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Date to (YYYY-MM-DD)",
+                        "name": "date_to",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Currency code",
+                        "name": "currency",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -740,8 +811,8 @@ const docTemplate = `{
                             "$ref": "#/definitions/response.BadRequestErrorResponse"
                         }
                     },
-                    "502": {
-                        "description": "Bad Gateway",
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/response.NoBankDetailsErrorResponse"
                         }
@@ -784,8 +855,8 @@ const docTemplate = `{
                             "$ref": "#/definitions/response.BadRequestErrorResponse"
                         }
                     },
-                    "502": {
-                        "description": "Bad Gateway",
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/response.ErrorResponse"
                         }
@@ -2538,6 +2609,9 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/response.Order"
                     }
+                },
+                "pagination": {
+                    "$ref": "#/definitions/response.Pagination"
                 }
             }
         },
@@ -2677,6 +2751,9 @@ const docTemplate = `{
                 "bank_detail": {
                     "$ref": "#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_order_response.BankDetail"
                 },
+                "created_at": {
+                    "type": "string"
+                },
                 "expires_at": {
                     "type": "string"
                 },
@@ -2685,6 +2762,29 @@ const docTemplate = `{
                 },
                 "status": {
                     "type": "string"
+                },
+                "trader_reward": {
+                    "type": "number"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.Pagination": {
+            "type": "object",
+            "properties": {
+                "current_page": {
+                    "type": "integer"
+                },
+                "items_per_page": {
+                    "type": "integer"
+                },
+                "total_items": {
+                    "type": "integer"
+                },
+                "total_pages": {
+                    "type": "integer"
                 }
             }
         },

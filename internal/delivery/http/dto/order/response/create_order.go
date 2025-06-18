@@ -33,4 +33,7 @@ type Order struct {
 	AmountCrypto float64    `json:"amount_crypto"`
 	ExpiresAt    time.Time  `json:"expires_at"`
 	BankDetail   BankDetail `json:"bank_detail"`
+	TraderReward float64	`json:"trader_reward"`
+	CreatedAt 	 time.Time	`json:"created_at"`
+	UpdatedAt    time.Time  `json:"updated_at"`
 }

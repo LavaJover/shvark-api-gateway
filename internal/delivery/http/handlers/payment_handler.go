@@ -32,7 +32,7 @@ func NewPaymentHandler(orderClient *client.OrderClient) (*PaymentHandler, error)
 // @Param input body paymentRequest.CreateH2HPayInRequest true "pay-in info"
 // @Success 201 {object} paymentResponse.CreateH2HPayInResponse
 // @Failure 400 {object} paymentResponse.BadRequestErrorResponse
-// @Failure 502 {object} paymentResponse.NoBankDetailsErrorResponse
+// @Failure 404 {object} paymentResponse.NoBankDetailsErrorResponse
 // @Router /payments/in/h2h [post]
 func (h *PaymentHandler) CreateH2HPayIn(c *gin.Context) {
 	var payInRequest paymentRequest.CreateH2HPayInRequest
@@ -57,7 +57,7 @@ func (h *PaymentHandler) CreateH2HPayIn(c *gin.Context) {
 		CallbackUrl: payInRequest.CallbackURL,
 	})
 	if err != nil {
-		c.JSON(http.StatusBadGateway, paymentResponse.NoBankDetailsErrorResponse{Error: "No available bank details"})
+		c.JSON(http.StatusNotFound, paymentResponse.NoBankDetailsErrorResponse{Error: "No available bank details"})
 		return
 	}
 
@@ -91,7 +91,7 @@ func (h *PaymentHandler) CreateH2HPayIn(c *gin.Context) {
 // @Param id path string true "order id"
 // @Success 200 {object} paymentResponse.GetH2HPayInInfoResponse
 // @Failure 400 {object} paymentResponse.BadRequestErrorResponse
-// @Failure 502 {object} paymentResponse.ErrorResponse
+// @Failure 404 {object} paymentResponse.ErrorResponse
 // @Router /payments/in/h2h/{id} [get]
 func (h *PaymentHandler) GetH2HPayInInfo(c *gin.Context) {
 	orderID := c.Param("id")
@@ -102,7 +102,7 @@ func (h *PaymentHandler) GetH2HPayInInfo(c *gin.Context) {
 
 	response, err := h.OrderClient.GetOrderByID(orderID)
 	if err != nil {
-		c.JSON(http.StatusBadGateway, paymentResponse.ErrorResponse{Error: "Order info is unavailable now"})
+		c.JSON(http.StatusNotFound, paymentResponse.ErrorResponse{Error: "Order info is unavailable now"})
 		return
 	}
 
