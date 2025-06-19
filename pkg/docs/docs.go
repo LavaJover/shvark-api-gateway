@@ -816,6 +816,18 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/response.NoBankDetailsErrorResponse"
                         }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "Bad Gateway",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorResponse"
+                        }
                     }
                 }
             }
@@ -2444,6 +2456,9 @@ const docTemplate = `{
                 "payment_system": {
                     "type": "string"
                 },
+                "recalculated": {
+                    "type": "boolean"
+                },
                 "status": {
                     "type": "string"
                 },
@@ -2584,6 +2599,9 @@ const docTemplate = `{
                 },
                 "payment_system": {
                     "type": "string"
+                },
+                "recalculated": {
+                    "type": "boolean"
                 },
                 "status": {
                     "type": "string"

@@ -433,6 +433,8 @@ definitions:
         $ref: '#/definitions/response.PaymentDetails'
       payment_system:
         type: string
+      recalculated:
+        type: boolean
       status:
         type: string
       tpay_link:
@@ -524,6 +526,8 @@ definitions:
         $ref: '#/definitions/response.PaymentDetails'
       payment_system:
         type: string
+      recalculated:
+        type: boolean
       status:
         type: string
       tpay_link:
@@ -1263,6 +1267,14 @@ paths:
           description: Not Found
           schema:
             $ref: '#/definitions/response.NoBankDetailsErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
       summary: Create new H2H Pay-In
       tags:
       - payments

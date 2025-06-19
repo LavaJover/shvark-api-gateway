@@ -7,6 +7,8 @@ import (
 	"github.com/LavaJover/shvark-api-gateway/internal/client"
 	paymentRequest "github.com/LavaJover/shvark-api-gateway/internal/delivery/http/dto/payment/request"
 	orderpb "github.com/LavaJover/shvark-order-service/proto/gen"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
 	paymentResponse "github.com/LavaJover/shvark-api-gateway/internal/delivery/http/dto/payment/response"
@@ -33,6 +35,8 @@ func NewPaymentHandler(orderClient *client.OrderClient) (*PaymentHandler, error)
 // @Success 201 {object} paymentResponse.CreateH2HPayInResponse
 // @Failure 400 {object} paymentResponse.BadRequestErrorResponse
 // @Failure 404 {object} paymentResponse.NoBankDetailsErrorResponse
+// @Failure 409 {object} paymentResponse.ErrorResponse
+// @Failure 502 {object} paymentResponse.ErrorResponse
 // @Router /payments/in/h2h [post]
 func (h *PaymentHandler) CreateH2HPayIn(c *gin.Context) {
 	var payInRequest paymentRequest.CreateH2HPayInRequest
@@ -56,9 +60,18 @@ func (h *PaymentHandler) CreateH2HPayIn(c *gin.Context) {
 		Shuffle: payInRequest.Shuffle,
 		CallbackUrl: payInRequest.CallbackURL,
 	})
-	if err != nil {
-		c.JSON(http.StatusNotFound, paymentResponse.NoBankDetailsErrorResponse{Error: "No available bank details"})
-		return
+	if err != nil  {
+		if status, ok := status.FromError(err); ok {
+			if status.Code() == codes.NotFound {
+				c.JSON(http.StatusNotFound, paymentResponse.NoBankDetailsErrorResponse{Error: err.Error()})
+				return
+			}else if status.Code() == codes.FailedPrecondition {
+				c.JSON(http.StatusConflict, paymentResponse.ErrorResponse{Error: err.Error()})
+				return
+			}else {
+				c.JSON(http.StatusBadGateway, paymentResponse.ErrorResponse{Error: err.Error()})
+			}
+		}
 	}
 
 	c.JSON(http.StatusCreated, paymentResponse.CreateH2HPayInResponse{
@@ -71,6 +84,7 @@ func (h *PaymentHandler) CreateH2HPayIn(c *gin.Context) {
 		MerchantOrderID: response.Order.MerchantOrderId,
 		CallbackURL: response.Order.CallbackUrl,
 		TPayLink: "tpay/link",
+		Recalculated: response.Order.Recalculated,
 		PaymentDetails: paymentResponse.PaymentDetails{
 			CardNumber: response.Order.BankDetail.CardNumber,
 			Owner: response.Order.BankDetail.Owner,
@@ -115,6 +129,7 @@ func (h *PaymentHandler) GetH2HPayInInfo(c *gin.Context) {
 		Status: response.Order.Status,
 		MerchantOrderID: response.Order.MerchantOrderId,
 		CallbackURL: response.Order.CallbackUrl,
+		Recalculated: response.Order.Recalculated,
 		PaymentDetails: paymentResponse.PaymentDetails{
 			CardNumber: response.Order.BankDetail.CardNumber,
 			Owner: response.Order.BankDetail.Owner,

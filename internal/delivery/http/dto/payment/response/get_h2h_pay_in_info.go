@@ -12,6 +12,7 @@ type GetH2HPayInInfoResponse struct {
 	PaymentDetails 	PaymentDetails `json:"payment_details"`
 	ExpiresAt 		int64 		   `json:"expires_at"`
 	TPayLink 		string 		   `json:"tpay_link"`
+	Recalculated 	bool		   `json:"recalculated"`
 }
 
 type ErrorResponse struct {
