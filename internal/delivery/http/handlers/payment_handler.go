@@ -85,6 +85,7 @@ func (h *PaymentHandler) CreateH2HPayIn(c *gin.Context) {
 		CallbackURL: response.Order.CallbackUrl,
 		TPayLink: "tpay/link",
 		Recalculated: response.Order.Recalculated,
+		CryptoRubRate: response.Order.CryptoRubRate,
 		PaymentDetails: paymentResponse.PaymentDetails{
 			CardNumber: response.Order.BankDetail.CardNumber,
 			Owner: response.Order.BankDetail.Owner,
@@ -130,6 +131,7 @@ func (h *PaymentHandler) GetH2HPayInInfo(c *gin.Context) {
 		MerchantOrderID: response.Order.MerchantOrderId,
 		CallbackURL: response.Order.CallbackUrl,
 		Recalculated: response.Order.Recalculated,
+		CryptoRubRate: response.Order.CryptoRubRate,
 		PaymentDetails: paymentResponse.PaymentDetails{
 			CardNumber: response.Order.BankDetail.CardNumber,
 			Owner: response.Order.BankDetail.Owner,
@@ -172,8 +174,13 @@ func (h *PaymentHandler) CancelPayIn(c *gin.Context) {
 	})
 }
 
+
 func (h *PaymentHandler) OpenPayInArbitrage(c *gin.Context) {
-	
+	var request paymentRequest.CreateDisputeRequest
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 }
 
 func (h *PaymentHandler) CreateRedirectPayIn(c *gin.Context) {

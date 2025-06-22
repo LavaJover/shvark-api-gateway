@@ -3,12 +3,14 @@ package main
 import (
 	"log"
 
+	"github.com/LavaJover/shvark-api-gateway/internal/client"
 	"github.com/LavaJover/shvark-api-gateway/internal/delivery/http/handlers"
 	"github.com/LavaJover/shvark-api-gateway/internal/delivery/http/middleware"
 	_ "github.com/LavaJover/shvark-api-gateway/pkg/docs"
 	"github.com/gin-gonic/gin"
 	"github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
+	// "github.com/joho/godotenv"
 )
 
 // @title Shvark API Gateway
@@ -21,6 +23,10 @@ import (
 // @in header
 // @name Authorization
 func main() {
+	// if err := godotenv.Load(); err != nil {
+	// 	log.Println("failed to load .env")
+	// }
+
 	// init sso-client
 	ssoAddr := "localhost:50051"
 	authHandler, err := handlers.NewAuthHandler(ssoAddr)
@@ -150,6 +156,20 @@ func main() {
 		paymentsGroup.POST("/in/h2h", paymentHandler.CreateH2HPayIn)
 		paymentsGroup.GET("/in/h2h/:id", paymentHandler.GetH2HPayInInfo)
 		paymentsGroup.POST("/in/h2h/:id/cancel", paymentHandler.CancelPayIn)
+	}
+
+	walletClient := client.NewHTTPWalletClient()
+
+	adminHandler := handlers.NewAdminHandler(
+		authHandler.SSOClient,
+		authzHandler.AuthzClient,
+		ordersHandler.OrderClient,
+		walletClient,
+	)
+
+	adminGroup := r.Group("/api/v1/admin")
+	{
+		adminGroup.POST("/teams", adminHandler.CreateTeam)
 	}
 
 	r.Run(":8080")

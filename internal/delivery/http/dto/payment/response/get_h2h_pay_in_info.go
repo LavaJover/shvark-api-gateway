@@ -13,6 +13,7 @@ type GetH2HPayInInfoResponse struct {
 	ExpiresAt 		int64 		   `json:"expires_at"`
 	TPayLink 		string 		   `json:"tpay_link"`
 	Recalculated 	bool		   `json:"recalculated"`
+	CryptoRubRate 	float64	   `json:"crypto_rub_rate"`
 }
 
 type ErrorResponse struct {

@@ -15,6 +15,57 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/admin/teams": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Create new team",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin"
+                ],
+                "summary": "Create new team",
+                "parameters": [
+                    {
+                        "description": "team credentials",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.CreateTeamRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/response.CreateTeamResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/banking/details": {
             "post": {
                 "security": [
@@ -2179,6 +2230,20 @@ const docTemplate = `{
                 }
             }
         },
+        "request.CreateTeamRequest": {
+            "type": "object",
+            "properties": {
+                "login": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
         "request.CreateWalletRequest": {
             "type": "object",
             "properties": {
@@ -2438,6 +2503,9 @@ const docTemplate = `{
                 "callback_url": {
                     "type": "string"
                 },
+                "crypto_rub_rate": {
+                    "type": "number"
+                },
                 "currency": {
                     "type": "string"
                 },
@@ -2483,6 +2551,20 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "order_status": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.CreateTeamResponse": {
+            "type": "object",
+            "properties": {
+                "access_token": {
+                    "type": "string"
+                },
+                "trader_id": {
+                    "type": "string"
+                },
+                "wallet_address": {
                     "type": "string"
                 }
             }
@@ -2581,6 +2663,9 @@ const docTemplate = `{
                 },
                 "callback_url": {
                     "type": "string"
+                },
+                "crypto_rub_rate": {
+                    "type": "number"
                 },
                 "currency": {
                     "type": "string"
@@ -2771,6 +2856,9 @@ const docTemplate = `{
                 },
                 "created_at": {
                     "type": "string"
+                },
+                "crypto_rub_rate": {
+                    "type": "number"
                 },
                 "expires_at": {
                     "type": "string"

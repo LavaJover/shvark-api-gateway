@@ -55,15 +55,15 @@ func (h *OrderHandler) CreateOrder(c *gin.Context) {
 	}
 
 	orderRequest := orderpb.CreateOrderRequest{
-		Shuffle: request.Shuffle,
-		MerchantId: request.MerchantID,
-		ClientId: request.ClientID,
+		Shuffle:         request.Shuffle,
+		MerchantId:      request.MerchantID,
+		ClientId:        request.ClientID,
 		MerchantOrderId: request.MerchantOrderID,
-		AmountFiat: request.AmountFiat,
-		Currency: request.Currency,
-		Country: request.Country,
-		PaymentSystem: request.PaymentSystem,
-		ExpiresAt: timestamppb.New(time.Now().Add(ttl)),
+		AmountFiat:      request.AmountFiat,
+		Currency:        request.Currency,
+		Country:         request.Country,
+		PaymentSystem:   request.PaymentSystem,
+		ExpiresAt:       timestamppb.New(time.Now().Add(ttl)),
 	}
 
 	response, err := h.OrderClient.CreateOrder(&orderRequest)
@@ -73,21 +73,21 @@ func (h *OrderHandler) CreateOrder(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, orderResponse.CreateOrderResponse{
-		OrderID: response.Order.OrderId,
-		OrderStatus: response.Order.Status,
-		AmountFiat: response.Order.AmountFiat,
+		OrderID:      response.Order.OrderId,
+		OrderStatus:  response.Order.Status,
+		AmountFiat:   response.Order.AmountFiat,
 		AmountCrypto: response.Order.AmountCrypto,
 		BankDetail: orderResponse.BankDetail{
-			ID: response.Order.BankDetail.BankDetailId,
-			TraderID: response.Order.BankDetail.TraderId,
-			Currency: response.Order.BankDetail.Currency,
-			Country: response.Order.BankDetail.Country,
-			MinAmount: response.Order.BankDetail.MinAmount,
-			MaxAmount: response.Order.BankDetail.MaxAmount,
-			BankName: response.Order.BankDetail.BankName,
+			ID:            response.Order.BankDetail.BankDetailId,
+			TraderID:      response.Order.BankDetail.TraderId,
+			Currency:      response.Order.BankDetail.Currency,
+			Country:       response.Order.BankDetail.Country,
+			MinAmount:     response.Order.BankDetail.MinAmount,
+			MaxAmount:     response.Order.BankDetail.MaxAmount,
+			BankName:      response.Order.BankDetail.BankName,
 			PaymentSystem: response.Order.BankDetail.PaymentSystem,
-			Enabled: response.Order.BankDetail.Enabled,
-			Delay: response.Order.BankDetail.Delay.String(),
+			Enabled:       response.Order.BankDetail.Enabled,
+			Delay:         response.Order.BankDetail.Delay.String(),
 		},
 	})
 }
@@ -118,26 +118,29 @@ func (h *OrderHandler) GetOrderByID(c *gin.Context) {
 
 	c.JSON(http.StatusOK, orderResponse.GetOrderByIDResponse{
 		Order: orderResponse.Order{
-			OrderID: response.Order.OrderId,
-			Status: response.Order.Status,
-			AmountFiat: response.Order.AmountFiat,
+			OrderID:      response.Order.OrderId,
+			Status:       response.Order.Status,
+			AmountFiat:   response.Order.AmountFiat,
 			AmountCrypto: response.Order.AmountCrypto,
-			ExpiresAt: response.Order.ExpiresAt.AsTime(),
+			ExpiresAt:    response.Order.ExpiresAt.AsTime(),
 			TraderReward: response.Order.TraderRewardPercent,
+			CreatedAt:    response.Order.CreatedAt.AsTime(),
+			UpdatedAt:    response.Order.UpdatedAt.AsTime(),
+			CryptoRubRate:   response.Order.CryptoRubRate,
 			BankDetail: orderResponse.BankDetail{
-				ID: response.Order.BankDetail.BankDetailId,
-				TraderID: response.Order.BankDetail.TraderId,
-				Currency: response.Order.BankDetail.Currency,
-				Country: response.Order.BankDetail.Country,
-				MinAmount: response.Order.BankDetail.MinAmount,
-				MaxAmount: response.Order.BankDetail.MaxAmount,
-				BankName: response.Order.BankDetail.BankName,
+				ID:            response.Order.BankDetail.BankDetailId,
+				TraderID:      response.Order.BankDetail.TraderId,
+				Currency:      response.Order.BankDetail.Currency,
+				Country:       response.Order.BankDetail.Country,
+				MinAmount:     response.Order.BankDetail.MinAmount,
+				MaxAmount:     response.Order.BankDetail.MaxAmount,
+				BankName:      response.Order.BankDetail.BankName,
 				PaymentSystem: response.Order.BankDetail.PaymentSystem,
-				Enabled: response.Order.BankDetail.Enabled,
-				Delay: response.Order.BankDetail.Delay.String(),
-				Owner: response.Order.BankDetail.Owner,
-				CardNumber: response.Order.BankDetail.CardNumber,
-				Phone: response.Order.BankDetail.Phone,
+				Enabled:       response.Order.BankDetail.Enabled,
+				Delay:         response.Order.BankDetail.Delay.String(),
+				Owner:         response.Order.BankDetail.Owner,
+				CardNumber:    response.Order.BankDetail.CardNumber,
+				Phone:         response.Order.BankDetail.Phone,
 			},
 		},
 	})
@@ -178,27 +181,27 @@ func (h *OrderHandler) GetOrdersByTraderID(c *gin.Context) {
 	}
 
 	var dateFrom, dateTo time.Time
-    if request.DateFrom != "" {
-        dateFrom, _ = time.Parse("2006-01-02", request.DateFrom)
-    }
-    if request.DateTo != "" {
-        dateTo, _ = time.Parse("2006-01-02", request.DateTo)
-    }
+	if request.DateFrom != "" {
+		dateFrom, _ = time.Parse("2006-01-02", request.DateFrom)
+	}
+	if request.DateTo != "" {
+		dateTo, _ = time.Parse("2006-01-02", request.DateTo)
+	}
 
 	response, err := h.OrderClient.GetOrdersByTraderID(
 		&orderpb.GetOrdersByTraderIDRequest{
-			TraderId: traderID.String(),
-			Page: request.Page,
-			Limit: request.Limit,
-			SortBy: request.SortBy,
+			TraderId:  traderID.String(),
+			Page:      request.Page,
+			Limit:     request.Limit,
+			SortBy:    request.SortBy,
 			SortOrder: request.SortOrder,
 			Filters: &orderpb.OrderFilters{
-				Statuses: request.Status,
+				Statuses:      request.Status,
 				MinAmountFiat: request.MinAmount,
 				MaxAmountFiat: request.MaxAmount,
-				DateFrom: timestamppb.New(dateFrom),
-				DateTo: timestamppb.New(dateTo),
-				Currency: request.Currency,
+				DateFrom:      timestamppb.New(dateFrom),
+				DateTo:        timestamppb.New(dateTo),
+				Currency:      request.Currency,
 			},
 		},
 	)
@@ -212,26 +215,29 @@ func (h *OrderHandler) GetOrdersByTraderID(c *gin.Context) {
 
 	for i, responseOrder := range responseOrders {
 		orders[i] = orderResponse.Order{
-			OrderID: responseOrder.OrderId,
-			Status: responseOrder.Status,
-			AmountFiat: responseOrder.AmountFiat,
+			OrderID:      responseOrder.OrderId,
+			Status:       responseOrder.Status,
+			AmountFiat:   responseOrder.AmountFiat,
 			AmountCrypto: responseOrder.AmountCrypto,
-			ExpiresAt: responseOrder.ExpiresAt.AsTime(),
+			ExpiresAt:    responseOrder.ExpiresAt.AsTime(),
 			TraderReward: responseOrder.TraderRewardPercent,
+			CreatedAt:    responseOrder.CreatedAt.AsTime(),
+			UpdatedAt:    responseOrder.UpdatedAt.AsTime(),
+			CryptoRubRate:   responseOrder.CryptoRubRate,
 			BankDetail: orderResponse.BankDetail{
-				ID: responseOrder.BankDetail.BankDetailId,
-				TraderID: responseOrder.BankDetail.TraderId,
-				Currency: responseOrder.BankDetail.Currency,
-				Country: responseOrder.BankDetail.Country,
-				MinAmount: responseOrder.BankDetail.MinAmount,
-				MaxAmount: responseOrder.BankDetail.MaxAmount,
-				BankName: responseOrder.BankDetail.BankName,
+				ID:            responseOrder.BankDetail.BankDetailId,
+				TraderID:      responseOrder.BankDetail.TraderId,
+				Currency:      responseOrder.BankDetail.Currency,
+				Country:       responseOrder.BankDetail.Country,
+				MinAmount:     responseOrder.BankDetail.MinAmount,
+				MaxAmount:     responseOrder.BankDetail.MaxAmount,
+				BankName:      responseOrder.BankDetail.BankName,
 				PaymentSystem: responseOrder.BankDetail.PaymentSystem,
-				Enabled: responseOrder.BankDetail.Enabled,
-				Delay: responseOrder.BankDetail.Delay.String(),
-				Owner: responseOrder.BankDetail.Owner,
-				CardNumber: responseOrder.BankDetail.CardNumber,
-				Phone: responseOrder.BankDetail.Phone,
+				Enabled:       responseOrder.BankDetail.Enabled,
+				Delay:         responseOrder.BankDetail.Delay.String(),
+				Owner:         responseOrder.BankDetail.Owner,
+				CardNumber:    responseOrder.BankDetail.CardNumber,
+				Phone:         responseOrder.BankDetail.Phone,
 			},
 		}
 	}
@@ -239,9 +245,9 @@ func (h *OrderHandler) GetOrdersByTraderID(c *gin.Context) {
 	c.JSON(http.StatusOK, orderResponse.GetOrdersByTraderIDResponse{
 		Orders: orders,
 		Pagination: orderResponse.Pagination{
-			CurrentPage: response.Pagination.CurrentPage,
-			TotalPages: response.Pagination.TotalPages,
-			TotalItems: response.Pagination.TotalItems,
+			CurrentPage:  response.Pagination.CurrentPage,
+			TotalPages:   response.Pagination.TotalPages,
+			TotalItems:   response.Pagination.TotalItems,
 			ItemsPerPage: response.Pagination.ItemsPerPage,
 		},
 	})
