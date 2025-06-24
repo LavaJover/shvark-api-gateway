@@ -36,7 +36,7 @@ func NewAuthHandler(addr string) (*AuthHandler, error) {
 
 // @Summary User registration
 // @Description Creating new account
-// @Tags Auth
+// @Tags auth
 // @Accept json
 // @Produce json
 // @Param input body authRequest.RegisterRequest true "Registration credentials"
@@ -70,7 +70,7 @@ type ErrorResponse struct {
 
 // @Summary User login
 // @Description Log in user account
-// @Tags Auth
+// @Tags auth
 // @Accept json
 // @Produce json
 // @Param input body authRequest.LoginRequest true "Login credentials"
@@ -88,10 +88,16 @@ func (h *AuthHandler) Login(c *gin.Context) {
 	}
 
 	// calling gRPC sso-service Login handler
-	response, err := h.SSOClient.Login(request.Login, request.Password)
+	response, err := h.SSOClient.Login(request.Login, request.Password, request.TwoFACode)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
+		if err.Error() == "rpc error: code = Unauthenticated desc = 2FA required" {
+			c.JSON(http.StatusUnauthorized, gin.H{
+				"error": "2FA_required",
+			})
+			return
+		}
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
 	}
 
 	c.JSON(http.StatusOK, authResponse.LoginResponse{
@@ -102,7 +108,7 @@ func (h *AuthHandler) Login(c *gin.Context) {
 
 // @Summary JWT validation check-point
 // @Description Check if JWT is valid or not
-// @Tags Auth
+// @Tags auth
 // @Accept json
 // @Produce json
 // @Param input body authRequest.ValidateTokenRequest true "JWT instance"
@@ -156,4 +162,65 @@ func (h *AuthHandler) GetUserByToken(c *gin.Context) {
 		"login": response.Login,
 		"username": response.Username,
 	})
+}
+
+// @Summary Setup Google 2FA
+// @Description Setup 2Fa using Google Authenticator
+// @Tags auth
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Success 200 {object} authResponse.Setup2FAResponse
+// @Failure 400 {object} ErrorResponse
+// @Failure 401 {object} ErrorResponse
+// @Router /2fa/setup [post]
+func (h *AuthHandler) Setup2FA(c *gin.Context) {
+	userID := c.GetString("userID")
+	if userID == "" {
+		c.JSON(http.StatusUnauthorized, ErrorResponse{Error: "unauthorized"})
+		return
+	}
+	qrURL, err := h.SSOClient.Setup2FA(userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, ErrorResponse{Error: err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, authResponse.Setup2FAResponse{
+		QrURL: qrURL,
+	})
+}
+
+// @Summary Verify 2FA code
+// @Description Verify 2FA code to enable 2FA for account
+// @Tags auth
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param input body authRequest.Verify2FARequest true "2FA code"
+// @Success 200 {object} authResponse.Verify2FAResponse
+// @Failure 400 {object} ErrorResponse
+// @Failure 502 {object} ErrorResponse
+// @Router /2fa/verify [post]
+func (h *AuthHandler) Verify2FA(c *gin.Context) {
+	userID := c.GetString("userID")
+	if userID == "" {
+		c.JSON(http.StatusUnauthorized, ErrorResponse{Error: "userID missed"})
+		return
+	}
+	var request authRequest.Verify2FARequest
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.JSON(http.StatusBadRequest, ErrorResponse{Error: err.Error()})
+		return
+	}
+	verif, err := h.SSOClient.Verify2FA(userID, request.Code)
+	if err != nil {
+		c.JSON(http.StatusBadGateway, ErrorResponse{Error: err.Error()})
+		return
+	}
+	if !verif {
+		c.JSON(http.StatusUnauthorized, ErrorResponse{Error: "wrong 2FA code"})
+		return
+	}
+	c.JSON(http.StatusOK, authResponse.Verify2FAResponse{})
 }

@@ -65,6 +65,7 @@ func (c *UserClient) UpdateUser(userID string, user *domain.User, fields []strin
 				Login: user.Login,
 				Username: user.Username,
 				Password: user.Password,
+				TwoFaSecret: user.TwoFaSecret,
 			},
 			UpdateMask: &fieldmaskpb.FieldMask{Paths: fields},
 		},

@@ -1,5 +1,21 @@
 basePath: /api/v1
 definitions:
+  github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_admin_request.CreateDisputeRequest:
+    properties:
+      dispute_reason:
+        type: string
+      order_id:
+        type: string
+      proof_url:
+        type: string
+      ttl:
+        type: string
+    type: object
+  github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_admin_response.CreateDisputeResponse:
+    properties:
+      dispute_id:
+        type: string
+    type: object
   github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_banking_response.BankDetail:
     properties:
       bank_name:
@@ -76,6 +92,11 @@ definitions:
     properties:
       error:
         example: invalid data
+        type: string
+    type: object
+  request.AcceptDisputeRequest:
+    properties:
+      dispute_id:
         type: string
     type: object
   request.AddPolicyRequest:
@@ -232,6 +253,15 @@ definitions:
       ttl:
         type: string
     type: object
+  request.CreateMerchantRequest:
+    properties:
+      login:
+        type: string
+      password:
+        type: string
+      username:
+        type: string
+    type: object
   request.CreateOrderRequest:
     properties:
       amount_fiat:
@@ -261,6 +291,19 @@ definitions:
         type: string
       username:
         type: string
+    type: object
+  request.CreateTrafficRequest:
+    properties:
+      enabled:
+        type: boolean
+      merchant_id:
+        type: string
+      trader_id:
+        type: string
+      trader_priority:
+        type: number
+      trader_reward:
+        type: number
     type: object
   request.CreateWalletRequest:
     properties:
@@ -294,6 +337,16 @@ definitions:
       txHash:
         type: string
     type: object
+  request.EditTrafficRequest:
+    properties:
+      traffic:
+        $ref: '#/definitions/request.Traffic'
+    type: object
+  request.FreezeDisputeRequest:
+    properties:
+      dispute_id:
+        type: string
+    type: object
   request.FreezeRequest:
     properties:
       amount:
@@ -310,6 +363,8 @@ definitions:
         type: string
       password:
         example: securepass123
+        type: string
+      two_fa_code:
         type: string
     type: object
   request.OpenOrderDisputeRequest:
@@ -330,6 +385,11 @@ definitions:
     - login
     - password
     - username
+    type: object
+  request.RejectDisputeRequest:
+    properties:
+      dispute_id:
+        type: string
     type: object
   request.ReleaseRequest:
     properties:
@@ -355,6 +415,21 @@ definitions:
     - role
     - user_id
     type: object
+  request.Traffic:
+    properties:
+      enabled:
+        type: boolean
+      id:
+        type: string
+      merchant_id:
+        type: string
+      trader_id:
+        type: string
+      trader_priority:
+        type: number
+      trader_reward:
+        type: number
+    type: object
   request.UpdateBankDetailRequest:
     properties:
       bank_detail:
@@ -365,6 +440,11 @@ definitions:
       token:
         type: string
     type: object
+  request.Verify2FARequest:
+    properties:
+      code:
+        type: string
+    type: object
   request.WithdrawRequest:
     properties:
       amount:
@@ -373,6 +453,8 @@ definitions:
         type: string
       traderId:
         type: string
+    type: object
+  response.AcceptDisputeResponse:
     type: object
   response.AddPolicyResponse:
     properties:
@@ -451,6 +533,13 @@ definitions:
       tpay_link:
         type: string
     type: object
+  response.CreateMerchantResponse:
+    properties:
+      access_token:
+        type: string
+      merchant_id:
+        type: string
+    type: object
   response.CreateOrderResponse:
     properties:
       amount_crypto:
@@ -471,6 +560,11 @@ definitions:
       trader_id:
         type: string
       wallet_address:
+        type: string
+    type: object
+  response.CreateTrafficResponse:
+    properties:
+      message:
         type: string
     type: object
   response.CreateWalletErrorResponse:
@@ -498,10 +592,27 @@ definitions:
       success:
         type: boolean
     type: object
+  response.Dispute:
+    properties:
+      dispute_id:
+        type: string
+      dispute_reason:
+        type: string
+      dispute_status:
+        type: string
+      order_id:
+        type: string
+      proof_url:
+        type: string
+    type: object
+  response.EditTrafficResponse:
+    type: object
   response.ErrorResponse:
     properties:
       error:
         type: string
+    type: object
+  response.FreezeDisputeResponse:
     type: object
   response.FreezeErrorResponse:
     properties:
@@ -525,6 +636,11 @@ definitions:
         items:
           $ref: '#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_banking_response.BankDetail'
         type: array
+    type: object
+  response.GetDisputeInfoResponse:
+    properties:
+      dispute:
+        $ref: '#/definitions/response.Dispute'
     type: object
   response.GetH2HPayInInfoResponse:
     properties:
@@ -620,6 +736,13 @@ definitions:
       address:
         type: string
     type: object
+  response.GetTrafficResponse:
+    properties:
+      traffic_records:
+        items:
+          $ref: '#/definitions/response.Traffic'
+        type: array
+    type: object
   response.GetUserByIDResponse:
     properties:
       login:
@@ -705,6 +828,8 @@ definitions:
         example: 1d6ab366-4fca-4bcc-972d-875c35ea939a
         type: string
     type: object
+  response.RejectDisputeResponse:
+    type: object
   response.ReleaseErrorResponse:
     properties:
       error:
@@ -728,6 +853,26 @@ definitions:
         type: boolean
     required:
     - success
+    type: object
+  response.Setup2FAResponse:
+    properties:
+      qr_url:
+        type: string
+    type: object
+  response.Traffic:
+    properties:
+      enabled:
+        type: boolean
+      id:
+        type: string
+      merchant_id:
+        type: string
+      trader_id:
+        type: string
+      trader_priority:
+        type: number
+      trader_reward:
+        type: number
     type: object
   response.Transaction:
     properties:
@@ -760,6 +905,8 @@ definitions:
       valid:
         type: boolean
     type: object
+  response.Verify2FAResponse:
+    type: object
   response.WithdrawErrorResponse:
     properties:
       details:
@@ -779,7 +926,245 @@ info:
   title: Shvark API Gateway
   version: "1.0"
 paths:
-  /admin/teams:
+  /2fa/setup:
+    post:
+      consumes:
+      - application/json
+      description: Setup 2Fa using Google Authenticator
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Setup2FAResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Setup Google 2FA
+      tags:
+      - auth
+  /2fa/verify:
+    post:
+      consumes:
+      - application/json
+      description: Verify 2FA code to enable 2FA for account
+      parameters:
+      - description: 2FA code
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/request.Verify2FARequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Verify2FAResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Verify 2FA code
+      tags:
+      - auth
+  /admin/disputes/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get dispute information by ID
+      parameters:
+      - description: dispute ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.GetDisputeInfoResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Get dispute info by dispute ID
+      tags:
+      - admin
+  /admin/disputes/accept:
+    post:
+      description: Accept active dispute
+      parameters:
+      - description: accept active dispute by ID
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/request.AcceptDisputeRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.AcceptDisputeResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Accept active dispute
+      tags:
+      - admin
+  /admin/disputes/create:
+    post:
+      consumes:
+      - application/json
+      description: Open new dispute
+      parameters:
+      - description: new dispute data
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_admin_request.CreateDisputeRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_admin_response.CreateDisputeResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create dispute
+      tags:
+      - admin
+  /admin/disputes/freeze:
+    post:
+      consumes:
+      - application/json
+      description: Freeze active dispute
+      parameters:
+      - description: dispute to Freeze
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/request.FreezeDisputeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.FreezeDisputeResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Freeze active dispute
+      tags:
+      - admin
+  /admin/disputes/reject:
+    post:
+      description: Reject active dispute
+      parameters:
+      - description: reject active dispute by ID
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/request.RejectDisputeRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.RejectDisputeResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Reject active dispute
+      tags:
+      - admin
+  /admin/merchants/create:
+    post:
+      consumes:
+      - application/json
+      description: Create merchant account
+      parameters:
+      - description: merchant credentials
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/request.CreateMerchantRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/response.CreateMerchantResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create merchant account
+      tags:
+      - admin
+  /admin/teams/create:
     post:
       consumes:
       - application/json
@@ -802,13 +1187,115 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/handlers.ErrorResponse'
-        "500":
-          description: Internal Server Error
+        "502":
+          description: Bad Gateway
           schema:
             $ref: '#/definitions/handlers.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Create new team
+      tags:
+      - admin
+  /admin/traffic/create:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: create new traffic
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/request.CreateTrafficRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/response.CreateTrafficResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create new traffic
+      tags:
+      - admin
+  /admin/traffic/edit:
+    patch:
+      consumes:
+      - application/json
+      description: Edit traffic
+      parameters:
+      - description: edit traffic
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/request.EditTrafficRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.EditTrafficResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Edit traffic
+      tags:
+      - admin
+  /admin/traffic/records:
+    get:
+      consumes:
+      - application/json
+      description: Get traffic records
+      parameters:
+      - default: 1
+        description: Page number
+        in: query
+        minimum: 1
+        name: page
+        type: integer
+      - default: 10
+        description: Items per page
+        in: query
+        maximum: 100
+        minimum: 1
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.GetTrafficResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get traffic records
       tags:
       - admin
   /banking/details:
@@ -999,7 +1486,7 @@ paths:
             $ref: '#/definitions/handlers.ErrorResponse'
       summary: User login
       tags:
-      - Auth
+      - auth
   /orders:
     post:
       consumes:
@@ -1608,7 +2095,7 @@ paths:
             $ref: '#/definitions/handlers.ErrorResponse'
       summary: User registration
       tags:
-      - Auth
+      - auth
   /users/{id}:
     get:
       consumes:
@@ -1667,7 +2154,7 @@ paths:
             $ref: '#/definitions/handlers.ErrorResponse'
       summary: JWT validation check-point
       tags:
-      - Auth
+      - auth
   /wallets/{traderID}/address:
     get:
       consumes:

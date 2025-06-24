@@ -15,7 +15,385 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/admin/teams": {
+        "/2fa/setup": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Setup 2Fa using Google Authenticator",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Setup Google 2FA",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Setup2FAResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/2fa/verify": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Verify 2FA code to enable 2FA for account",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Verify 2FA code",
+                "parameters": [
+                    {
+                        "description": "2FA code",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.Verify2FARequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Verify2FAResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "Bad Gateway",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/disputes/accept": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Accept active dispute",
+                "tags": [
+                    "admin"
+                ],
+                "summary": "Accept active dispute",
+                "parameters": [
+                    {
+                        "description": "accept active dispute by ID",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.AcceptDisputeRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.AcceptDisputeResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "Bad Gateway",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/disputes/create": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Open new dispute",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin"
+                ],
+                "summary": "Create dispute",
+                "parameters": [
+                    {
+                        "description": "new dispute data",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_admin_request.CreateDisputeRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_admin_response.CreateDisputeResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "Bad Gateway",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/disputes/freeze": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Freeze active dispute",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin"
+                ],
+                "summary": "Freeze active dispute",
+                "parameters": [
+                    {
+                        "description": "dispute to Freeze",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.FreezeDisputeRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.FreezeDisputeResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "Bad Gateway",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/disputes/reject": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Reject active dispute",
+                "tags": [
+                    "admin"
+                ],
+                "summary": "Reject active dispute",
+                "parameters": [
+                    {
+                        "description": "reject active dispute by ID",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.RejectDisputeRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.RejectDisputeResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "Bad Gateway",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/disputes/{id}": {
+            "get": {
+                "description": "Get dispute information by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin"
+                ],
+                "summary": "Get dispute info by dispute ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "dispute ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.GetDisputeInfoResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "Bad Gateway",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/merchants/create": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Create merchant account",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin"
+                ],
+                "summary": "Create merchant account",
+                "parameters": [
+                    {
+                        "description": "merchant credentials",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.CreateMerchantRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/response.CreateMerchantResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "Bad Gateway",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/teams/create": {
             "post": {
                 "security": [
                     {
@@ -57,8 +435,168 @@ const docTemplate = `{
                             "$ref": "#/definitions/handlers.ErrorResponse"
                         }
                     },
-                    "500": {
-                        "description": "Internal Server Error",
+                    "502": {
+                        "description": "Bad Gateway",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/traffic/create": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin"
+                ],
+                "summary": "Create new traffic",
+                "parameters": [
+                    {
+                        "description": "create new traffic",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.CreateTrafficRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/response.CreateTrafficResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "Bad Gateway",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/traffic/edit": {
+            "patch": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Edit traffic",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin"
+                ],
+                "summary": "Edit traffic",
+                "parameters": [
+                    {
+                        "description": "edit traffic",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.EditTrafficRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.EditTrafficResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "Bad Gateway",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/traffic/records": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get traffic records",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin"
+                ],
+                "summary": "Get traffic records",
+                "parameters": [
+                    {
+                        "minimum": 1,
+                        "type": "integer",
+                        "default": 1,
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "maximum": 100,
+                        "minimum": 1,
+                        "type": "integer",
+                        "default": 10,
+                        "description": "Items per page",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.GetTrafficResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "Bad Gateway",
                         "schema": {
                             "$ref": "#/definitions/handlers.ErrorResponse"
                         }
@@ -329,7 +867,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Auth"
+                    "auth"
                 ],
                 "summary": "User login",
                 "parameters": [
@@ -1276,7 +1814,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Auth"
+                    "auth"
                 ],
                 "summary": "User registration",
                 "parameters": [
@@ -1366,7 +1904,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Auth"
+                    "auth"
                 ],
                 "summary": "JWT validation check-point",
                 "parameters": [
@@ -1848,6 +2386,31 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_admin_request.CreateDisputeRequest": {
+            "type": "object",
+            "properties": {
+                "dispute_reason": {
+                    "type": "string"
+                },
+                "order_id": {
+                    "type": "string"
+                },
+                "proof_url": {
+                    "type": "string"
+                },
+                "ttl": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_admin_response.CreateDisputeResponse": {
+            "type": "object",
+            "properties": {
+                "dispute_id": {
+                    "type": "string"
+                }
+            }
+        },
         "github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_banking_response.BankDetail": {
             "type": "object",
             "properties": {
@@ -1963,6 +2526,14 @@ const docTemplate = `{
                 "error": {
                     "type": "string",
                     "example": "invalid data"
+                }
+            }
+        },
+        "request.AcceptDisputeRequest": {
+            "type": "object",
+            "properties": {
+                "dispute_id": {
+                    "type": "string"
                 }
             }
         },
@@ -2198,6 +2769,20 @@ const docTemplate = `{
                 }
             }
         },
+        "request.CreateMerchantRequest": {
+            "type": "object",
+            "properties": {
+                "login": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
         "request.CreateOrderRequest": {
             "type": "object",
             "properties": {
@@ -2241,6 +2826,26 @@ const docTemplate = `{
                 },
                 "username": {
                     "type": "string"
+                }
+            }
+        },
+        "request.CreateTrafficRequest": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean"
+                },
+                "merchant_id": {
+                    "type": "string"
+                },
+                "trader_id": {
+                    "type": "string"
+                },
+                "trader_priority": {
+                    "type": "number"
+                },
+                "trader_reward": {
+                    "type": "number"
                 }
             }
         },
@@ -2293,6 +2898,22 @@ const docTemplate = `{
                 }
             }
         },
+        "request.EditTrafficRequest": {
+            "type": "object",
+            "properties": {
+                "traffic": {
+                    "$ref": "#/definitions/request.Traffic"
+                }
+            }
+        },
+        "request.FreezeDisputeRequest": {
+            "type": "object",
+            "properties": {
+                "dispute_id": {
+                    "type": "string"
+                }
+            }
+        },
         "request.FreezeRequest": {
             "type": "object",
             "properties": {
@@ -2317,6 +2938,9 @@ const docTemplate = `{
                 "password": {
                     "type": "string",
                     "example": "securepass123"
+                },
+                "two_fa_code": {
+                    "type": "string"
                 }
             }
         },
@@ -2344,6 +2968,14 @@ const docTemplate = `{
                     "minLength": 8
                 },
                 "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.RejectDisputeRequest": {
+            "type": "object",
+            "properties": {
+                "dispute_id": {
                     "type": "string"
                 }
             }
@@ -2385,6 +3017,29 @@ const docTemplate = `{
                 }
             }
         },
+        "request.Traffic": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "merchant_id": {
+                    "type": "string"
+                },
+                "trader_id": {
+                    "type": "string"
+                },
+                "trader_priority": {
+                    "type": "number"
+                },
+                "trader_reward": {
+                    "type": "number"
+                }
+            }
+        },
         "request.UpdateBankDetailRequest": {
             "type": "object",
             "properties": {
@@ -2397,6 +3052,14 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "token": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.Verify2FARequest": {
+            "type": "object",
+            "properties": {
+                "code": {
                     "type": "string"
                 }
             }
@@ -2414,6 +3077,9 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
+        },
+        "response.AcceptDisputeResponse": {
+            "type": "object"
         },
         "response.AddPolicyResponse": {
             "type": "object",
@@ -2535,6 +3201,17 @@ const docTemplate = `{
                 }
             }
         },
+        "response.CreateMerchantResponse": {
+            "type": "object",
+            "properties": {
+                "access_token": {
+                    "type": "string"
+                },
+                "merchant_id": {
+                    "type": "string"
+                }
+            }
+        },
         "response.CreateOrderResponse": {
             "type": "object",
             "properties": {
@@ -2565,6 +3242,14 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "wallet_address": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.CreateTrafficResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
                     "type": "string"
                 }
             }
@@ -2608,6 +3293,29 @@ const docTemplate = `{
                 }
             }
         },
+        "response.Dispute": {
+            "type": "object",
+            "properties": {
+                "dispute_id": {
+                    "type": "string"
+                },
+                "dispute_reason": {
+                    "type": "string"
+                },
+                "dispute_status": {
+                    "type": "string"
+                },
+                "order_id": {
+                    "type": "string"
+                },
+                "proof_url": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.EditTrafficResponse": {
+            "type": "object"
+        },
         "response.ErrorResponse": {
             "type": "object",
             "properties": {
@@ -2615,6 +3323,9 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
+        },
+        "response.FreezeDisputeResponse": {
+            "type": "object"
         },
         "response.FreezeErrorResponse": {
             "type": "object",
@@ -2649,6 +3360,14 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_banking_response.BankDetail"
                     }
+                }
+            }
+        },
+        "response.GetDisputeInfoResponse": {
+            "type": "object",
+            "properties": {
+                "dispute": {
+                    "$ref": "#/definitions/response.Dispute"
                 }
             }
         },
@@ -2798,6 +3517,17 @@ const docTemplate = `{
                 }
             }
         },
+        "response.GetTrafficResponse": {
+            "type": "object",
+            "properties": {
+                "traffic_records": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/response.Traffic"
+                    }
+                }
+            }
+        },
         "response.GetUserByIDResponse": {
             "type": "object",
             "properties": {
@@ -2928,6 +3658,9 @@ const docTemplate = `{
                 }
             }
         },
+        "response.RejectDisputeResponse": {
+            "type": "object"
+        },
         "response.ReleaseErrorResponse": {
             "type": "object",
             "properties": {
@@ -2963,6 +3696,37 @@ const docTemplate = `{
             "properties": {
                 "success": {
                     "type": "boolean"
+                }
+            }
+        },
+        "response.Setup2FAResponse": {
+            "type": "object",
+            "properties": {
+                "qr_url": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.Traffic": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "merchant_id": {
+                    "type": "string"
+                },
+                "trader_id": {
+                    "type": "string"
+                },
+                "trader_priority": {
+                    "type": "number"
+                },
+                "trader_reward": {
+                    "type": "number"
                 }
             }
         },
@@ -3012,6 +3776,9 @@ const docTemplate = `{
                     "type": "boolean"
                 }
             }
+        },
+        "response.Verify2FAResponse": {
+            "type": "object"
         },
         "response.WithdrawErrorResponse": {
             "type": "object",

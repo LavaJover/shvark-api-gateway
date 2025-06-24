@@ -94,10 +94,14 @@ func main() {
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	// auth-service
-	r.POST("/api/v1/register", authHandler.Register)
-	r.POST("/api/v1/login", authHandler.Login)
-	r.POST("/api/v1/validate_token", authHandler.ValidateToken)
-	r.GET("/api/v1/user_by_token", authHandler.GetUserByToken)
+	authGroup := r.Group("/api/v1")
+	{
+		authGroup.POST("/register", authHandler.Register)
+		authGroup.POST("/login", authHandler.Login)
+		authGroup.POST("/validate_token", authHandler.ValidateToken)
+		authGroup.POST("/2fa/setup", middleware.AuthMiddleware(authHandler.SSOClient), authHandler.Setup2FA)
+		authGroup.POST("/2fa/verify", middleware.AuthMiddleware(authHandler.SSOClient), authHandler.Verify2FA)
+	}
 
 	// user-service
 	r.GET("/api/v1/users/:id", userHandler.GetUserByID)
@@ -169,7 +173,16 @@ func main() {
 
 	adminGroup := r.Group("/api/v1/admin")
 	{
-		adminGroup.POST("/teams", adminHandler.CreateTeam)
+		adminGroup.POST("/teams/create", adminHandler.CreateTeam)
+		adminGroup.POST("/merchants/create", adminHandler.CreateMerchant)
+		adminGroup.POST("/traffic/create", adminHandler.CreateTraffic)
+		adminGroup.PATCH("/traffic/edit", adminHandler.EditTraffic)
+		adminGroup.GET("/traffic/records", adminHandler.GetTrafficRecords)
+		adminGroup.POST("/disputes/create", adminHandler.CreateDispute)
+		adminGroup.POST("/disputes/accept", adminHandler.AcceptDispute)
+		adminGroup.POST("/disputes/reject", adminHandler.RejectDispute)
+		adminGroup.GET("/disputes/:id", adminHandler.GetDisputeInfo)
+		adminGroup.POST("/disputes/freeze", adminHandler.FreezeDispute)
 	}
 
 	r.Run(":8080")

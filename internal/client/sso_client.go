@@ -58,13 +58,14 @@ func (c *SSOClient) RegisterWithretry(login, username, rawPassword string, maxRe
 	return nil, errors.New("max retries exceeded")
 }
 
-func (c *SSOClient) Login(login, rawPassword string) (*ssopb.LoginResponse, error) {
+func (c *SSOClient) Login(login, rawPassword string, code string) (*ssopb.LoginResponse, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	return c.service.Login(ctx, &ssopb.LoginRequest{
 		Login: login,
 		Password: rawPassword,
+		TwoFaCode: code,
 	})
 }
 
@@ -84,6 +85,40 @@ func (c *SSOClient) GetUserByToken(token string) (*ssopb.GetUserByTokenResponse,
 	return c.service.GetUserByToken(ctx, &ssopb.GetUserByTokenRequest{
 		AccessToken: token,
 	})
+}
+
+func (c *SSOClient) Setup2FA(userID string) (string, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	response, err := c.service.Setup2FA(
+		ctx,
+		&ssopb.Setup2FARequest{
+			UserId: userID,
+		},
+	)
+	if err != nil {
+		return "", err
+	}
+
+	return response.QrUrl, nil
+}
+
+func (c *SSOClient) Verify2FA(userID, code string) (bool, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	response, err := c.service.Verify2FA(
+		ctx,
+		&ssopb.Verify2FARequest{
+			UserId: userID,
+			Code: code,
+		},
+	)
+	if err != nil {
+		return false, err
+	}
+	return response.Verif, nil
 }
 
 func (c *SSOClient) Close() {
