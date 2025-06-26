@@ -121,7 +121,7 @@ func (c *OrderClient) ResolveOrderDispute(orderID string) (*orderpb.ResolveOrder
 
 func (c *OrderClient) AddTraffic(
 	merchantID, traderID string,
-	traderReward, traderPriority float64,
+	traderReward, traderPriority, platformFee float64,
 	enabled bool,
 	) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
@@ -135,6 +135,7 @@ func (c *OrderClient) AddTraffic(
 			TraderRewardPercent: traderReward,
 			TraderPriority: traderPriority,
 			Enabled: enabled,
+			PlatformFee: platformFee,
 		},
 	)
 	return err
@@ -142,7 +143,7 @@ func (c *OrderClient) AddTraffic(
 
 func (c *OrderClient) EditTraffic(
 	trafficID string,
-	traderReward, traderPriority float64,
+	traderReward, traderPriority, platformFee float64,
 	enabled bool,
 ) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
@@ -156,6 +157,7 @@ func (c *OrderClient) EditTraffic(
 				TraderRewardPercent: traderReward,
 				TraderPriority: traderPriority,
 				Enabled: enabled,
+				PlatformFee: platformFee,
 			},
 		},
 	)

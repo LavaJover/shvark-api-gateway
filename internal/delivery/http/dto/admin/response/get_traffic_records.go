@@ -10,5 +10,6 @@ type Traffic struct {
 	TraderID 		string 		`json:"trader_id"`
 	TraderReward 	float64 	`json:"trader_reward"`
 	TraderPriority 	float64 	`json:"trader_priority"`
+	PlatformFee		float64		`json:"platform_fee"`
 	Enabled 		bool 		`json:"enabled"`
 }

@@ -110,9 +110,17 @@ func (h *AdminHandler) CreateMerchant(c *gin.Context) {
 		c.JSON(http.StatusBadGateway, ErrorResponse{Error: err.Error()})
 		return
 	}
+	// create wallet for merchant
+	walletAddress, err := h.WalletClient.CreateWallet(registerResponse.UserId)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, ErrorResponse{Error: err.Error()})
+		return
+	}
+
 	c.JSON(http.StatusCreated, adminResponse.CreateMerchantResponse{
 		MerchantID: registerResponse.UserId,
 		AccessToken: loginResponse.AccessToken,
+		WalletAddress: walletAddress,
 	})
 }
 
@@ -138,6 +146,7 @@ func (h *AdminHandler) CreateTraffic(c *gin.Context) {
 		request.TraderID,
 		request.TraderReward,
 		request.TraderPriority,
+		request.PlatformFee,
 		request.Enabled,
 	)
 	if err != nil {
@@ -170,6 +179,7 @@ func (h *AdminHandler) EditTraffic(c *gin.Context) {
 		request.Traffic.ID,
 		request.Traffic.TraderReward,
 		request.Traffic.TraderPriority,
+		request.Traffic.PlatformFee,
 		request.Traffic.Enabled,
 	)
 	if err != nil {
@@ -214,6 +224,7 @@ func (h *AdminHandler) GetTrafficRecords(c *gin.Context) {
 			TraderID: trafficResp.TraderId,
 			TraderReward: trafficResp.TraderRewardPercent,
 			TraderPriority: trafficResp.TraderPriority,
+			PlatformFee: trafficResp.PlatformFee,
 			Enabled: trafficResp.Enabled,
 		}
 	}
