@@ -28,14 +28,14 @@ func main() {
 	// }
 
 	// init sso-client
-	ssoAddr := "localhost:50051"
+	ssoAddr := "sso-service:50051"
 	authHandler, err := handlers.NewAuthHandler(ssoAddr)
 	if err != nil {
 		log.Printf("failed to init auth handler: %v\n", err)
 	}
 
 	// init user-client
-	userAddr := "localhost:50052"
+	userAddr := "user-service:50052"
 	userHandler, err := handlers.NewUserHandler(userAddr)
 	if err != nil {
 		log.Printf("failed to init user handler")
@@ -160,6 +160,8 @@ func main() {
 		paymentsGroup.POST("/in/h2h", paymentHandler.CreateH2HPayIn)
 		paymentsGroup.GET("/in/h2h/:id", paymentHandler.GetH2HPayInInfo)
 		paymentsGroup.POST("/in/h2h/:id/cancel", paymentHandler.CancelPayIn)
+		paymentsGroup.POST("/in/h2h/:id/arbitrage/link", paymentHandler.OpenPayInArbitrageLink)
+		paymentsGroup.GET("/in/h2h/:id/arbitrage/info", paymentHandler.GetPayInArbitrageInfo)
 	}
 
 	walletClient := client.NewHTTPWalletClient()

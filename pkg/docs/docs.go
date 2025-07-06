@@ -1465,6 +1465,109 @@ const docTemplate = `{
                 }
             }
         },
+        "/payments/in/h2h/{id}/arbitrage/info": {
+            "get": {
+                "description": "Get dispute info by disputeID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "payments"
+                ],
+                "summary": "Get info about dispute",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "dispute id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.GetPayInArbitrageInfoResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/payments/in/h2h/{id}/arbitrage/link": {
+            "post": {
+                "description": "Opent dispute by order id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "payments"
+                ],
+                "summary": "Open dispute for given order",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "order ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "dispute description",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_payment_request.CreateDisputeRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_payment_response.CreateDisputeResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "Bad Gateway",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/payments/in/h2h/{id}/cancel": {
             "post": {
                 "description": "Cancel Pay in order",
@@ -2411,6 +2514,26 @@ const docTemplate = `{
                 }
             }
         },
+        "github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_admin_response.Dispute": {
+            "type": "object",
+            "properties": {
+                "dispute_id": {
+                    "type": "string"
+                },
+                "dispute_reason": {
+                    "type": "string"
+                },
+                "dispute_status": {
+                    "type": "string"
+                },
+                "order_id": {
+                    "type": "string"
+                },
+                "proof_url": {
+                    "type": "string"
+                }
+            }
+        },
         "github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_banking_response.BankDetail": {
             "type": "object",
             "properties": {
@@ -2516,6 +2639,48 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "trader_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_payment_request.CreateDisputeRequest": {
+            "type": "object",
+            "properties": {
+                "proof_url": {
+                    "type": "string"
+                },
+                "reason": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_payment_response.CreateDisputeResponse": {
+            "type": "object",
+            "properties": {
+                "dispute_id": {
+                    "type": "string"
+                },
+                "expires_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_payment_response.Dispute": {
+            "type": "object",
+            "properties": {
+                "dispute_id": {
+                    "type": "string"
+                },
+                "dispute_reason": {
+                    "type": "string"
+                },
+                "dispute_status": {
+                    "type": "string"
+                },
+                "order_id": {
+                    "type": "string"
+                },
+                "proof_url": {
                     "type": "string"
                 }
             }
@@ -2838,6 +3003,9 @@ const docTemplate = `{
                 "merchant_id": {
                     "type": "string"
                 },
+                "platform_fee": {
+                    "type": "number"
+                },
                 "trader_id": {
                     "type": "string"
                 },
@@ -3029,6 +3197,9 @@ const docTemplate = `{
                 "merchant_id": {
                     "type": "string"
                 },
+                "platform_fee": {
+                    "type": "number"
+                },
                 "trader_id": {
                     "type": "string"
                 },
@@ -3209,6 +3380,9 @@ const docTemplate = `{
                 },
                 "merchant_id": {
                     "type": "string"
+                },
+                "wallet_address": {
+                    "type": "string"
                 }
             }
         },
@@ -3293,26 +3467,6 @@ const docTemplate = `{
                 }
             }
         },
-        "response.Dispute": {
-            "type": "object",
-            "properties": {
-                "dispute_id": {
-                    "type": "string"
-                },
-                "dispute_reason": {
-                    "type": "string"
-                },
-                "dispute_status": {
-                    "type": "string"
-                },
-                "order_id": {
-                    "type": "string"
-                },
-                "proof_url": {
-                    "type": "string"
-                }
-            }
-        },
         "response.EditTrafficResponse": {
             "type": "object"
         },
@@ -3367,7 +3521,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "dispute": {
-                    "$ref": "#/definitions/response.Dispute"
+                    "$ref": "#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_admin_response.Dispute"
                 }
             }
         },
@@ -3434,6 +3588,14 @@ const docTemplate = `{
                 },
                 "pagination": {
                     "$ref": "#/definitions/response.Pagination"
+                }
+            }
+        },
+        "response.GetPayInArbitrageInfoResponse": {
+            "type": "object",
+            "properties": {
+                "dispute": {
+                    "$ref": "#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_payment_response.Dispute"
                 }
             }
         },
@@ -3718,6 +3880,9 @@ const docTemplate = `{
                 },
                 "merchant_id": {
                     "type": "string"
+                },
+                "platform_fee": {
+                    "type": "number"
                 },
                 "trader_id": {
                     "type": "string"

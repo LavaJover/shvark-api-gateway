@@ -16,6 +16,19 @@ definitions:
       dispute_id:
         type: string
     type: object
+  github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_admin_response.Dispute:
+    properties:
+      dispute_id:
+        type: string
+      dispute_reason:
+        type: string
+      dispute_status:
+        type: string
+      order_id:
+        type: string
+      proof_url:
+        type: string
+    type: object
   github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_banking_response.BankDetail:
     properties:
       bank_name:
@@ -86,6 +99,33 @@ definitions:
       phone:
         type: string
       trader_id:
+        type: string
+    type: object
+  github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_payment_request.CreateDisputeRequest:
+    properties:
+      proof_url:
+        type: string
+      reason:
+        type: string
+    type: object
+  github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_payment_response.CreateDisputeResponse:
+    properties:
+      dispute_id:
+        type: string
+      expires_at:
+        type: string
+    type: object
+  github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_payment_response.Dispute:
+    properties:
+      dispute_id:
+        type: string
+      dispute_reason:
+        type: string
+      dispute_status:
+        type: string
+      order_id:
+        type: string
+      proof_url:
         type: string
     type: object
   handlers.ErrorResponse:
@@ -298,6 +338,8 @@ definitions:
         type: boolean
       merchant_id:
         type: string
+      platform_fee:
+        type: number
       trader_id:
         type: string
       trader_priority:
@@ -423,6 +465,8 @@ definitions:
         type: string
       merchant_id:
         type: string
+      platform_fee:
+        type: number
       trader_id:
         type: string
       trader_priority:
@@ -539,6 +583,8 @@ definitions:
         type: string
       merchant_id:
         type: string
+      wallet_address:
+        type: string
     type: object
   response.CreateOrderResponse:
     properties:
@@ -592,19 +638,6 @@ definitions:
       success:
         type: boolean
     type: object
-  response.Dispute:
-    properties:
-      dispute_id:
-        type: string
-      dispute_reason:
-        type: string
-      dispute_status:
-        type: string
-      order_id:
-        type: string
-      proof_url:
-        type: string
-    type: object
   response.EditTrafficResponse:
     type: object
   response.ErrorResponse:
@@ -640,7 +673,7 @@ definitions:
   response.GetDisputeInfoResponse:
     properties:
       dispute:
-        $ref: '#/definitions/response.Dispute'
+        $ref: '#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_admin_response.Dispute'
     type: object
   response.GetH2HPayInInfoResponse:
     properties:
@@ -684,6 +717,11 @@ definitions:
         type: array
       pagination:
         $ref: '#/definitions/response.Pagination'
+    type: object
+  response.GetPayInArbitrageInfoResponse:
+    properties:
+      dispute:
+        $ref: '#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_payment_response.Dispute'
     type: object
   response.GetProfileByIDResponse:
     properties:
@@ -867,6 +905,8 @@ definitions:
         type: string
       merchant_id:
         type: string
+      platform_fee:
+        type: number
       trader_id:
         type: string
       trader_priority:
@@ -1848,6 +1888,74 @@ paths:
           schema:
             $ref: '#/definitions/response.ErrorResponse'
       summary: Get H2h Pay-in info
+      tags:
+      - payments
+  /payments/in/h2h/{id}/arbitrage/info:
+    get:
+      consumes:
+      - application/json
+      description: Get dispute info by disputeID
+      parameters:
+      - description: dispute id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.GetPayInArbitrageInfoResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Get info about dispute
+      tags:
+      - payments
+  /payments/in/h2h/{id}/arbitrage/link:
+    post:
+      consumes:
+      - application/json
+      description: Opent dispute by order id
+      parameters:
+      - description: order ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: dispute description
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_payment_request.CreateDisputeRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_payment_response.CreateDisputeResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Open dispute for given order
       tags:
       - payments
   /payments/in/h2h/{id}/cancel:

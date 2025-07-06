@@ -174,13 +174,86 @@ func (h *PaymentHandler) CancelPayIn(c *gin.Context) {
 	})
 }
 
-
-func (h *PaymentHandler) OpenPayInArbitrage(c *gin.Context) {
-	var request paymentRequest.CreateDisputeRequest
-	if err := c.ShouldBindJSON(&request); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+// @Summary Open dispute for given order
+// @Description Opent dispute by order id
+// @Tags payments
+// @Accept json
+// @Produce json
+// @Param id path string true "order ID"
+// @Param input body paymentRequest.CreateDisputeRequest true "dispute description"
+// @Success 201 {object} paymentResponse.CreateDisputeResponse
+// @Failure 400 {object} ErrorResponse
+// @Failure 404 {object} ErrorResponse
+// @Failure 502 {object} ErrorResponse
+// @Router /payments/in/h2h/{id}/arbitrage/link [post]
+func (h *PaymentHandler) OpenPayInArbitrageLink(c *gin.Context) {
+	orderID := c.Param("id")
+	if orderID == "" {
+		c.JSON(http.StatusBadRequest, ErrorResponse{Error: "path param id missed"})
 		return
 	}
+	var requestBody paymentRequest.CreateDisputeRequest
+	if err := c.ShouldBindJSON(&requestBody); err != nil {
+		c.JSON(http.StatusBadRequest, ErrorResponse{Error: err.Error()})
+		return
+	}
+	disputeTtl := 30*time.Minute
+	disputeID, err := h.OrderClient.CreateDispute(
+		orderID,
+		requestBody.ProofUrl,
+		requestBody.Reason,
+		disputeTtl,
+	)
+	if err != nil {
+		c.JSON(http.StatusNotFound, ErrorResponse{Error: err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusCreated, paymentResponse.CreateDisputeResponse{
+		DisputeID: disputeID,
+		ExpiresAt: time.Now().Add(disputeTtl).Local().String(),
+	})
+}
+
+// @Summary Get info about dispute
+// @Description Get dispute info by disputeID
+// @Tags payments
+// @Accept json
+// @Produce json
+// @Param id path string true "dispute id"
+// @Success 200 {object} paymentResponse.GetPayInArbitrageInfoResponse
+// @Success 400 {object} ErrorResponse
+// @Success 404 {object} ErrorResponse
+// @Router /payments/in/h2h/{id}/arbitrage/info [get]
+func (h *PaymentHandler) GetPayInArbitrageInfo(c *gin.Context) {
+	disputeID := c.Param("id")
+	if disputeID == "" {
+		c.JSON(http.StatusBadRequest, ErrorResponse{Error: "dispute id path param missed"})
+		return
+	}
+	dispute, err := h.OrderClient.GetDisputeInfo(disputeID)
+	if err != nil {
+		c.JSON(http.StatusNotFound, ErrorResponse{Error: err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, paymentResponse.GetPayInArbitrageInfoResponse{
+		Dispute: paymentResponse.Dispute{
+			DisputeID: dispute.DisputeID,
+			OrderID: dispute.OrderID,
+			ProofUrl: dispute.ProofUrl,
+			DisputeReason: dispute.DisputeReason,
+			DisputeStatus: dispute.DisputeStatus,
+		},
+	})
+}
+
+// @Summary Get merchant account USD balance
+// @Description Get merchant account USD balance
+// @Tags payments
+// @Accept json
+// @Produce json
+func (h *PaymentHandler) GetBalance(c *gin.Context) {
+
 }
 
 func (h *PaymentHandler) CreateRedirectPayIn(c *gin.Context) {
@@ -190,3 +263,4 @@ func (h *PaymentHandler) CreateRedirectPayIn(c *gin.Context) {
 func (h *PaymentHandler) GetRedirectPayInInfo(c *gin.Context) {
 
 }
+
