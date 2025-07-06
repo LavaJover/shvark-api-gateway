@@ -49,21 +49,21 @@ func main() {
 	}
 
 	// init authz-client
-	authzAddr := "localhost:50054"
+	authzAddr := "authz-service:50054"
 	authzHandler, err := handlers.NewAuthzhandler(authzAddr)
 	if err != nil {
 		log.Printf("failed to init authz handler")
 	}
 
 	// init banking-client
-	bankingAddr := "localhost:50057"
+	bankingAddr := "banking-service:50057"
 	bankingHandler, err := handlers.NewBankingHandler(bankingAddr)
 	if err != nil {
 		log.Printf("failed to init banking handler")
 	}
 
 	// init orders-client
-	ordersAddr := "localhost:50058"
+	ordersAddr := "order-service:50058"
 	ordersHandler, err := handlers.NewOrderHandler(ordersAddr)
 	if err != nil {
 		log.Printf("failed to init orders handler: %v\n", err)
