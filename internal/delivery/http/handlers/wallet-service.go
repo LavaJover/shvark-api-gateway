@@ -44,7 +44,7 @@ func (h *WalletHandler) CreateWallet(c *gin.Context) {
 		return
 	}
 
-	proxyResp, err := http.Post("http://tether-wallet-service:3000/wallets/create", "application/json", bytes.NewBuffer(proxyRequestBody))
+	proxyResp, err := http.Post("tether-wallet-service:3000/wallets/create", "application/json", bytes.NewBuffer(proxyRequestBody))
 	if err != nil {
 		c.JSON(http.StatusBadGateway, gin.H{"error": "wallet-service unavailable"})
 		return
@@ -96,7 +96,7 @@ func (h *WalletHandler) Freeze(c *gin.Context) {
 		return
 	}
 
-	proxyResp, err := http.Post("http://tether-wallet-service:3000/wallets/freeze", "application/json", bytes.NewBuffer(proxyRequestBody))
+	proxyResp, err := http.Post("tether-wallet-service:3000/wallets/freeze", "application/json", bytes.NewBuffer(proxyRequestBody))
 	if err != nil {
 		c.JSON(http.StatusBadGateway, gin.H{"error": "wallet-service unavailable"})
 		return
@@ -148,7 +148,7 @@ func (h *WalletHandler) Release(c *gin.Context) {
 		return
 	}
 
-	proxyResp, err := http.Post("http://tether-wallet-service:3000/wallets/release", "application/json", bytes.NewBuffer(proxyRequestBody))
+	proxyResp, err := http.Post("tether-wallet-service:3000/wallets/release", "application/json", bytes.NewBuffer(proxyRequestBody))
 	if err != nil {
 		c.JSON(http.StatusBadGateway, gin.H{"error": "wallet-service unavailable"})
 		return
@@ -200,7 +200,7 @@ func (h *WalletHandler) Withdraw(c *gin.Context) {
 		return
 	}
 
-	proxyResp, err := http.Post("http://tether-wallet-service:3000/wallets/withdraw", "application/json", bytes.NewBuffer(proxyRequestBody))
+	proxyResp, err := http.Post("tether-wallet-service:3000/wallets/withdraw", "application/json", bytes.NewBuffer(proxyRequestBody))
 	if err != nil {
 		c.JSON(http.StatusBadGateway, gin.H{"error": "wallet-service unavailable"})
 		return
@@ -254,7 +254,7 @@ func (h *WalletHandler) Deposit(c *gin.Context) {
 		return
 	}
 
-	proxyResp, err := http.Post("http://tether-wallet-service:3000/wallets/deposit", "application/json", bytes.NewBuffer(proxyRequestBody))
+	proxyResp, err := http.Post("tether-wallet-service:3000/wallets/deposit", "application/json", bytes.NewBuffer(proxyRequestBody))
 	if err != nil {
 		c.JSON(http.StatusBadGateway, gin.H{"error": "wallet-service unavailable"})
 		return
@@ -301,7 +301,7 @@ func (h *WalletHandler) GetTraderHistory(c *gin.Context) {
 		return
 	}
 
-	proxyResp, err := http.Get("http://tether-wallet-service:3000/wallets/"+traderID+"/history")
+	proxyResp, err := http.Get("tether-wallet-service:3000/wallets/"+traderID+"/history")
 	if err != nil {
 		c.JSON(http.StatusBadGateway, gin.H{"error": err.Error()})
 		return
@@ -346,7 +346,7 @@ func (h *WalletHandler) GetTraderBalance(c *gin.Context) {
 		return
 	}
 
-	proxyResp, err := http.Get("http://tether-wallet-service:3000/wallets/"+traderID+"/balance")
+	proxyResp, err := http.Get("tether-wallet-service:3000/wallets/"+traderID+"/balance")
 	if err != nil {
 		c.JSON(http.StatusBadGateway, gin.H{"error": err.Error()})
 		return
@@ -391,7 +391,7 @@ func (h WalletHandler) GetTraderWalletAddress(c *gin.Context) {
 		return
 	}
 
-	proxyResp, err := http.Get("http://tether-wallet-service:3000/wallets/"+traderID+"/address")
+	proxyResp, err := http.Get("tether-wallet-service:3000/wallets/"+traderID+"/address")
 	if err != nil {
 		c.JSON(http.StatusBadGateway, gin.H{"error": err.Error()})
 		return

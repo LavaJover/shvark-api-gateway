@@ -29,7 +29,7 @@ func (c *HTTPWalletClient) CreateWallet(traderID string) (string, error) {
 		return "", err
 	}
 
-	response, err := http.Post("http://tether-wallet-service:3000/wallets/create", "application/json", bytes.NewBuffer(requestBody))
+	response, err := http.Post("tether-wallet-service:3000/wallets/create", "application/json", bytes.NewBuffer(requestBody))
 	if err != nil {
 		return "", err
 	}
