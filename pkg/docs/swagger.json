@@ -6,7 +6,7 @@
         "contact": {},
         "version": "1.0"
     },
-    "host": "localhost:8080",
+    "host": "http://158.160.188.216:8080",
     "basePath": "/api/v1",
     "paths": {
         "/2fa/setup": {

@@ -959,7 +959,7 @@ definitions:
       txid:
         type: string
     type: object
-host: localhost:8080
+host: http://158.160.188.216:8080
 info:
   contact: {}
   description: REST API for ShvarkPay

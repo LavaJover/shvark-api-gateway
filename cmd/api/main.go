@@ -16,7 +16,7 @@ import (
 // @title Shvark API Gateway
 // @version 1.0
 // @description REST API for ShvarkPay
-// @host localhost:8080
+// @host http://158.160.188.216:8080
 // @BasePath /api/v1
 //
 // @securityDefinitions.apikey BearerAuth
@@ -28,14 +28,14 @@ func main() {
 	// }
 
 	// init sso-client
-	ssoAddr := "sso-service:50051"
+	ssoAddr := "localhost:50051"
 	authHandler, err := handlers.NewAuthHandler(ssoAddr)
 	if err != nil {
 		log.Printf("failed to init auth handler: %v\n", err)
 	}
 
 	// init user-client
-	userAddr := "user-service:50052"
+	userAddr := "localhost:50052"
 	userHandler, err := handlers.NewUserHandler(userAddr)
 	if err != nil {
 		log.Printf("failed to init user handler")
@@ -49,21 +49,21 @@ func main() {
 	}
 
 	// init authz-client
-	authzAddr := "authz-service:50054"
+	authzAddr := "localhost:50054"
 	authzHandler, err := handlers.NewAuthzhandler(authzAddr)
 	if err != nil {
 		log.Printf("failed to init authz handler")
 	}
 
 	// init banking-client
-	bankingAddr := "banking-service:50057"
+	bankingAddr := "localhost:50057"
 	bankingHandler, err := handlers.NewBankingHandler(bankingAddr)
 	if err != nil {
 		log.Printf("failed to init banking handler")
 	}
 
 	// init orders-client
-	ordersAddr := "order-service:50058"
+	ordersAddr := "localhost:50058"
 	ordersHandler, err := handlers.NewOrderHandler(ordersAddr)
 	if err != nil {
 		log.Printf("failed to init orders handler: %v\n", err)
