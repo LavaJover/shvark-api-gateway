@@ -9,7 +9,6 @@ import (
 	"github.com/LavaJover/shvark-api-gateway/internal/delivery/http/handlers"
 	"github.com/LavaJover/shvark-api-gateway/internal/delivery/http/middleware"
 	"github.com/LavaJover/shvark-api-gateway/pkg/docs"
-	_ "github.com/LavaJover/shvark-api-gateway/pkg/docs"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"github.com/swaggo/files"
@@ -49,14 +48,14 @@ func main() {
 	userAddr := fmt.Sprintf("%s:%s", cfg.UserService.Host, cfg.UserService.Port)
 	userHandler, err := handlers.NewUserHandler(userAddr)
 	if err != nil {
-		log.Printf("failed to init user handler")
+		log.Printf("failed to init user handler: %v", err)
 	}
 
 	// init authz-client
 	authzAddr := fmt.Sprintf("%s:%s", cfg.AuthzService.Host, cfg.AuthzService.Port)
 	authzHandler, err := handlers.NewAuthzhandler(authzAddr)
 	if err != nil {
-		log.Printf("failed to init authz handler")
+		log.Printf("failed to init authz handler: %v", err)
 	}
 
 	// init banking-client
@@ -74,7 +73,7 @@ func main() {
 	}
 
 	// init wallet client
-	walletHandler, err := handlers.NewWalletHandler()
+	walletHandler, err := handlers.NewWalletHandler(client.NewHTTPWalletClient(fmt.Sprintf("%s:%s", cfg.WalletService.Host, cfg.WalletService.Port)))
 	if err != nil {
 		log.Printf("failed to init wallet client")
 	}

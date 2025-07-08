@@ -1,4 +1,7 @@
 {
+    "schemes": [
+        "http"
+    ],
     "swagger": "2.0",
     "info": {
         "description": "REST API for ShvarkPay",
@@ -6,7 +9,7 @@
         "contact": {},
         "version": "1.0"
     },
-    "host": "http://158.160.188.216:8080",
+    "host": "http://localhost:8080",
     "basePath": "/api/v1",
     "paths": {
         "/2fa/setup": {

@@ -959,7 +959,7 @@ definitions:
       txid:
         type: string
     type: object
-host: http://158.160.188.216:8080
+host: http://localhost:8080
 info:
   contact: {}
   description: REST API for ShvarkPay
@@ -2544,6 +2544,8 @@ paths:
       summary: Withdraw crypto
       tags:
       - wallets
+schemes:
+- http
 securityDefinitions:
   BearerAuth:
     in: header

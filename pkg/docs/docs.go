@@ -3977,9 +3977,9 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "http://158.160.188.216:8080",
+	Host:             "http://localhost:8080",
 	BasePath:         "/api/v1",
-	Schemes:          []string{},
+	Schemes:          []string{"http"},
 	Title:            "Shvark API Gateway",
 	Description:      "REST API for ShvarkPay",
 	InfoInstanceName: "swagger",

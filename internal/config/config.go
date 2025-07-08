@@ -70,10 +70,10 @@ type SwaggerConfig struct {
 func MustLoad() *HttpAPIConfig {
 
 	// Processing env config variable and file
-	configPath := os.Getenv("HttpAPI_CONFIG_PATH")
+	configPath := os.Getenv("API_CONFIG_PATH")
 
 	if configPath == ""{
-		log.Fatalf("HttpAPI_CONFIG_PATH was not found\n")
+		log.Fatalf("API_CONFIG_PATH was not found\n")
 	}
 
 	if _, err := os.Stat(configPath); err != nil{
