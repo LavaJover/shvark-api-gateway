@@ -1,4 +1,3 @@
-
 package handlers
 
 /*
@@ -8,7 +7,7 @@ To-Do:
 2) Retry middleware
 3) Connetion pools - grpc.WithResolvers + balancing
 4) OpenTelemetry for tracing
-5) Metrics (callback time) 
+5) Metrics (callback time)
 6) Viper configs
 */
 
@@ -16,9 +15,11 @@ import (
 	"net/http"
 
 	"github.com/LavaJover/shvark-api-gateway/internal/client"
-	"github.com/gin-gonic/gin"
 	authRequest "github.com/LavaJover/shvark-api-gateway/internal/delivery/http/dto/auth/request"
 	authResponse "github.com/LavaJover/shvark-api-gateway/internal/delivery/http/dto/auth/response"
+	"github.com/gin-gonic/gin"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type AuthHandler struct {
@@ -90,6 +91,15 @@ func (h *AuthHandler) Login(c *gin.Context) {
 	// calling gRPC sso-service Login handler
 	response, err := h.SSOClient.Login(request.Login, request.Password, request.TwoFACode)
 	if err != nil {
+		st, ok := status.FromError(err)
+		if ok {
+			switch st.Code(){
+			case codes.NotFound:
+				c.JSON(http.StatusUnauthorized, gin.H{
+					"error": "user not found",
+				})
+			}
+		}
 		if err.Error() == "rpc error: code = Unauthenticated desc = 2FA required" {
 			c.JSON(http.StatusUnauthorized, gin.H{
 				"error": "2FA_required",
