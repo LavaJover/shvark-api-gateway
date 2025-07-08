@@ -1,69 +1,73 @@
 package main
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/LavaJover/shvark-api-gateway/internal/client"
+	"github.com/LavaJover/shvark-api-gateway/internal/config"
 	"github.com/LavaJover/shvark-api-gateway/internal/delivery/http/handlers"
 	"github.com/LavaJover/shvark-api-gateway/internal/delivery/http/middleware"
+	"github.com/LavaJover/shvark-api-gateway/pkg/docs"
 	_ "github.com/LavaJover/shvark-api-gateway/pkg/docs"
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 	"github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-	// "github.com/joho/godotenv"
 )
 
-// @title Shvark API Gateway
-// @version 1.0
-// @description REST API for ShvarkPay
-// @host http://158.160.188.216:8080
-// @BasePath /api/v1
+// @title 						Shvark API Gateway
+// @version 					1.0
+// @description 				REST API for ShvarkPay
+// @host 						http://localhost:8080
+// @schemes 					http
+// @BasePath 					/api/v1
 //
-// @securityDefinitions.apikey BearerAuth
-// @in header
-// @name Authorization
+// @securityDefinitions.apikey 	BearerAuth
+// @in 							header
+// @name 						Authorization
 func main() {
-	// if err := godotenv.Load(); err != nil {
-	// 	log.Println("failed to load .env")
-	// }
+	if err := godotenv.Load(); err != nil {
+		log.Println("failed to load .env")
+	}
+
+	cfg := config.MustLoad()
+
+	// setup swagger based on development environment
+	docs.SwaggerInfo.Host = fmt.Sprintf("%s:%s",  cfg.SwaggerConfig.Host, cfg.SwaggerConfig.Port)
+	docs.SwaggerInfo.Schemes = []string{cfg.SwaggerConfig.Schemes}
+	docs.SwaggerInfo.BasePath = cfg.SwaggerConfig.BasePath
 
 	// init sso-client
-	ssoAddr := "localhost:50051"
+	ssoAddr := fmt.Sprintf("%s:%s", cfg.SSOService.Host, cfg.SSOService.Port)
 	authHandler, err := handlers.NewAuthHandler(ssoAddr)
 	if err != nil {
 		log.Printf("failed to init auth handler: %v\n", err)
 	}
 
 	// init user-client
-	userAddr := "localhost:50052"
+	userAddr := fmt.Sprintf("%s:%s", cfg.UserService.Host, cfg.UserService.Port)
 	userHandler, err := handlers.NewUserHandler(userAddr)
 	if err != nil {
 		log.Printf("failed to init user handler")
 	}
 
-	// init profile-client
-	profileAddr := "localhost:50055"
-	profileHandler, err := handlers.NewProfileHandler(profileAddr)
-	if err != nil {
-		log.Printf("failed to init profile handler")
-	}
-
 	// init authz-client
-	authzAddr := "localhost:50054"
+	authzAddr := fmt.Sprintf("%s:%s", cfg.AuthzService.Host, cfg.AuthzService.Port)
 	authzHandler, err := handlers.NewAuthzhandler(authzAddr)
 	if err != nil {
 		log.Printf("failed to init authz handler")
 	}
 
 	// init banking-client
-	bankingAddr := "localhost:50057"
+	bankingAddr := fmt.Sprintf("%s:%s", cfg.BankingService.Host, cfg.BankingService.Port)
 	bankingHandler, err := handlers.NewBankingHandler(bankingAddr)
 	if err != nil {
 		log.Printf("failed to init banking handler")
 	}
 
 	// init orders-client
-	ordersAddr := "localhost:50058"
+	ordersAddr := fmt.Sprintf("%s:%s", cfg.OrderService.Host, cfg.OrderService.Port)
 	ordersHandler, err := handlers.NewOrderHandler(ordersAddr)
 	if err != nil {
 		log.Printf("failed to init orders handler: %v\n", err)
@@ -105,9 +109,6 @@ func main() {
 
 	// user-service
 	r.GET("/api/v1/users/:id", userHandler.GetUserByID)
-
-	// profile-service
-	r.GET("/api/v1/profiles/:uuid", profileHandler.GetProfileByID)
 
 	// RBAC-service
 	rbacGroup := r.Group("/api/v1/rbac", middleware.AuthMiddleware(authHandler.SSOClient))
@@ -164,7 +165,8 @@ func main() {
 		paymentsGroup.GET("/in/h2h/:id/arbitrage/info", paymentHandler.GetPayInArbitrageInfo)
 	}
 
-	walletClient := client.NewHTTPWalletClient()
+	walletAddr := fmt.Sprintf("%s:%s", cfg.WalletService.Host, cfg.WalletService.Port)
+	walletClient := client.NewHTTPWalletClient(walletAddr)
 
 	adminHandler := handlers.NewAdminHandler(
 		authHandler.SSOClient,

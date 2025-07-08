@@ -1,8 +1,31 @@
 env: "local"
 http_server:
-  host: "localhost"
+  host: "http://localhost"
   port: "50056"
 log_config:
   log_level: "debug"
   log_format: "json"
   log_output: "stdout"
+user-service:
+  host: "http://localhost"
+  port: "50052"
+sso-service:
+  host: "http://localhost"
+  port: "50052"
+authz-service":
+  host: "http://localhost"
+  port: "50054"
+order-service:
+  host: "http://localhost"
+  port: "50058"
+banking-service:
+  host: "http://localhost"
+  port: "50057"
+wallet-service:
+  host: "http://localhost"
+  port: "3000"
+swagger_config:
+  host: "http://localhost"
+  port: "8080"
+  base_path: "/api/v1"
+  schemes: "http"

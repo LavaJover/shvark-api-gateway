@@ -12,11 +12,13 @@ import (
 )
 
 type HTTPWalletClient struct {
-
+	Addr string
 }
 
-func NewHTTPWalletClient() *HTTPWalletClient {
-	return &HTTPWalletClient{}
+func NewHTTPWalletClient(addr string) *HTTPWalletClient {
+	return &HTTPWalletClient{
+		Addr: addr,
+	}
 }
 
 func (c *HTTPWalletClient) CreateWallet(traderID string) (string, error) {
@@ -29,7 +31,7 @@ func (c *HTTPWalletClient) CreateWallet(traderID string) (string, error) {
 		return "", err
 	}
 
-	response, err := http.Post("http://tether-wallet-service:3000/wallets/create", "application/json", bytes.NewBuffer(requestBody))
+	response, err := http.Post(fmt.Sprintf("%s/wallets/create", c.Addr), "application/json", bytes.NewBuffer(requestBody))
 	if err != nil {
 		return "", err
 	}
