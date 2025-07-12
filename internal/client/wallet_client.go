@@ -31,7 +31,7 @@ func (c *HTTPWalletClient) CreateWallet(traderID string) (string, error) {
 		return "", err
 	}
 
-	response, err := http.Post(fmt.Sprintf("%s/wallets/create", c.Addr), "application/json", bytes.NewBuffer(requestBody))
+	response, err := http.Post(fmt.Sprintf("http://%s/wallets/create", c.Addr), "application/json", bytes.NewBuffer(requestBody))
 	if err != nil {
 		return "", err
 	}

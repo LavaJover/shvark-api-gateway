@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/LavaJover/shvark-api-gateway/internal/client"
-	bankingpb "github.com/LavaJover/shvark-banking-service/proto/gen"
+	orderpb "github.com/LavaJover/shvark-order-service/proto/gen"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"google.golang.org/protobuf/types/known/durationpb"
@@ -16,17 +16,17 @@ import (
 )
 
 type BankingHandler struct {
-	BankingClient *client.BankingClient
+	OrderClient *client.OrderClient
 }
 
 func NewBankingHandler(addr string) (*BankingHandler, error) {
-	bankingClient, err := client.NewBankingClient(addr)
+	orderClient, err := client.NewOrderClient(addr)
 	if err != nil {
 		return nil, err
 	}
 
 	return &BankingHandler{
-		BankingClient: bankingClient,
+		OrderClient: orderClient,
 	}, nil
 }
 
@@ -55,7 +55,7 @@ func (h *BankingHandler) CreateBankDetail(c *gin.Context) {
 		return
 	}
 
-	bankDetailRequest := bankingpb.CreateBankDetailRequest{
+	bankDetailRequest := orderpb.CreateBankDetailRequest{
 		TraderId: request.TraderID,
 		Country: request.Country,
 		Currency: request.Currency,
@@ -77,7 +77,7 @@ func (h *BankingHandler) CreateBankDetail(c *gin.Context) {
 		DeviceId: request.DeviceID,
 	}
 
-	response, err := h.BankingClient.CreateBankDetail(&bankDetailRequest)
+	response, err := h.OrderClient.CreateBankDetail(&bankDetailRequest)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -85,7 +85,6 @@ func (h *BankingHandler) CreateBankDetail(c *gin.Context) {
 
 	c.JSON(http.StatusCreated, bankingResponse.CreateBankDetailResponse{
 		BankDetailId: response.BankDetailId,
-		Message: response.Message,
 	})
 }
 
@@ -108,7 +107,9 @@ func (h *BankingHandler) GetBankDetailByID(c *gin.Context) {
 		return
 	}
 
-	response, err := h.BankingClient.GetBankDetailByID(bankDetailID.String())
+	response, err := h.OrderClient.GetBankDetailByID(&orderpb.GetBankDetailByIDRequest{
+		BankDetailId: bankDetailID.String(),
+	})
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -164,8 +165,8 @@ func (h *BankingHandler) UpdateBankDetail(c *gin.Context) {
 		return
 	}
 
-	bankDetailRequest := bankingpb.UpdateBankDetailRequest{
-		BankDetail: &bankingpb.BankDetail{
+	bankDetailRequest := orderpb.UpdateBankDetailRequest{
+		BankDetail: &orderpb.BankDetail{
 			BankDetailId: request.BankDetail.ID,
 			TraderId: request.BankDetail.TraderID,
 			Currency: request.BankDetail.Currency,
@@ -189,7 +190,7 @@ func (h *BankingHandler) UpdateBankDetail(c *gin.Context) {
 		},
 	}
 
-	_, err = h.BankingClient.UpdateBankDetail(&bankDetailRequest)
+	_, err = h.OrderClient.EditBankDetail(&bankDetailRequest)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -216,7 +217,9 @@ func (h *BankingHandler) GetBankDetailsByTraderID(c *gin.Context) {
 		return
 	}
 
-	response, err := h.BankingClient.GetBankDetailsByTraderID(traderID.String())
+	response, err := h.OrderClient.GetBankDetailsByTraderID(&orderpb.GetBankDetailsByTraderIDRequest{
+		TraderId: traderID.String(),
+	})
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -273,34 +276,52 @@ func (h *BankingHandler) DeleteBankDetail(c *gin.Context) {
 	}
 
 	bankDetailID := request.BankDetailID
-	response, err := h.BankingClient.DeleteBankDetail(bankDetailID)
+	_, err := h.OrderClient.DeleteBankDetail(&orderpb.DeleteBankDetailRequest{
+		BankDetailId: bankDetailID,
+	})
 	if err != nil {
 		c.JSON(http.StatusBadGateway, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, bankingResponse.DeleteBankDetailResponse{
-		BankDetail: bankingResponse.BankDetail{
-			ID: response.BankDetail.BankDetailId,
-			TraderID: response.BankDetail.TraderId,
-			Country: response.BankDetail.Country,
-			Currency: response.BankDetail.Currency,
-			MinAmount: response.BankDetail.MinAmount,
-			MaxAmount: response.BankDetail.MaxAmount,
-			BankName: response.BankDetail.BankName,
-			PaymentSystem: response.BankDetail.PaymentSystem,
-			Delay: response.BankDetail.Delay.AsDuration().Milliseconds(),
-			Enabled: response.BankDetail.Enabled,
-			CardNumber: response.BankDetail.CardNumber,
-			Phone: response.BankDetail.Phone,
-			Owner: response.BankDetail.Owner,
-			MaxOrdersSimultaneosly: response.BankDetail.MaxOrdersSimultaneosly,
-			MaxAmountDay: response.BankDetail.MaxAmountDay,
-			MaxAmountMonth: response.BankDetail.MaxAmountMonth,
-			MaxQuantityDay: int32(response.BankDetail.MaxQuantityDay),
-			MaxQuantityMonth: int32(response.BankDetail.MaxQuantityMonth),
-			DeviceID: response.BankDetail.DeviceId,
-			InflowCurrency: response.BankDetail.InflowCurrency,
-		},
+	c.JSON(http.StatusOK, bankingResponse.DeleteBankDetailResponse{})
+}
+
+// @Summary Get bank details stats
+// @Description Get bank details stats
+// @Tags banking
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param traderID path string true "traderID"
+// @Success 200 {object} bankingResponse.GetBankDetailsStatsResponse
+// @Failure 400 {object} ErrorResponse
+// @Failure 502 {object} ErrorResponse
+// @Router /banking/details/stats/{traderID} [get]
+func (h *BankingHandler) GetBankDetailsStats(c *gin.Context) {
+	traderID := c.Param("traderID")
+	if traderID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "traderID path param missed"})
+		return
+	}
+	response, err := h.OrderClient.GetBankDetailsStatsByTraderID(&orderpb.GetBankDetailsStatsByTraderIDRequest{TraderId: traderID})
+	if err != nil {
+		c.JSON(http.StatusBadGateway, gin.H{"error": err.Error()})
+		return
+	}
+
+	stats := make([]bankingResponse.BankDetailStat, len(response.BankDetailStat))
+	for i, stat := range response.BankDetailStat {
+		stats[i] = bankingResponse.BankDetailStat{
+			BankDetailID: stat.BankDetailId,
+			CurrentCountToday: int(stat.CurrentCountToday),
+			CurrentCountMonth: int(stat.CurrentCountMonth),
+			CurrentAmountToday: stat.CurrentAmountToday,
+			CurrentAmountMonth: stat.CurrentAmountMonth,
+		}
+	}
+
+	c.JSON(http.StatusOK, bankingResponse.GetBankDetailsStatsResponse{
+		Stats: stats,
 	})
 }

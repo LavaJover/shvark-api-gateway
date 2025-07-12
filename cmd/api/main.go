@@ -58,18 +58,16 @@ func main() {
 		log.Printf("failed to init authz handler: %v", err)
 	}
 
-	// init banking-client
-	bankingAddr := fmt.Sprintf("%s:%s", cfg.BankingService.Host, cfg.BankingService.Port)
-	bankingHandler, err := handlers.NewBankingHandler(bankingAddr)
-	if err != nil {
-		log.Printf("failed to init banking handler")
-	}
-
 	// init orders-client
 	ordersAddr := fmt.Sprintf("%s:%s", cfg.OrderService.Host, cfg.OrderService.Port)
 	ordersHandler, err := handlers.NewOrderHandler(ordersAddr)
 	if err != nil {
 		log.Printf("failed to init orders handler: %v\n", err)
+	}
+	
+	bankingHandler, err := handlers.NewBankingHandler(ordersAddr)
+	if err != nil {
+		log.Printf("failed to init banking handler")
 	}
 
 	// init wallet client
@@ -126,7 +124,8 @@ func main() {
 		bankingGroup.POST("/details/delete", bankingHandler.DeleteBankDetail)
 		bankingGroup.GET("/details/:uuid", bankingHandler.GetBankDetailByID)
 		bankingGroup.PATCH("/details", bankingHandler.UpdateBankDetail)
-		bankingGroup.GET("/details", bankingHandler.GetBankDetailsByTraderID)	
+		bankingGroup.GET("/details", bankingHandler.GetBankDetailsByTraderID)
+		bankingGroup.GET("/details/stats/:traderID", bankingHandler.GetBankDetailsStats)
 	}
 
 	// orders-service

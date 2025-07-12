@@ -15,6 +15,7 @@ type OrderClient struct {
 	conn *grpc.ClientConn
 	service orderpb.OrderServiceClient
 	trafficService orderpb.TrafficServiceClient
+	bankDetailService orderpb.BankDetailServiceClient
 }
 
 func NewOrderClient(addr string) (*OrderClient, error) {
@@ -36,6 +37,7 @@ func NewOrderClient(addr string) (*OrderClient, error) {
 		conn: conn,
 		service: orderpb.NewOrderServiceClient(conn),
 		trafficService: orderpb.NewTrafficServiceClient(conn),
+		bankDetailService: orderpb.NewBankDetailServiceClient(conn),
 	}, nil
 }
 
@@ -284,4 +286,64 @@ func (c *OrderClient) FreeezeDispute(disputeID string) error {
 	)
 
 	return err
+}
+
+func (c *OrderClient) CreateBankDetail(createBankDetailRequest *orderpb.CreateBankDetailRequest) (*orderpb.CreateBankDetailResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	return c.bankDetailService.CreateBankDetail(
+		ctx,
+		createBankDetailRequest,
+	)
+}
+
+func (c *OrderClient) EditBankDetail(editBankDetailRequest *orderpb.UpdateBankDetailRequest) (*orderpb.UpdateBankDetailResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	return c.bankDetailService.UpdateBankDetail(
+		ctx,
+		editBankDetailRequest,
+	)
+}
+
+func (c *OrderClient) DeleteBankDetail(deleteBankDetailRequest *orderpb.DeleteBankDetailRequest) (*orderpb.DeleteBankDetailResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	return c.bankDetailService.DeleteBankDetail(
+		ctx,
+		deleteBankDetailRequest,
+	)
+}
+
+func (c *OrderClient) GetBankDetailsByTraderID(getBankDetailsRequest *orderpb.GetBankDetailsByTraderIDRequest) (*orderpb.GetBankDetailsByTraderIDResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	return c.bankDetailService.GetBankDetailsByTraderID(
+		ctx,
+		getBankDetailsRequest,
+	)
+}
+
+func (c *OrderClient) GetBankDetailByID(getbankDetailRequest *orderpb.GetBankDetailByIDRequest) (*orderpb.GetBankDetailByIDResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	return c.bankDetailService.GetBankDetailByID(
+		ctx,
+		getbankDetailRequest,
+	)
+}
+
+func (c *OrderClient) GetBankDetailsStatsByTraderID(getStatsRequest *orderpb.GetBankDetailsStatsByTraderIDRequest) (*orderpb.GetBankDetailsStatsByTraderIDResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	return c.bankDetailService.GetBankDetailsStatsByTraderID(
+		ctx,
+		getStatsRequest,
+	)
 }

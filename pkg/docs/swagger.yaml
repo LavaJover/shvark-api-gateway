@@ -524,6 +524,19 @@ definitions:
       error:
         type: string
     type: object
+  response.BankDetailStat:
+    properties:
+      bank_detail_id:
+        type: string
+      current_amount_month:
+        type: number
+      current_amount_today:
+        type: number
+      current_count_month:
+        type: integer
+      current_count_today:
+        type: integer
+    type: object
   response.CancelOrderResponse:
     properties:
       message:
@@ -668,6 +681,13 @@ definitions:
       bank_details:
         items:
           $ref: '#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_banking_response.BankDetail'
+        type: array
+    type: object
+  response.GetBankDetailsStatsResponse:
+    properties:
+      stats:
+        items:
+          $ref: '#/definitions/response.BankDetailStat'
         type: array
     type: object
   response.GetDisputeInfoResponse:
@@ -1495,6 +1515,37 @@ paths:
       security:
       - BearerAuth: []
       summary: Delete bank detail
+      tags:
+      - banking
+  /banking/details/stats/{traderID}:
+    get:
+      consumes:
+      - application/json
+      description: Get bank details stats
+      parameters:
+      - description: traderID
+        in: path
+        name: traderID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.GetBankDetailsStatsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get bank details stats
       tags:
       - banking
   /login:

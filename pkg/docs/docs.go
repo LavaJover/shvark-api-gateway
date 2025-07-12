@@ -808,6 +808,55 @@ const docTemplate = `{
                 }
             }
         },
+        "/banking/details/stats/{traderID}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get bank details stats",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "banking"
+                ],
+                "summary": "Get bank details stats",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "traderID",
+                        "name": "traderID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.GetBankDetailsStatsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "Bad Gateway",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/banking/details/{uuid}": {
             "get": {
                 "security": [
@@ -3290,6 +3339,26 @@ const docTemplate = `{
                 }
             }
         },
+        "response.BankDetailStat": {
+            "type": "object",
+            "properties": {
+                "bank_detail_id": {
+                    "type": "string"
+                },
+                "current_amount_month": {
+                    "type": "number"
+                },
+                "current_amount_today": {
+                    "type": "number"
+                },
+                "current_count_month": {
+                    "type": "integer"
+                },
+                "current_count_today": {
+                    "type": "integer"
+                }
+            }
+        },
         "response.CancelOrderResponse": {
             "type": "object",
             "properties": {
@@ -3513,6 +3582,17 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_banking_response.BankDetail"
+                    }
+                }
+            }
+        },
+        "response.GetBankDetailsStatsResponse": {
+            "type": "object",
+            "properties": {
+                "stats": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/response.BankDetailStat"
                     }
                 }
             }
