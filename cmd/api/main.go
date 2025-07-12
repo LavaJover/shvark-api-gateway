@@ -172,7 +172,6 @@ func main() {
 		ordersHandler.OrderClient,
 		walletClient,
 	)
-
 	adminGroup := r.Group("/api/v1/admin")
 	{
 		adminGroup.POST("/teams/create", adminHandler.CreateTeam)
@@ -185,6 +184,12 @@ func main() {
 		adminGroup.POST("/disputes/reject", adminHandler.RejectDispute)
 		adminGroup.GET("/disputes/:id", adminHandler.GetDisputeInfo)
 		adminGroup.POST("/disputes/freeze", adminHandler.FreezeDispute)
+	}
+
+	merchantHandler := handlers.NewMerchanHandler(ordersHandler.OrderClient)
+	merchantGroup := r.Group("/api/v1/merchant")
+	{
+		merchantGroup.POST("/order/:accountID/deposit", merchantHandler.CreatePayIn)
 	}
 
 	r.Run(":8080")

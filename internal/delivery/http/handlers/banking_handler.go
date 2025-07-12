@@ -75,6 +75,8 @@ func (h *BankingHandler) CreateBankDetail(c *gin.Context) {
 		MaxQuantityDay: float64(request.MaxQuantityDay),
 		MaxQuantityMonth: float64(request.MaxQuantityMonth),
 		DeviceId: request.DeviceID,
+		BankCode: request.BankCode,
+		NspkCode: request.NspkCode,
 	}
 
 	response, err := h.OrderClient.CreateBankDetail(&bankDetailRequest)
@@ -137,6 +139,8 @@ func (h *BankingHandler) GetBankDetailByID(c *gin.Context) {
 			MaxQuantityMonth: int32(response.BankDetail.MaxQuantityMonth),
 			DeviceID: response.BankDetail.DeviceId,
 			InflowCurrency: response.BankDetail.InflowCurrency,
+			BankCode: response.BankDetail.BankCode,
+			NspkCode: response.BankDetail.NspkCode,
 		},
 	})
 }
@@ -187,6 +191,8 @@ func (h *BankingHandler) UpdateBankDetail(c *gin.Context) {
 			MaxQuantityMonth: float64(request.BankDetail.MaxQuantityMonth),
 			DeviceId: request.BankDetail.DeviceID,
 			InflowCurrency: request.BankDetail.InflowCurrency,
+			BankCode: request.BankDetail.BankCode,
+			NspkCode: request.BankDetail.NspkCode,
 		},
 	}
 
@@ -248,6 +254,8 @@ func (h *BankingHandler) GetBankDetailsByTraderID(c *gin.Context) {
 			MaxQuantityMonth: int32(bankDetail.MaxQuantityMonth),
 			DeviceID: bankDetail.DeviceId,
 			InflowCurrency: bankDetail.InflowCurrency,
+			BankCode: bankDetail.BankCode,
+			NspkCode: bankDetail.NspkCode,
 		}
 	}
 

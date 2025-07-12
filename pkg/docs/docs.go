@@ -952,6 +952,59 @@ const docTemplate = `{
                 }
             }
         },
+        "/merchant/order/{accountID}/deposit": {
+            "post": {
+                "description": "Create new pay-in order",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "merchant"
+                ],
+                "summary": "Create new deposit order",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "merchant account ID",
+                        "name": "accountID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "new deposit order details",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/merchant.CreatePayInRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/merchant.CreatePayInResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/orders": {
             "post": {
                 "security": [
@@ -2586,6 +2639,9 @@ const docTemplate = `{
         "github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_banking_response.BankDetail": {
             "type": "object",
             "properties": {
+                "bank_code": {
+                    "type": "string"
+                },
                 "bank_name": {
                     "type": "string"
                 },
@@ -2633,6 +2689,9 @@ const docTemplate = `{
                 },
                 "min_amount": {
                     "type": "number"
+                },
+                "nspk_code": {
+                    "type": "string"
                 },
                 "owner": {
                     "type": "string"
@@ -2743,6 +2802,67 @@ const docTemplate = `{
                 }
             }
         },
+        "merchant.CreatePayInRequest": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "callbackUrl": {
+                    "type": "string"
+                },
+                "currency": {
+                    "type": "string"
+                },
+                "isSbp": {
+                    "type": "boolean"
+                },
+                "issuer": {
+                    "type": "string"
+                },
+                "iternalId": {
+                    "type": "string"
+                },
+                "nspkCode": {
+                    "type": "string"
+                }
+            }
+        },
+        "merchant.CreatePayInResponse": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "amountByCurrency": {
+                    "type": "number"
+                },
+                "cardNumber": {
+                    "type": "string"
+                },
+                "currencyRate": {
+                    "type": "number"
+                },
+                "holderName": {
+                    "type": "string"
+                },
+                "issuer": {
+                    "type": "string"
+                },
+                "nspkCode": {
+                    "type": "string"
+                },
+                "orderId": {
+                    "type": "string"
+                },
+                "phoneNumber": {
+                    "type": "string"
+                },
+                "timeExpires": {
+                    "type": "integer"
+                }
+            }
+        },
         "request.AcceptDisputeRequest": {
             "type": "object",
             "properties": {
@@ -2796,6 +2916,9 @@ const docTemplate = `{
         "request.BankDetail": {
             "type": "object",
             "properties": {
+                "bank_code": {
+                    "type": "string"
+                },
                 "bank_name": {
                     "type": "string"
                 },
@@ -2844,6 +2967,9 @@ const docTemplate = `{
                 "min_amount": {
                     "type": "number"
                 },
+                "nspk_code": {
+                    "type": "string"
+                },
                 "owner": {
                     "type": "string"
                 },
@@ -2888,6 +3014,9 @@ const docTemplate = `{
         "request.CreateBankDetailRequest": {
             "type": "object",
             "properties": {
+                "bank_code": {
+                    "type": "string"
+                },
                 "bank_name": {
                     "type": "string"
                 },
@@ -2933,6 +3062,9 @@ const docTemplate = `{
                 },
                 "min_amount": {
                     "type": "number"
+                },
+                "nspk_code": {
+                    "type": "string"
                 },
                 "owner": {
                     "type": "string"

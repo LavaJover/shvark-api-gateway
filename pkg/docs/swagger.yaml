@@ -31,6 +31,8 @@ definitions:
     type: object
   github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_banking_response.BankDetail:
     properties:
+      bank_code:
+        type: string
       bank_name:
         type: string
       card_number:
@@ -63,6 +65,8 @@ definitions:
         type: integer
       min_amount:
         type: number
+      nspk_code:
+        type: string
       owner:
         type: string
       payment_system:
@@ -134,6 +138,46 @@ definitions:
         example: invalid data
         type: string
     type: object
+  merchant.CreatePayInRequest:
+    properties:
+      amount:
+        type: number
+      callbackUrl:
+        type: string
+      currency:
+        type: string
+      isSbp:
+        type: boolean
+      issuer:
+        type: string
+      iternalId:
+        type: string
+      nspkCode:
+        type: string
+    type: object
+  merchant.CreatePayInResponse:
+    properties:
+      amount:
+        type: number
+      amountByCurrency:
+        type: number
+      cardNumber:
+        type: string
+      currencyRate:
+        type: number
+      holderName:
+        type: string
+      issuer:
+        type: string
+      nspkCode:
+        type: string
+      orderId:
+        type: string
+      phoneNumber:
+        type: string
+      timeExpires:
+        type: integer
+    type: object
   request.AcceptDisputeRequest:
     properties:
       dispute_id:
@@ -169,6 +213,8 @@ definitions:
     type: object
   request.BankDetail:
     properties:
+      bank_code:
+        type: string
       bank_name:
         type: string
       card_number:
@@ -201,6 +247,8 @@ definitions:
         type: integer
       min_amount:
         type: number
+      nspk_code:
+        type: string
       owner:
         type: string
       payment_system:
@@ -230,6 +278,8 @@ definitions:
     type: object
   request.CreateBankDetailRequest:
     properties:
+      bank_code:
+        type: string
       bank_name:
         type: string
       card_number:
@@ -261,6 +311,8 @@ definitions:
         type: integer
       min_amount:
         type: number
+      nspk_code:
+        type: string
       owner:
         type: string
       payment_system:
@@ -1578,6 +1630,41 @@ paths:
       summary: User login
       tags:
       - auth
+  /merchant/order/{accountID}/deposit:
+    post:
+      consumes:
+      - application/json
+      description: Create new pay-in order
+      parameters:
+      - description: merchant account ID
+        in: path
+        name: accountID
+        required: true
+        type: string
+      - description: new deposit order details
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/merchant.CreatePayInRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/merchant.CreatePayInResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Create new deposit order
+      tags:
+      - merchant
   /orders:
     post:
       consumes:
