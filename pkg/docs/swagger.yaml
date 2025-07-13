@@ -138,6 +138,15 @@ definitions:
         example: invalid data
         type: string
     type: object
+  merchant.AccountBalance:
+    properties:
+      balance:
+        type: string
+      currency:
+        type: string
+      name:
+        type: string
+    type: object
   merchant.CreatePayInRequest:
     properties:
       amount:
@@ -177,6 +186,33 @@ definitions:
         type: string
       timeExpires:
         type: integer
+    type: object
+  merchant.GetAccountBalanceResponse:
+    properties:
+      balances:
+        items:
+          $ref: '#/definitions/merchant.AccountBalance'
+        type: array
+    type: object
+  merchant.WithdrawRequest:
+    properties:
+      amount:
+        type: number
+      currency:
+        type: string
+      toAddress:
+        type: string
+    type: object
+  merchant.WithdrawResponse:
+    properties:
+      amount:
+        type: number
+      currency:
+        type: string
+      toAddress:
+        type: string
+      txHash:
+        type: string
     type: object
   request.AcceptDisputeRequest:
     properties:
@@ -1630,6 +1666,71 @@ paths:
       summary: User login
       tags:
       - auth
+  /merchant/accounts/balance:
+    get:
+      consumes:
+      - application/json
+      description: Get account balance
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/merchant.GetAccountBalanceResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get balance
+      tags:
+      - merchant
+  /merchant/accounts/withdraw/create:
+    post:
+      consumes:
+      - application/json
+      description: Withdraw USDT
+      parameters:
+      - description: withdraw data
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/merchant.WithdrawRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/merchant.WithdrawResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Withdraw crypto from account wallet
+      tags:
+      - merchant
   /merchant/order/{accountID}/deposit:
     post:
       consumes:

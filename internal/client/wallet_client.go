@@ -50,3 +50,71 @@ func (c *HTTPWalletClient) CreateWallet(traderID string) (string, error) {
 	}
 	return "", fmt.Errorf("failed to create wallet for trader")
 }
+
+type balanceResponse struct {
+	UserID  string  `json:"userId"`
+	Address string  `json:"address"`
+	Balance float64 `json:"balance"`
+	Frozen  float64 `json:"frozen"`
+}
+
+func (c *HTTPWalletClient) GetBalance(userID string) (float64, error){
+	url := fmt.Sprintf("http://%s/wallets/%s/balance",c.Addr, userID)
+	resp, err := http.Get(url)
+	if err != nil {
+		return 0, fmt.Errorf("failed to make GET request: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return 0, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
+	}
+
+	var result balanceResponse
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		return 0, fmt.Errorf("failed to decode response: %w", err)
+	}
+
+	return result.Balance, nil
+}
+
+
+type withdrawRequest struct {
+	TraderID  string  `json:"traderId"`
+	ToAddress string  `json:"toAddress"`
+	Amount    float64 `json:"amount"`
+}
+
+type withdrawResponse struct {
+	TxHash string `json:"txHash"`
+}
+
+func (c *HTTPWalletClient) Withdraw(userID, toAddress string, amount float64) (string, error) {
+	reqBody := withdrawRequest{
+		TraderID:  userID,
+		ToAddress: toAddress,
+		Amount:    amount,
+	}
+
+	jsonData, err := json.Marshal(reqBody)
+	if err != nil {
+		return "", fmt.Errorf("failed to marshal request: %w", err)
+	}
+
+	resp, err := http.Post(fmt.Sprintf("http://%s/wallets/withdraw", c.Addr), "application/json", bytes.NewBuffer(jsonData))
+	if err != nil {
+		return "", fmt.Errorf("failed to make POST request: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("unexpected status code: %d", resp.StatusCode)
+	}
+
+	var res withdrawResponse
+	if err := json.NewDecoder(resp.Body).Decode(&res); err != nil {
+		return "", fmt.Errorf("failed to decode response: %w", err)
+	}
+
+	return res.TxHash, nil
+}

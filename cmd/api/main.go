@@ -34,7 +34,7 @@ func main() {
 
 	// setup swagger based on development environment
 	docs.SwaggerInfo.Host = fmt.Sprintf("%s:%s",  cfg.SwaggerConfig.Host, cfg.SwaggerConfig.Port)
-	docs.SwaggerInfo.Schemes = []string{cfg.SwaggerConfig.Schemes}
+	docs.SwaggerInfo.Schemes = []string{cfg.SwaggerConfig.Schemes, "https"}
 	docs.SwaggerInfo.BasePath = cfg.SwaggerConfig.BasePath
 
 	// init sso-client
@@ -186,10 +186,12 @@ func main() {
 		adminGroup.POST("/disputes/freeze", adminHandler.FreezeDispute)
 	}
 
-	merchantHandler := handlers.NewMerchanHandler(ordersHandler.OrderClient)
+	merchantHandler := handlers.NewMerchanHandler(ordersHandler.OrderClient, walletClient)
 	merchantGroup := r.Group("/api/v1/merchant")
 	{
 		merchantGroup.POST("/order/:accountID/deposit", merchantHandler.CreatePayIn)
+		merchantGroup.GET("/accounts/balance", middleware.AuthMiddleware(authHandler.SSOClient), merchantHandler.GetAccountBalance)
+		merchantGroup.POST("/accounts/withdraw/create", middleware.AuthMiddleware(authHandler.SSOClient), merchantHandler.Withdraw)
 	}
 
 	r.Run(":8080")

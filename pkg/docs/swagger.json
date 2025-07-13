@@ -949,6 +949,109 @@
                 }
             }
         },
+        "/merchant/accounts/balance": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get account balance",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "merchant"
+                ],
+                "summary": "Get balance",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/merchant.GetAccountBalanceResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "Bad Gateway",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/merchant/accounts/withdraw/create": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Withdraw USDT",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "merchant"
+                ],
+                "summary": "Withdraw crypto from account wallet",
+                "parameters": [
+                    {
+                        "description": "withdraw data",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/merchant.WithdrawRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/merchant.WithdrawResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "Bad Gateway",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/merchant/order/{accountID}/deposit": {
             "post": {
                 "description": "Create new pay-in order",
@@ -2799,6 +2902,20 @@
                 }
             }
         },
+        "merchant.AccountBalance": {
+            "type": "object",
+            "properties": {
+                "balance": {
+                    "type": "string"
+                },
+                "currency": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
         "merchant.CreatePayInRequest": {
             "type": "object",
             "properties": {
@@ -2857,6 +2974,48 @@
                 },
                 "timeExpires": {
                     "type": "integer"
+                }
+            }
+        },
+        "merchant.GetAccountBalanceResponse": {
+            "type": "object",
+            "properties": {
+                "balances": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/merchant.AccountBalance"
+                    }
+                }
+            }
+        },
+        "merchant.WithdrawRequest": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "currency": {
+                    "type": "string"
+                },
+                "toAddress": {
+                    "type": "string"
+                }
+            }
+        },
+        "merchant.WithdrawResponse": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "currency": {
+                    "type": "string"
+                },
+                "toAddress": {
+                    "type": "string"
+                },
+                "txHash": {
+                    "type": "string"
                 }
             }
         },
