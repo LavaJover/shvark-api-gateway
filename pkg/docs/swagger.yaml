@@ -509,6 +509,8 @@ definitions:
       password:
         minLength: 8
         type: string
+      role:
+        type: string
       username:
         type: string
     required:

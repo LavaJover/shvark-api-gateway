@@ -7,8 +7,8 @@ require (
 	github.com/LavaJover/shvark-banking-service v0.0.6
 	github.com/LavaJover/shvark-order-service v0.0.29
 	github.com/LavaJover/shvark-profile-service v0.0.0-20250519161935-955e6b16225d
-	github.com/LavaJover/shvark-sso-service v0.0.3
-	github.com/LavaJover/shvark-user-service v0.0.6
+	github.com/LavaJover/shvark-sso-service v0.0.4
+	github.com/LavaJover/shvark-user-service v0.0.7
 	github.com/gin-gonic/gin v1.10.1
 	github.com/google/uuid v1.6.0
 	github.com/ilyakaznacheev/cleanenv v1.5.0

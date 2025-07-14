@@ -3475,6 +3475,9 @@ const docTemplate = `{
                     "type": "string",
                     "minLength": 8
                 },
+                "role": {
+                    "type": "string"
+                },
                 "username": {
                     "type": "string"
                 }

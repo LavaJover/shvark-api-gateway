@@ -95,3 +95,23 @@ func (c *UserClient) GetUserByLogin(login string) (*userpb.GetUserByLoginRespons
 		},
 	)
 }
+
+func (c *UserClient) GetTraders() (*userpb.GetTradersResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	return c.service.GetTraders(
+		ctx,
+		&userpb.GetTradersRequest{},
+	)
+}
+
+func (c *UserClient) GetMerchants() (*userpb.GetMerchantsResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	return c.service.GetMerchants(
+		ctx,
+		&userpb.GetMerchantsRequest{},
+	)
+}

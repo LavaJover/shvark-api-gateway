@@ -53,6 +53,7 @@ func (h *AdminHandler) CreateTeam(c *gin.Context) {
 		request.Login,
 		request.Username,
 		request.Password,
+		"TRADER",
 	)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, ErrorResponse{Error: err.Error()})
@@ -100,6 +101,7 @@ func (h *AdminHandler) CreateMerchant(c *gin.Context) {
 		request.Login,
 		request.Username,
 		request.Password,
+		"MERCHANT",
 	)
 	if err != nil {
 		c.JSON(http.StatusBadGateway, ErrorResponse{Error: err.Error()})

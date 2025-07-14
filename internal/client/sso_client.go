@@ -36,7 +36,7 @@ func NewSSOClient(addr string) (*SSOClient, error) {
 	}, err
 }
 
-func (c *SSOClient) Register(login, username, rawPassword string) (*ssopb.RegisterResponse, error) {
+func (c *SSOClient) Register(login, username, rawPassword, role string) (*ssopb.RegisterResponse, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -44,12 +44,13 @@ func (c *SSOClient) Register(login, username, rawPassword string) (*ssopb.Regist
 		Login: login,
 		Username: username,
 		Password: rawPassword,
+		Role: role,
 	})
 }
 
-func (c *SSOClient) RegisterWithretry(login, username, rawPassword string, maxRetries int) (*ssopb.RegisterResponse, error) {
+func (c *SSOClient) RegisterWithretry(login, username, rawPassword, role string, maxRetries int) (*ssopb.RegisterResponse, error) {
 	for range maxRetries {
-		resp, err := c.Register(login, username, rawPassword)
+		resp, err := c.Register(login, username, rawPassword, role)
 		if err == nil {
 			return resp, err
 		}

@@ -55,7 +55,7 @@ func (h *AuthHandler) Register(c *gin.Context) {
 	}
 
 	// calling gRPC sso-service
-	response, err := h.SSOClient.Register(request.Login, request.Username, request.Password)
+	response, err := h.SSOClient.Register(request.Login, request.Username, request.Password, request.Role)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 	}
