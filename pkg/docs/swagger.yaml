@@ -902,6 +902,13 @@ definitions:
       username:
         type: string
     type: object
+  response.GetUsersResponse:
+    properties:
+      users:
+        items:
+          $ref: '#/definitions/response.User'
+        type: array
+    type: object
   response.LoginResponse:
     properties:
       access_token:
@@ -1046,6 +1053,15 @@ definitions:
         type: string
     type: object
   response.UpdateBankDetailResponse:
+    type: object
+  response.User:
+    properties:
+      login:
+        type: string
+      role:
+        type: string
+      username:
+        type: string
     type: object
   response.ValidateTokenResponse:
     properties:
@@ -1282,6 +1298,25 @@ paths:
       summary: Reject active dispute
       tags:
       - admin
+  /admin/merchants:
+    get:
+      consumes:
+      - application/json
+      description: Get merchants
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.GetUsersResponse'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Get merchants
+      tags:
+      - admin
   /admin/merchants/create:
     post:
       consumes:
@@ -1344,6 +1379,25 @@ paths:
       security:
       - BearerAuth: []
       summary: Create new team
+      tags:
+      - admin
+  /admin/traders:
+    get:
+      consumes:
+      - application/json
+      description: Get traders
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.GetUsersResponse'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Get traders
       tags:
       - admin
   /admin/traffic/create:

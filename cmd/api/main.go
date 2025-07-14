@@ -171,6 +171,7 @@ func main() {
 		authzHandler.AuthzClient,
 		ordersHandler.OrderClient,
 		walletClient,
+		userHandler.UserClient,
 	)
 	adminGroup := r.Group("/api/v1/admin")
 	{
@@ -184,6 +185,8 @@ func main() {
 		adminGroup.POST("/disputes/reject", adminHandler.RejectDispute)
 		adminGroup.GET("/disputes/:id", adminHandler.GetDisputeInfo)
 		adminGroup.POST("/disputes/freeze", adminHandler.FreezeDispute)
+		adminGroup.GET("/traders", adminHandler.GetTraders)
+		adminGroup.GET("/merchants", adminHandler.GetMerchants)
 	}
 
 	merchantHandler := handlers.NewMerchanHandler(ordersHandler.OrderClient, walletClient)

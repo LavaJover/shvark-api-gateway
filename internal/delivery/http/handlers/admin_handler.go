@@ -15,6 +15,7 @@ type AdminHandler struct {
 	AuthzClient *client.AuthzClient
 	OrderClient *client.OrderClient
 	WalletClient *client.HTTPWalletClient
+	UserClient *client.UserClient
 }
 
 func NewAdminHandler(
@@ -22,12 +23,14 @@ func NewAdminHandler(
 	authzClient *client.AuthzClient,
 	orderClient *client.OrderClient,
 	walletClient *client.HTTPWalletClient,
+	userClient *client.UserClient,
 ) *AdminHandler {
 	return &AdminHandler{
 		SSOClient: ssoClient,
 		AuthzClient: authzClient,
 		OrderClient: orderClient,
 		WalletClient: walletClient,
+		UserClient: userClient,
 	}
 }
 
@@ -380,4 +383,64 @@ func (h *AdminHandler) FreezeDispute(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, adminResponse.FreezeDisputeResponse{})
+}
+
+// @Summary Get traders
+// @Description Get traders
+// @Tags admin
+// @Accept json
+// @Produce json
+// @Success 200 {object} adminResponse.GetUsersResponse
+// @Failure 502 {object} ErrorResponse
+// @Router /admin/traders [get]
+func (h *AdminHandler) GetTraders(c *gin.Context) {
+	response, err := h.UserClient.GetTraders()
+	if err != nil {
+		c.JSON(http.StatusBadGateway, gin.H{"error": err.Error()})
+		return
+	}
+
+	tradersResp := make([]adminResponse.User, len(response.Traders))
+
+	for i, trader := range response.Traders {
+		tradersResp[i] = adminResponse.User{
+			Username: trader.Username,
+			Login: trader.Login,
+			Role: trader.Role,
+		}
+	}
+
+	c.JSON(http.StatusOK, adminResponse.GetUsersResponse{
+		Users: tradersResp,
+	})
+}
+
+// @Summary Get merchants
+// @Description Get merchants
+// @Tags admin
+// @Accept json
+// @Produce json
+// @Success 200 {object} adminResponse.GetUsersResponse
+// @Failure 502 {object} ErrorResponse
+// @Router /admin/merchants [get]
+func (h *AdminHandler) GetMerchants(c *gin.Context) {
+	response, err := h.UserClient.GetMerchants()
+	if err != nil {
+		c.JSON(http.StatusBadGateway, gin.H{"error": err.Error()})
+		return
+	}
+
+	merchantsResp := make([]adminResponse.User, len(response.Merchants))
+
+	for i, merchant := range response.Merchants {
+		merchantsResp[i] = adminResponse.User{
+			Username: merchant.Username,
+			Login: merchant.Login,
+			Role: merchant.Role,
+		}
+	}
+
+	c.JSON(http.StatusOK, adminResponse.GetUsersResponse{
+		Users: merchantsResp,
+	})
 }
