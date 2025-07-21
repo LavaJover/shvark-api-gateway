@@ -16,6 +16,16 @@ github.com/LavaJover/shvark-order-service v0.0.28 h1:kA0N4mfdp6hkyL2Hg1M37F/5fXz
 github.com/LavaJover/shvark-order-service v0.0.28/go.mod h1:5XztLEpoP2BjxrjGjm1qBrwvabVJPXeq9O/ldntjltY=
 github.com/LavaJover/shvark-order-service v0.0.29 h1:tou0gJ8t/Yrbmttiie07Lk+1vAhis4uZG71NmYhr3sI=
 github.com/LavaJover/shvark-order-service v0.0.29/go.mod h1:5XztLEpoP2BjxrjGjm1qBrwvabVJPXeq9O/ldntjltY=
+github.com/LavaJover/shvark-order-service v0.0.30 h1:XBZq98QIdCTBAyHN4DE22VJXFgD+/qL9jkm2NpAW0Gw=
+github.com/LavaJover/shvark-order-service v0.0.30/go.mod h1:5XztLEpoP2BjxrjGjm1qBrwvabVJPXeq9O/ldntjltY=
+github.com/LavaJover/shvark-order-service v0.0.31 h1:o0A1wvOU1/cOMPccViYZleKXScpqzetQQaU3usv7zcI=
+github.com/LavaJover/shvark-order-service v0.0.31/go.mod h1:5XztLEpoP2BjxrjGjm1qBrwvabVJPXeq9O/ldntjltY=
+github.com/LavaJover/shvark-order-service v0.0.32 h1:nctaMsa87Pl8me/ujpFSjNMindcJzTxMW+Savrh2/74=
+github.com/LavaJover/shvark-order-service v0.0.32/go.mod h1:5XztLEpoP2BjxrjGjm1qBrwvabVJPXeq9O/ldntjltY=
+github.com/LavaJover/shvark-order-service v0.0.33 h1:z1LtTjo6h1nTIbVwWwT1IMOmGATELgE1YZ0TG0ekEGk=
+github.com/LavaJover/shvark-order-service v0.0.33/go.mod h1:5XztLEpoP2BjxrjGjm1qBrwvabVJPXeq9O/ldntjltY=
+github.com/LavaJover/shvark-order-service v0.0.34 h1:3LTrzWH4rJfiiR4w0VTsVRgzMqHUDxmpSJynNS8vXv4=
+github.com/LavaJover/shvark-order-service v0.0.34/go.mod h1:5XztLEpoP2BjxrjGjm1qBrwvabVJPXeq9O/ldntjltY=
 github.com/LavaJover/shvark-profile-service v0.0.0-20250519161935-955e6b16225d h1:xuRct1ICwKAOcrXokgOy2AF1YdvKl0ku9GIqAZLyGsc=
 github.com/LavaJover/shvark-profile-service v0.0.0-20250519161935-955e6b16225d/go.mod h1:xSLMdyF68a2I1L23yzsOsVNQkRuXblIsp6WhLlIY9ak=
 github.com/LavaJover/shvark-sso-service v0.0.3 h1:aLDi2OkDhxorVeoLYPGsjsIDsL6DKSTdFcCI14ONsMI=

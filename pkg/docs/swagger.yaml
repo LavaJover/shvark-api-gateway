@@ -2,6 +2,8 @@ basePath: /api/v1
 definitions:
   github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_admin_request.CreateDisputeRequest:
     properties:
+      dispute_amount_fiat:
+        type: number
       dispute_reason:
         type: string
       order_id:
@@ -11,6 +13,21 @@ definitions:
       ttl:
         type: string
     type: object
+  github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_admin_response.BankDetail:
+    properties:
+      bank_name:
+        type: string
+      card_number:
+        type: string
+      owner:
+        type: string
+      payment_system:
+        type: string
+      phone:
+        type: string
+      trader_id:
+        type: string
+    type: object
   github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_admin_response.CreateDisputeResponse:
     properties:
       dispute_id:
@@ -18,16 +35,52 @@ definitions:
     type: object
   github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_admin_response.Dispute:
     properties:
+      accept_at:
+        type: string
+      dispute_amount_crypto:
+        type: number
+      dispute_amount_fiat:
+        type: number
+      dispute_crypto_rate:
+        type: number
       dispute_id:
         type: string
       dispute_reason:
         type: string
       dispute_status:
         type: string
+      order:
+        $ref: '#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_admin_response.Order'
       order_id:
         type: string
       proof_url:
         type: string
+    type: object
+  github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_admin_response.Order:
+    properties:
+      amount_crypto:
+        type: number
+      amount_fiat:
+        type: number
+      bank_detail:
+        $ref: '#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_admin_response.BankDetail'
+      crypro_rate:
+        type: number
+      merchant_order_id:
+        type: string
+      order_id:
+        type: string
+    type: object
+  github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_admin_response.Pagination:
+    properties:
+      current_page:
+        type: integer
+      items_per_page:
+        type: integer
+      total_items:
+        type: integer
+      total_pages:
+        type: integer
     type: object
   github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_banking_response.BankDetail:
     properties:
@@ -105,8 +158,48 @@ definitions:
       trader_id:
         type: string
     type: object
+  github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_order_response.Order:
+    properties:
+      amount_crypto:
+        type: number
+      amount_fiat:
+        type: number
+      bank_detail:
+        $ref: '#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_order_response.BankDetail'
+      created_at:
+        type: string
+      crypto_rub_rate:
+        type: number
+      expires_at:
+        type: string
+      merchant_id:
+        type: string
+      merchant_order_id:
+        type: string
+      order_id:
+        type: string
+      status:
+        type: string
+      trader_reward:
+        type: number
+      updated_at:
+        type: string
+    type: object
+  github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_order_response.Pagination:
+    properties:
+      current_page:
+        type: integer
+      items_per_page:
+        type: integer
+      total_items:
+        type: integer
+      total_pages:
+        type: integer
+    type: object
   github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_payment_request.CreateDisputeRequest:
     properties:
+      amount_fiat:
+        type: number
       proof_url:
         type: string
       reason:
@@ -497,6 +590,15 @@ definitions:
       two_fa_code:
         type: string
     type: object
+  request.OffchainWithdrawRequest:
+    properties:
+      amount:
+        type: number
+      traderId:
+        type: string
+      txHash:
+        type: string
+    type: object
   request.OpenOrderDisputeRequest:
     properties:
       order_id:
@@ -546,6 +648,17 @@ definitions:
     required:
     - role
     - user_id
+    type: object
+  request.SetWithdrawalRulesRequest:
+    properties:
+      cooldown_seconds:
+        type: integer
+      fixed_fee:
+        type: number
+      min_amount:
+        type: number
+      user_id:
+        type: string
     type: object
   request.Traffic:
     properties:
@@ -730,6 +843,8 @@ definitions:
     required:
     - success
     type: object
+  response.DeleteWithdrawalRulesResponse:
+    type: object
   response.DepositErrorResponse:
     properties:
       error:
@@ -817,16 +932,44 @@ definitions:
   response.GetOrderByIDResponse:
     properties:
       order:
-        $ref: '#/definitions/response.Order'
+        $ref: '#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_order_response.Order'
+    type: object
+  response.GetOrderDisputesResponse:
+    properties:
+      disputes:
+        items:
+          $ref: '#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_admin_response.Dispute'
+        type: array
+      pagination:
+        $ref: '#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_admin_response.Pagination'
+    type: object
+  response.GetOrderStatsResponse:
+    properties:
+      canceled_amount_crypto:
+        type: number
+      canceled_amount_fiat:
+        type: number
+      canceled_orders:
+        type: integer
+      income_crypto:
+        type: number
+      processed_amount_crypto:
+        type: number
+      processed_amount_fiat:
+        type: number
+      succeed_orders:
+        type: integer
+      total_orders:
+        type: integer
     type: object
   response.GetOrdersByTraderIDResponse:
     properties:
       orders:
         items:
-          $ref: '#/definitions/response.Order'
+          $ref: '#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_order_response.Order'
         type: array
       pagination:
-        $ref: '#/definitions/response.Pagination'
+        $ref: '#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_order_response.Pagination'
     type: object
   response.GetPayInArbitrageInfoResponse:
     properties:
@@ -909,6 +1052,11 @@ definitions:
           $ref: '#/definitions/response.User'
         type: array
     type: object
+  response.GetWithdrawalRulesResponse:
+    properties:
+      rule:
+        $ref: '#/definitions/response.Rule'
+    type: object
   response.LoginResponse:
     properties:
       access_token:
@@ -921,44 +1069,12 @@ definitions:
       error:
         type: string
     type: object
+  response.OffchainWithdrawResponse:
+    type: object
   response.OpenOrderDisputeResponse:
     properties:
       message:
         type: string
-    type: object
-  response.Order:
-    properties:
-      amount_crypto:
-        type: number
-      amount_fiat:
-        type: number
-      bank_detail:
-        $ref: '#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_order_response.BankDetail'
-      created_at:
-        type: string
-      crypto_rub_rate:
-        type: number
-      expires_at:
-        type: string
-      order_id:
-        type: string
-      status:
-        type: string
-      trader_reward:
-        type: number
-      updated_at:
-        type: string
-    type: object
-  response.Pagination:
-    properties:
-      current_page:
-        type: integer
-      items_per_page:
-        type: integer
-      total_items:
-        type: integer
-      total_pages:
-        type: integer
     type: object
   response.PaymentDetails:
     properties:
@@ -1009,6 +1125,30 @@ definitions:
     required:
     - success
     type: object
+  response.Rule:
+    properties:
+      cooldown_seconds:
+        type: integer
+      created_at:
+        type: string
+      fixed_fee:
+        type: number
+      id:
+        type: integer
+      min_amount:
+        type: number
+      trader_id:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  response.SetWithdrawalRulesResponse:
+    properties:
+      rule:
+        $ref: '#/definitions/response.Rule'
+      success:
+        type: boolean
+    type: object
   response.Setup2FAResponse:
     properties:
       qr_url:
@@ -1056,6 +1196,8 @@ definitions:
     type: object
   response.User:
     properties:
+      id:
+        type: string
       login:
         type: string
       role:
@@ -1349,6 +1491,46 @@ paths:
       summary: Create merchant account
       tags:
       - admin
+  /admin/orders/disputes:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - default: 1
+        description: Page number
+        in: query
+        minimum: 1
+        name: page
+        type: integer
+      - default: 10
+        description: Items per page
+        in: query
+        maximum: 100
+        minimum: 1
+        name: limit
+        type: integer
+      - description: Filter by status
+        in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.GetOrderDisputesResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Get order disputes
+      tags:
+      - admin
   /admin/teams/create:
     post:
       consumes:
@@ -1500,6 +1682,85 @@ paths:
       security:
       - BearerAuth: []
       summary: Get traffic records
+      tags:
+      - admin
+  /admin/wallets/withdraw/rules:
+    post:
+      consumes:
+      - application/json
+      description: Set withdrawal rules for user
+      parameters:
+      - description: Withdrawal rules
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/request.SetWithdrawalRulesRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.SetWithdrawalRulesResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Set withdrawal rules
+      tags:
+      - admin
+  /admin/wallets/withdraw/rules/{userId}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete user withdrawal rule
+      parameters:
+      - description: user ID
+        in: path
+        name: userId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.DeleteWithdrawalRulesResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Delete withdrawal rule
+      tags:
+      - admin
+    get:
+      consumes:
+      - application/json
+      description: Get withdrawal rules for a given trader
+      parameters:
+      - description: user ID
+        in: path
+        name: userId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.GetWithdrawalRulesResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Get withdrawal rules
       tags:
       - admin
   /banking/details:
@@ -2031,6 +2292,77 @@ paths:
       security:
       - BearerAuth: []
       summary: Resolve order dispute by order uuid
+      tags:
+      - orders
+  /orders/merchant/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get order by merchant order ID
+      parameters:
+      - description: order id in merchant system
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.GetOrderByIDResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get order by merchant order ID
+      tags:
+      - orders
+  /orders/statistics:
+    get:
+      consumes:
+      - application/json
+      description: Get order statistics
+      parameters:
+      - description: Дата начала (RFC3339 format, e.g. 2025-07-21T00:00:00Z)
+        in: query
+        name: date_from
+        required: true
+        type: string
+      - description: Дата конца (RFC3339 format, e.g. 2025-07-21T23:59:59Z)
+        in: query
+        name: date_to
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.GetOrderStatsResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get order statistics
       tags:
       - orders
   /orders/trader/{traderUUID}:
@@ -2765,6 +3097,42 @@ paths:
       security:
       - BearerAuth: []
       summary: Freeze crypto
+      tags:
+      - wallets
+  /wallets/offchain-withdraw:
+    post:
+      consumes:
+      - application/json
+      description: Withdraw crypto off-chain
+      parameters:
+      - description: wallet data
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/request.OffchainWithdrawRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.OffchainWithdrawResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Withdraw crypto off-chain
       tags:
       - wallets
   /wallets/release:

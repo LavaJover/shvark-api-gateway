@@ -422,6 +422,65 @@ const docTemplate = `{
                 }
             }
         },
+        "/admin/orders/disputes": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin"
+                ],
+                "summary": "Get order disputes",
+                "parameters": [
+                    {
+                        "minimum": 1,
+                        "type": "integer",
+                        "default": 1,
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "maximum": 100,
+                        "minimum": 1,
+                        "type": "integer",
+                        "default": 10,
+                        "description": "Items per page",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter by status",
+                        "name": "status",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.GetOrderDisputesResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "Bad Gateway",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/admin/teams/create": {
             "post": {
                 "security": [
@@ -655,6 +714,126 @@ const docTemplate = `{
                     },
                     "502": {
                         "description": "Bad Gateway",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/wallets/withdraw/rules": {
+            "post": {
+                "description": "Set withdrawal rules for user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin"
+                ],
+                "summary": "Set withdrawal rules",
+                "parameters": [
+                    {
+                        "description": "Withdrawal rules",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.SetWithdrawalRulesRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.SetWithdrawalRulesResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/wallets/withdraw/rules/{userId}": {
+            "get": {
+                "description": "Get withdrawal rules for a given trader",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin"
+                ],
+                "summary": "Get withdrawal rules",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "user ID",
+                        "name": "userId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.GetWithdrawalRulesResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete user withdrawal rule",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin"
+                ],
+                "summary": "Delete withdrawal rule",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "user ID",
+                        "name": "userId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.DeleteWithdrawalRulesResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/handlers.ErrorResponse"
                         }
@@ -1438,6 +1617,117 @@ const docTemplate = `{
                     },
                     "502": {
                         "description": "Bad Gateway",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/orders/merchant/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get order by merchant order ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "orders"
+                ],
+                "summary": "Get order by merchant order ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "order id in merchant system",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.GetOrderByIDResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "Bad Gateway",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/orders/statistics": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get order statistics",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "orders"
+                ],
+                "summary": "Get order statistics",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Дата начала (RFC3339 format, e.g. 2025-07-21T00:00:00Z)",
+                        "name": "date_from",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Дата конца (RFC3339 format, e.g. 2025-07-21T23:59:59Z)",
+                        "name": "date_to",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.GetOrderStatsResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/handlers.ErrorResponse"
                         }
@@ -2471,6 +2761,63 @@ const docTemplate = `{
                 }
             }
         },
+        "/wallets/offchain-withdraw": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Withdraw crypto off-chain",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "wallets"
+                ],
+                "summary": "Withdraw crypto off-chain",
+                "parameters": [
+                    {
+                        "description": "wallet data",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.OffchainWithdrawRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.OffchainWithdrawResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "Bad Gateway",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/wallets/release": {
             "post": {
                 "security": [
@@ -2755,6 +3102,9 @@ const docTemplate = `{
         "github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_admin_request.CreateDisputeRequest": {
             "type": "object",
             "properties": {
+                "dispute_amount_fiat": {
+                    "type": "number"
+                },
                 "dispute_reason": {
                     "type": "string"
                 },
@@ -2765,6 +3115,29 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "ttl": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_admin_response.BankDetail": {
+            "type": "object",
+            "properties": {
+                "bank_name": {
+                    "type": "string"
+                },
+                "card_number": {
+                    "type": "string"
+                },
+                "owner": {
+                    "type": "string"
+                },
+                "payment_system": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "trader_id": {
                     "type": "string"
                 }
             }
@@ -2780,6 +3153,18 @@ const docTemplate = `{
         "github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_admin_response.Dispute": {
             "type": "object",
             "properties": {
+                "accept_at": {
+                    "type": "string"
+                },
+                "dispute_amount_crypto": {
+                    "type": "number"
+                },
+                "dispute_amount_fiat": {
+                    "type": "number"
+                },
+                "dispute_crypto_rate": {
+                    "type": "number"
+                },
                 "dispute_id": {
                     "type": "string"
                 },
@@ -2789,11 +3174,54 @@ const docTemplate = `{
                 "dispute_status": {
                     "type": "string"
                 },
+                "order": {
+                    "$ref": "#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_admin_response.Order"
+                },
                 "order_id": {
                     "type": "string"
                 },
                 "proof_url": {
                     "type": "string"
+                }
+            }
+        },
+        "github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_admin_response.Order": {
+            "type": "object",
+            "properties": {
+                "amount_crypto": {
+                    "type": "number"
+                },
+                "amount_fiat": {
+                    "type": "number"
+                },
+                "bank_detail": {
+                    "$ref": "#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_admin_response.BankDetail"
+                },
+                "crypro_rate": {
+                    "type": "number"
+                },
+                "merchant_order_id": {
+                    "type": "string"
+                },
+                "order_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_admin_response.Pagination": {
+            "type": "object",
+            "properties": {
+                "current_page": {
+                    "type": "integer"
+                },
+                "items_per_page": {
+                    "type": "integer"
+                },
+                "total_items": {
+                    "type": "integer"
+                },
+                "total_pages": {
+                    "type": "integer"
                 }
             }
         },
@@ -2912,9 +3340,70 @@ const docTemplate = `{
                 }
             }
         },
+        "github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_order_response.Order": {
+            "type": "object",
+            "properties": {
+                "amount_crypto": {
+                    "type": "number"
+                },
+                "amount_fiat": {
+                    "type": "number"
+                },
+                "bank_detail": {
+                    "$ref": "#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_order_response.BankDetail"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "crypto_rub_rate": {
+                    "type": "number"
+                },
+                "expires_at": {
+                    "type": "string"
+                },
+                "merchant_id": {
+                    "type": "string"
+                },
+                "merchant_order_id": {
+                    "type": "string"
+                },
+                "order_id": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "trader_reward": {
+                    "type": "number"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_order_response.Pagination": {
+            "type": "object",
+            "properties": {
+                "current_page": {
+                    "type": "integer"
+                },
+                "items_per_page": {
+                    "type": "integer"
+                },
+                "total_items": {
+                    "type": "integer"
+                },
+                "total_pages": {
+                    "type": "integer"
+                }
+            }
+        },
         "github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_payment_request.CreateDisputeRequest": {
             "type": "object",
             "properties": {
+                "amount_fiat": {
+                    "type": "number"
+                },
                 "proof_url": {
                     "type": "string"
                 },
@@ -3510,6 +3999,20 @@ const docTemplate = `{
                 }
             }
         },
+        "request.OffchainWithdrawRequest": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "traderId": {
+                    "type": "string"
+                },
+                "txHash": {
+                    "type": "string"
+                }
+            }
+        },
         "request.OpenOrderDisputeRequest": {
             "type": "object",
             "properties": {
@@ -3580,6 +4083,23 @@ const docTemplate = `{
             "properties": {
                 "role": {
                     "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.SetWithdrawalRulesRequest": {
+            "type": "object",
+            "properties": {
+                "cooldown_seconds": {
+                    "type": "integer"
+                },
+                "fixed_fee": {
+                    "type": "number"
+                },
+                "min_amount": {
+                    "type": "number"
                 },
                 "user_id": {
                     "type": "string"
@@ -3871,6 +4391,9 @@ const docTemplate = `{
                 }
             }
         },
+        "response.DeleteWithdrawalRulesResponse": {
+            "type": "object"
+        },
         "response.DepositErrorResponse": {
             "type": "object",
             "properties": {
@@ -4005,7 +4528,50 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "order": {
-                    "$ref": "#/definitions/response.Order"
+                    "$ref": "#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_order_response.Order"
+                }
+            }
+        },
+        "response.GetOrderDisputesResponse": {
+            "type": "object",
+            "properties": {
+                "disputes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_admin_response.Dispute"
+                    }
+                },
+                "pagination": {
+                    "$ref": "#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_admin_response.Pagination"
+                }
+            }
+        },
+        "response.GetOrderStatsResponse": {
+            "type": "object",
+            "properties": {
+                "canceled_amount_crypto": {
+                    "type": "number"
+                },
+                "canceled_amount_fiat": {
+                    "type": "number"
+                },
+                "canceled_orders": {
+                    "type": "integer"
+                },
+                "income_crypto": {
+                    "type": "number"
+                },
+                "processed_amount_crypto": {
+                    "type": "number"
+                },
+                "processed_amount_fiat": {
+                    "type": "number"
+                },
+                "succeed_orders": {
+                    "type": "integer"
+                },
+                "total_orders": {
+                    "type": "integer"
                 }
             }
         },
@@ -4015,11 +4581,11 @@ const docTemplate = `{
                 "orders": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/response.Order"
+                        "$ref": "#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_order_response.Order"
                     }
                 },
                 "pagination": {
-                    "$ref": "#/definitions/response.Pagination"
+                    "$ref": "#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_order_response.Pagination"
                 }
             }
         },
@@ -4150,6 +4716,14 @@ const docTemplate = `{
                 }
             }
         },
+        "response.GetWithdrawalRulesResponse": {
+            "type": "object",
+            "properties": {
+                "rule": {
+                    "$ref": "#/definitions/response.Rule"
+                }
+            }
+        },
         "response.LoginResponse": {
             "type": "object",
             "properties": {
@@ -4169,63 +4743,14 @@ const docTemplate = `{
                 }
             }
         },
+        "response.OffchainWithdrawResponse": {
+            "type": "object"
+        },
         "response.OpenOrderDisputeResponse": {
             "type": "object",
             "properties": {
                 "message": {
                     "type": "string"
-                }
-            }
-        },
-        "response.Order": {
-            "type": "object",
-            "properties": {
-                "amount_crypto": {
-                    "type": "number"
-                },
-                "amount_fiat": {
-                    "type": "number"
-                },
-                "bank_detail": {
-                    "$ref": "#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_order_response.BankDetail"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "crypto_rub_rate": {
-                    "type": "number"
-                },
-                "expires_at": {
-                    "type": "string"
-                },
-                "order_id": {
-                    "type": "string"
-                },
-                "status": {
-                    "type": "string"
-                },
-                "trader_reward": {
-                    "type": "number"
-                },
-                "updated_at": {
-                    "type": "string"
-                }
-            }
-        },
-        "response.Pagination": {
-            "type": "object",
-            "properties": {
-                "current_page": {
-                    "type": "integer"
-                },
-                "items_per_page": {
-                    "type": "integer"
-                },
-                "total_items": {
-                    "type": "integer"
-                },
-                "total_pages": {
-                    "type": "integer"
                 }
             }
         },
@@ -4304,6 +4829,43 @@ const docTemplate = `{
                 }
             }
         },
+        "response.Rule": {
+            "type": "object",
+            "properties": {
+                "cooldown_seconds": {
+                    "type": "integer"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "fixed_fee": {
+                    "type": "number"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "min_amount": {
+                    "type": "number"
+                },
+                "trader_id": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.SetWithdrawalRulesResponse": {
+            "type": "object",
+            "properties": {
+                "rule": {
+                    "$ref": "#/definitions/response.Rule"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
         "response.Setup2FAResponse": {
             "type": "object",
             "properties": {
@@ -4376,6 +4938,9 @@ const docTemplate = `{
         "response.User": {
             "type": "object",
             "properties": {
+                "id": {
+                    "type": "string"
+                },
                 "login": {
                     "type": "string"
                 },

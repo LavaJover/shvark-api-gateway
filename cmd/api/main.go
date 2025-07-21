@@ -138,6 +138,8 @@ func main() {
 		orderGroup.POST("/cancel", ordersHandler.CancelOrder)
 		orderGroup.POST("/disputes/open", ordersHandler.OpenOrderDispute)
 		orderGroup.POST("/disputes/resolve", ordersHandler.ResolveOrderDispute)	
+		orderGroup.GET("/merchant/:id", ordersHandler.GetOrderByMerchantOrderID)
+		orderGroup.GET("/statistics", ordersHandler.GetOrderStats)
 	}
 
 	// wallet-service
@@ -151,6 +153,7 @@ func main() {
 		walletGroup.GET("/:traderID/history", middleware.RequireSelfOrAdmin(authzHandler.AuthzClient, "traderID"), walletHandler.GetTraderHistory)
 		walletGroup.GET("/:traderID/balance", middleware.RequireSelfOrAdmin(authzHandler.AuthzClient, "traderID"), walletHandler.GetTraderBalance)
 		walletGroup.GET("/:traderID/address", middleware.RequireSelfOrAdmin(authzHandler.AuthzClient, "traderID"), walletHandler.GetTraderWalletAddress)
+		walletGroup.POST("/offchain-withdraw", middleware.AuthMiddleware(authHandler.SSOClient), walletHandler.OffchainWithdraw)
 	}
 
 	// payments for merchant
@@ -187,6 +190,10 @@ func main() {
 		adminGroup.POST("/disputes/freeze", adminHandler.FreezeDispute)
 		adminGroup.GET("/traders", adminHandler.GetTraders)
 		adminGroup.GET("/merchants", adminHandler.GetMerchants)
+		adminGroup.GET("/orders/disputes", adminHandler.GetOrderDisputes)
+		adminGroup.POST("/wallets/withdraw/rules", adminHandler.SetWithdrawalRules)
+		adminGroup.GET("/wallets/withdraw/rules/:userId", adminHandler.GetUserWithdrawalRules)
+		adminGroup.DELETE("/wallets/withdraw/rules/:userId", adminHandler.DeleteUserWithdrawalRules)
 	}
 
 	merchantHandler := handlers.NewMerchanHandler(ordersHandler.OrderClient, walletClient)

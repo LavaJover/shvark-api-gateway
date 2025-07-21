@@ -37,4 +37,6 @@ type Order struct {
 	CryptoRubRate   float64		`json:"crypto_rub_rate"`
 	CreatedAt 	 	time.Time	`json:"created_at"`
 	UpdatedAt    	time.Time  `json:"updated_at"`
+	MerchantID 		string 		`json:"merchant_id"`
+	MerchantOrderID string 		`json:"merchant_order_id"`
 }

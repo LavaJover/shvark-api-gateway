@@ -285,6 +285,58 @@ func (h *WalletHandler) Deposit(c *gin.Context) {
 	c.Data(proxyResp.StatusCode, "application/json", proxyRespBody)
 }
 
+// @Summary Withdraw crypto off-chain
+// @Description Withdraw crypto off-chain
+// @Tags wallets
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param input body walletRequest.OffchainWithdrawRequest true "wallet data"
+// @Success 200 {object} walletResponse.OffchainWithdrawResponse
+// @Failure 400 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Failure 502 {object} ErrorResponse
+// @Router /wallets/offchain-withdraw [post]
+func (h *WalletHandler) OffchainWithdraw(c *gin.Context) {
+	var request walletRequest.OffchainWithdrawRequest
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	proxyRequestBody, err := json.Marshal(request)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "json marshal failed"})
+		return
+	}
+
+	proxyResp, err := http.Post(fmt.Sprintf("http://%s/wallets/offchain-withdraw", h.WalletClient.Addr), "application/json", bytes.NewBuffer(proxyRequestBody))
+	if err != nil {
+		c.JSON(http.StatusBadGateway, gin.H{"error": "wallet-service unavailable"})
+		return
+	}
+	defer proxyResp.Body.Close()
+
+	proxyRespBody, err := io.ReadAll(proxyResp.Body)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to read wallet-service reponse body"})
+		return
+	}
+
+	if proxyResp.StatusCode >= 200 && proxyResp.StatusCode < 300 {
+		var response walletResponse.OffchainWithdrawResponse
+		if err := json.Unmarshal(proxyRespBody, &response); err != nil {
+			c.Data(proxyResp.StatusCode, "application/json", proxyRespBody)
+			return
+		}
+
+		c.JSON(proxyResp.StatusCode, response)
+		return
+	}
+
+	c.Data(proxyResp.StatusCode, "application/json", proxyRespBody)
+}
+
 // @Summary Get trader transactions history
 // @Description Get trader transaction history
 // @Tags wallets

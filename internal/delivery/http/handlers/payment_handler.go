@@ -203,6 +203,7 @@ func (h *PaymentHandler) OpenPayInArbitrageLink(c *gin.Context) {
 		requestBody.ProofUrl,
 		requestBody.Reason,
 		disputeTtl,
+		requestBody.AmountFiat,
 	)
 	if err != nil {
 		c.JSON(http.StatusNotFound, ErrorResponse{Error: err.Error()})

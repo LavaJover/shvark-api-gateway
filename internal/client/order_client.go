@@ -7,6 +7,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/protobuf/types/known/durationpb"
+	"google.golang.org/protobuf/types/known/timestamppb"
 
 	orderpb "github.com/LavaJover/shvark-order-service/proto/gen"
 )
@@ -59,6 +60,18 @@ func (c *OrderClient) GetOrderByID(orderID string) (*orderpb.GetOrderByIDRespons
 		ctx,
 		&orderpb.GetOrderByIDRequest{
 			OrderId: orderID,
+		},
+	)
+}
+
+func (c *OrderClient) GetOrderByMerchantOrderID(merchantOrderID string) (*orderpb.GetOrderByMerchantOrderIDResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	return c.service.GetOrderByMerchantOrderID(
+		ctx,
+		&orderpb.GetOrderByMerchantOrderIDRequest{
+			MerchantOrderId: merchantOrderID,
 		},
 	)
 }
@@ -188,6 +201,7 @@ func (c *OrderClient) GetTrafficRecords(page, limit int32) ([]*orderpb.Traffic, 
 func (c *OrderClient) CreateDispute(
 	orderID, proofUrl, disputeReason string,
 	ttl time.Duration,
+	disputeAmountFiat float64,
 ) (string, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
@@ -199,6 +213,7 @@ func (c *OrderClient) CreateDispute(
 			ProofUrl: proofUrl,
 			DisputeReason: disputeReason,
 			Ttl: durationpb.New(ttl),
+			DisputeAmountFiat: disputeAmountFiat,
 		},
 	)
 
@@ -345,5 +360,48 @@ func (c *OrderClient) GetBankDetailsStatsByTraderID(getStatsRequest *orderpb.Get
 	return c.bankDetailService.GetBankDetailsStatsByTraderID(
 		ctx,
 		getStatsRequest,
+	)
+}
+
+
+func (c *OrderClient) GetOrderDisputes(page, limit int64, status string) (*orderpb.GetOrderDisputesResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	return c.service.GetOrderDisputes(
+		ctx,
+		&orderpb.GetOrderDisputesRequest{
+			Page: page,
+			Limit: limit,
+			Status: status,
+		},
+	)
+}
+
+type OrderStats struct {
+	TotalOrders 			int64 	
+	SucceedOrders 			int64 	
+	CanceledOrders 			int64 	
+	ProcessedAmountFiat 	float64 
+	ProcessedAmountCrypto 	float64 
+	CanceledAmountFiat 		float64 
+	CanceledAmountCrypto 	float64 
+	IncomeCrypto 			float64 
+}
+
+func (c *OrderClient) GetOrderStats(
+	traderID string,
+	dateFrom, dateTo time.Time,
+) (*orderpb.GetOrderStatisticsResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	return c.service.GetOrderStatistics(
+		ctx,
+		&orderpb.GetOrderStatisticsRequest{
+			TraderId: traderID,
+			DateFrom: timestamppb.New(dateFrom),
+			DateTo: timestamppb.New(dateTo),
+		},
 	)
 }

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"time"
 
 	walletRequest "github.com/LavaJover/shvark-api-gateway/internal/delivery/http/dto/wallet/request"
 	walletResponse "github.com/LavaJover/shvark-api-gateway/internal/delivery/http/dto/wallet/response"
@@ -117,4 +118,100 @@ func (c *HTTPWalletClient) Withdraw(userID, toAddress string, amount float64) (s
 	}
 
 	return res.TxHash, nil
+}
+
+type SetWithdrawalRulesRequest struct {
+	TraderID 		string 	`json:"traderId"`
+	FixedFee 		float64 `json:"fixedFee"`
+	MinAmount 		float64 `json:"minAmount"`
+	CooldownSeconds int64 	`json:"cooldownSeconds"`
+}
+
+type SetWithdrawalRulesResponse struct {
+	Success bool 	`json:"success"`
+	Rule Rule 		`json:"rule"`
+}
+
+type Rule struct {
+	ID 				int64 	  `json:"id"`
+	TraderID 		string 	  `json:"traderId"`
+	FixedFee 		float64   `json:"fixedFee"`
+	MinAmount 		float64   `json:"minAmount"`
+	CooldownSeconds int64 	  `json:"cooldownSeconds"`
+	UpdatedAt 		time.Time `json:"updatedAt"`
+	CreatedAt 		time.Time `json:"createdAt"`
+}
+
+func (c *HTTPWalletClient) SetWithdrawalRules(requestBody *SetWithdrawalRulesRequest) (*SetWithdrawalRulesResponse, error) {
+	jsonData, err := json.Marshal(requestBody)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := http.Post(fmt.Sprintf("http://%s/admin/withdrawal-rules", c.Addr), "application/json", bytes.NewBuffer(jsonData))
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		return nil, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
+	}
+
+	var res SetWithdrawalRulesResponse
+	if err := json.NewDecoder(resp.Body).Decode(&res); err != nil {
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+type GetWithdrawalRulesResponse struct {
+	ID 				int64 	  `json:"id"`
+	TraderID 		string 	  `json:"traderId"`
+	FixedFee 		float64   `json:"fixedFee"`
+	MinAmount 		float64   `json:"minAmount"`
+	CooldownSeconds int64 	  `json:"cooldownSeconds"`
+	UpdatedAt 		time.Time `json:"updatedAt"`
+	CreatedAt 		time.Time `json:"createdAt"`
+}
+
+func (c *HTTPWalletClient) GetWithdrawalRules(userID string) (*GetWithdrawalRulesResponse, error) {
+	resp, err := http.Get(fmt.Sprintf("http://%s/withdrawal-rules/%s", c.Addr, userID))
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		return nil, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
+	}
+
+	var res GetWithdrawalRulesResponse
+	if err := json.NewDecoder(resp.Body).Decode(&res); err != nil {
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+func (c HTTPWalletClient) DeleteWithdrawalRule(userID string) error {
+	url := fmt.Sprintf("http://%s/withdrawal-rules/%s", c.Addr, userID)
+	req, err := http.NewRequest(http.MethodDelete, url, nil)
+	if err != nil {
+		return err
+	}
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("error deleting withdrawal rule")
+	}
+
+	return nil
 }

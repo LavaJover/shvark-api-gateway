@@ -1,7 +1,9 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/LavaJover/shvark-api-gateway/internal/client"
@@ -213,6 +215,12 @@ func (h *AdminHandler) GetTrafficRecords(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, ErrorResponse{Error: err.Error()})
 		return
 	}
+	if request.Page == 0 {
+		request.Page = 1
+	}
+	if request.Limit == 0 {
+		request.Limit = 1000
+	}
 	trafficResponse, err := h.OrderClient.GetTrafficRecords(
 		request.Page,
 		request.Limit,
@@ -268,6 +276,7 @@ func (h *AdminHandler) CreateDispute(c *gin.Context) {
 		request.ProofUrl,
 		request.DisputeReason,
 		disputeTtl,
+		request.DisputeAmountFiat,
 	)
 	if err != nil {
 		c.JSON(http.StatusBadGateway, ErrorResponse{Error: err.Error()})
@@ -404,6 +413,7 @@ func (h *AdminHandler) GetTraders(c *gin.Context) {
 
 	for i, trader := range response.Traders {
 		tradersResp[i] = adminResponse.User{
+			ID: trader.UserId,
 			Username: trader.Username,
 			Login: trader.Login,
 			Role: trader.Role,
@@ -434,6 +444,7 @@ func (h *AdminHandler) GetMerchants(c *gin.Context) {
 
 	for i, merchant := range response.Merchants {
 		merchantsResp[i] = adminResponse.User{
+			ID: merchant.UserId,
 			Username: merchant.Username,
 			Login: merchant.Login,
 			Role: merchant.Role,
@@ -443,4 +454,191 @@ func (h *AdminHandler) GetMerchants(c *gin.Context) {
 	c.JSON(http.StatusOK, adminResponse.GetUsersResponse{
 		Users: merchantsResp,
 	})
+}
+
+// @Summary Get order disputes
+// @Descriptions get order disputes
+// @Tags admin
+// @Accept json
+// @Produce json
+// @Param page query int false "Page number" default(1) minimum(1)
+// @Param limit query int false "Items per page" default(10) minimum(1) maximum(100)
+// @Param status query string false "Filter by status"
+// @Success 200 {object} adminResponse.GetOrderDisputesResponse
+// @Failure 400 {object} ErrorResponse
+// @Failure 502 {object} ErrorResponse
+// @Router /admin/orders/disputes [get]
+func (h *AdminHandler) GetOrderDisputes(c *gin.Context) {
+	// Параметры по умолчанию
+	const (
+		defaultPage  = 1
+		defaultLimit = 10
+		maxLimit     = 100
+	)
+
+	page, err := strconv.Atoi(c.DefaultQuery("page", fmt.Sprintf("%d", defaultPage)))
+	if err != nil || page < 1 {
+		c.JSON(http.StatusBadRequest, ErrorResponse{Error: "invalid page parameter"})
+		return
+	}
+
+	// Получаем и парсим limit
+	limit, err := strconv.Atoi(c.DefaultQuery("limit", fmt.Sprintf("%d", defaultLimit)))
+	if err != nil || limit < 1 || limit > maxLimit {
+		c.JSON(http.StatusBadRequest, ErrorResponse{Error: "invalid limit parameter"})
+		return
+	}
+
+	// Получаем статус (необязательный)
+	status := c.Query("status")
+
+	response, err := h.OrderClient.GetOrderDisputes(int64(page), int64(limit), status)
+	if err != nil {
+		c.JSON(http.StatusBadGateway,ErrorResponse{Error: err.Error()})
+		return
+	}
+
+	disputes := make([]adminResponse.Dispute, len(response.Disputes))
+	for i, dispute := range response.Disputes {
+		disputes[i] = adminResponse.Dispute{
+			DisputeID: dispute.DisputeId,
+			ProofUrl: dispute.ProofUrl,
+			DisputeReason: dispute.DisputeReason,
+			DisputeStatus: dispute.DisputeStatus,
+			DisputeAmountFiat: dispute.DisputeAmountFiat,
+			DisputeAmountCrypto: dispute.DisputeAmountCrypto,
+			DisputeCryptoRate: dispute.DisputeCryptoRate,
+			OrderID: dispute.OrderId,
+			AcceptAt: dispute.AcceptAt.AsTime(),
+			Order: adminResponse.Order{
+				ID: dispute.Order.OrderId,
+				MerchantOrderID: dispute.Order.MerchantOrderId,
+				AmountFiat: dispute.Order.AmountFiat,
+				CryproRate: dispute.Order.CryptoRubRate,
+				AmountCrypto: dispute.Order.AmountCrypto,
+				BankDetail: adminResponse.BankDetail{
+					BankName: dispute.Order.BankDetail.BankName,
+					PaymentSystem: dispute.Order.BankDetail.PaymentSystem,
+					Phone: dispute.Order.BankDetail.Phone,
+					CardNumber: dispute.Order.BankDetail.CardNumber,
+					Owner: dispute.Order.BankDetail.Owner,
+					TraderID: dispute.Order.BankDetail.TraderId,
+				},
+			},
+		}
+	}
+
+	c.JSON(http.StatusOK, adminResponse.GetOrderDisputesResponse{
+		Disputes: disputes,
+		Pagination: adminResponse.Pagination{
+			CurrentPage: response.Pagination.CurrentPage,
+			TotalPages: response.Pagination.TotalPages,
+			TotalItems: response.Pagination.TotalItems,
+			ItemsPerPage: response.Pagination.ItemsPerPage,
+		},
+	})
+}
+
+// @Summary Set withdrawal rules
+// @Description Set withdrawal rules for user
+// @Tags admin
+// @Accept json
+// @Produce json
+// @Param input body adminRequest.SetWithdrawalRulesRequest true "Withdrawal rules"
+// @Success 200 {object} adminResponse.SetWithdrawalRulesResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /admin/wallets/withdraw/rules [post]
+func (h *AdminHandler) SetWithdrawalRules(c *gin.Context) {
+	var request adminRequest.SetWithdrawalRulesRequest
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	walletRequest := client.SetWithdrawalRulesRequest{
+		TraderID: request.UserID,
+		FixedFee: request.FixedFee,
+		MinAmount: request.MinAmount,
+		CooldownSeconds: request.CooldownSeconds,
+	}
+
+	resp, err := h.WalletClient.SetWithdrawalRules(&walletRequest)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, adminResponse.SetWithdrawalRulesResponse{
+		Success: resp.Success,
+		Rule: adminResponse.Rule{
+			ID: resp.Rule.ID,
+			TraderID: resp.Rule.TraderID,
+			FixedFee: resp.Rule.FixedFee,
+			MinAmount: resp.Rule.MinAmount,
+			CooldownSeconds: resp.Rule.CooldownSeconds,
+			UpdatedAt: resp.Rule.UpdatedAt,
+			CreatedAt: resp.Rule.CreatedAt,
+		},
+	})
+}
+
+// @Summary Get withdrawal rules
+// @Description Get withdrawal rules for a given trader
+// @Tags admin
+// @Accept json
+// @Produce json
+// @Param userId path string true "user ID"
+// @Success 200 {object} adminResponse.GetWithdrawalRulesResponse
+// @Success 400 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /admin/wallets/withdraw/rules/{userId} [get]
+func (h *AdminHandler) GetUserWithdrawalRules(c *gin.Context) {
+	userID := c.Param("userId")
+	if userID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "userID path param missed"})
+		return
+	}
+
+	resp, err := h.WalletClient.GetWithdrawalRules(userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, adminResponse.GetWithdrawalRulesResponse{
+		Rule: adminResponse.Rule{
+			ID: resp.ID,
+			TraderID: resp.TraderID,
+			FixedFee: resp.FixedFee,
+			MinAmount: resp.MinAmount,
+			CooldownSeconds: resp.CooldownSeconds,
+			UpdatedAt: resp.UpdatedAt,
+			CreatedAt: resp.CreatedAt,
+		},
+	})
+}
+
+// @Summary Delete withdrawal rule
+// @Description Delete user withdrawal rule
+// @Tags admin
+// @Accept json
+// @Produce json
+// @Param userId path string true "user ID"
+// @Success 200 {object} adminResponse.DeleteWithdrawalRulesResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /admin/wallets/withdraw/rules/{userId} [delete]
+func (h *AdminHandler) DeleteUserWithdrawalRules(c *gin.Context) {
+	userID := c.Param("userId")
+	if userID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "userID path param missed"})
+		return
+	}
+
+	err := h.WalletClient.DeleteWithdrawalRule(userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, adminResponse.DeleteWithdrawalRulesResponse{})
 }

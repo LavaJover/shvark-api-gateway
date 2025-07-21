@@ -127,6 +127,61 @@ func (h *OrderHandler) GetOrderByID(c *gin.Context) {
 			CreatedAt:    response.Order.CreatedAt.AsTime(),
 			UpdatedAt:    response.Order.UpdatedAt.AsTime(),
 			CryptoRubRate:   response.Order.CryptoRubRate,
+			MerchantOrderID: response.Order.MerchantOrderId,
+			BankDetail: orderResponse.BankDetail{
+				ID:            response.Order.BankDetail.BankDetailId,
+				TraderID:      response.Order.BankDetail.TraderId,
+				Currency:      response.Order.BankDetail.Currency,
+				Country:       response.Order.BankDetail.Country,
+				MinAmount:     response.Order.BankDetail.MinAmount,
+				MaxAmount:     response.Order.BankDetail.MaxAmount,
+				BankName:      response.Order.BankDetail.BankName,
+				PaymentSystem: response.Order.BankDetail.PaymentSystem,
+				Enabled:       response.Order.BankDetail.Enabled,
+				Delay:         response.Order.BankDetail.Delay.String(),
+				Owner:         response.Order.BankDetail.Owner,
+				CardNumber:    response.Order.BankDetail.CardNumber,
+				Phone:         response.Order.BankDetail.Phone,
+			},
+		},
+	})
+}
+
+// @Summary Get order by merchant order ID
+// @Description Get order by merchant order ID
+// @Tags orders
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param id path string true "order id in merchant system"
+// @Success 200 {object} orderResponse.GetOrderByIDResponse
+// @Failure 400 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Failure 502 {object} ErrorResponse
+// @Router /orders/merchant/{id} [get]
+func (h *OrderHandler) GetOrderByMerchantOrderID(c *gin.Context) {
+	merchantOrderID := c.Param("id")
+	if merchantOrderID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "id path param missed"})
+		return
+	}
+	response, err := h.OrderClient.GetOrderByMerchantOrderID(merchantOrderID)
+	if err != nil {
+		c.JSON(http.StatusBadGateway, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, orderResponse.GetOrderByIDResponse{
+		Order: orderResponse.Order{
+			OrderID:      response.Order.OrderId,
+			Status:       response.Order.Status,
+			AmountFiat:   response.Order.AmountFiat,
+			AmountCrypto: response.Order.AmountCrypto,
+			ExpiresAt:    response.Order.ExpiresAt.AsTime(),
+			TraderReward: response.Order.TraderRewardPercent,
+			CreatedAt:    response.Order.CreatedAt.AsTime(),
+			UpdatedAt:    response.Order.UpdatedAt.AsTime(),
+			CryptoRubRate:   response.Order.CryptoRubRate,
+			MerchantOrderID: response.Order.MerchantOrderId,
 			BankDetail: orderResponse.BankDetail{
 				ID:            response.Order.BankDetail.BankDetailId,
 				TraderID:      response.Order.BankDetail.TraderId,
@@ -224,6 +279,7 @@ func (h *OrderHandler) GetOrdersByTraderID(c *gin.Context) {
 			CreatedAt:    responseOrder.CreatedAt.AsTime(),
 			UpdatedAt:    responseOrder.UpdatedAt.AsTime(),
 			CryptoRubRate:   responseOrder.CryptoRubRate,
+			MerchantOrderID: responseOrder.MerchantOrderId,
 			BankDetail: orderResponse.BankDetail{
 				ID:            responseOrder.BankDetail.BankDetailId,
 				TraderID:      responseOrder.BankDetail.TraderId,
@@ -373,3 +429,60 @@ func (h *OrderHandler) ResolveOrderDispute(c *gin.Context) {
 	})
 }
 
+// @Summary 	Get order statistics
+// @Description Get order statistics
+// @Tags 		orders
+// @Security 	BearerAuth
+// @Accept 		json
+// @Produce 	json
+// @Param       date_from query string true "Дата начала (RFC3339 format, e.g. 2025-07-21T00:00:00Z)"
+// @Param       date_to   query string true "Дата конца (RFC3339 format, e.g. 2025-07-21T23:59:59Z)"
+// @Success 200 {object} orderResponse.GetOrderStatsResponse
+// @Failure 401 {object} ErrorResponse
+// @Failure 404 {object} ErrorResponse
+// @Router /orders/statistics [get]
+func (h *OrderHandler) GetOrderStats(c *gin.Context) {
+	userID, exists := c.Get("userID")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "userID not found in context"})
+		return
+	}
+	userIDstr, ok := userID.(string)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid userID"})
+		return
+	}
+	dateFromStr := c.Query("date_from")
+	dateToStr := c.Query("date_to")
+
+	dateFrom, err := time.Parse(time.RFC3339, dateFromStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid date_from format, expected RFC3339"})
+		return
+	}
+
+	dateTo, err := time.Parse(time.RFC3339, dateToStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid date_to format, expected RFC3339"})
+		return
+	}
+	resp, err := h.OrderClient.GetOrderStats(
+		userIDstr,
+		dateFrom,
+		dateTo,
+	)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "no stats was found"})
+		return
+	}
+	c.JSON(http.StatusOK, orderResponse.GetOrderStatsResponse{
+		TotalOrders: resp.TotalOrders,
+		SucceedOrders: resp.SucceedOrders,
+		CanceledOrders: resp.CanceledOrders,
+		ProcessedAmountFiat: float64(resp.ProcessedAmountFiat),
+		ProcessedAmountCrypto: float64(resp.ProcessedAmountCrypto),
+		CanceledAmountFiat: float64(resp.CanceledAmountFiat),
+		CanceledAmountCrypto: float64(resp.CanceledAmountCrypto),
+		IncomeCrypto: float64(resp.IncomeCrypto),
+	})
+}
