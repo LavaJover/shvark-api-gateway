@@ -80,7 +80,7 @@ func (h *MerchantHandler) CreatePayIn(c *gin.Context) {
 	}
 	orderServiceResponse, err := h.OrderClient.CreateOrder(&orderServiceRequest)
 	if err != nil {
-		c.JSON(http.StatusBadGateway, gin.H{"error": err.Error()})
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		return
 	}
 	c.JSON(http.StatusCreated, merchant.CreatePayInResponse{
