@@ -27,7 +27,7 @@ func RequireSelfOrAdmin(authzClient *client.AuthzClient, paramName string) gin.H
 			return
 		}
 
-		resp, err := authzClient.CheckPermission(userID, "wallets", "read:any")
+		resp, err := authzClient.CheckPermission(userID, "*", "*")
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusBadGateway, gin.H{"error": "Authorization service is unavailable now"})
 			return

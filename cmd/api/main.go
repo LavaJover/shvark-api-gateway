@@ -92,7 +92,7 @@ func main() {
 	// r.Use(middleware.HeaderCheckMiddleware())
 
 	// define routes
-	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	r.GET("/swagger/*any", middleware.BasicAuth(), ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	// auth-service
 	authGroup := r.Group("/api/v1")
@@ -196,12 +196,16 @@ func main() {
 		adminGroup.DELETE("/wallets/withdraw/rules/:userId", adminHandler.DeleteUserWithdrawalRules)
 	}
 
-	merchantHandler := handlers.NewMerchanHandler(ordersHandler.OrderClient, walletClient)
+	merchantHandler := handlers.NewMerchanHandler(ordersHandler.OrderClient, walletClient, userHandler.UserClient, authHandler.SSOClient)
 	merchantGroup := r.Group("/api/v1/merchant")
 	{
-		merchantGroup.POST("/order/:accountID/deposit", merchantHandler.CreatePayIn)
+		merchantGroup.POST("/order/:accountID/deposit", middleware.AuthMiddleware(authHandler.SSOClient), merchantHandler.CreatePayIn)
 		merchantGroup.GET("/accounts/balance", middleware.AuthMiddleware(authHandler.SSOClient), merchantHandler.GetAccountBalance)
 		merchantGroup.POST("/accounts/withdraw/create", middleware.AuthMiddleware(authHandler.SSOClient), merchantHandler.Withdraw)
+		merchantGroup.GET("/banks", merchantHandler.GetBanks)
+		merchantGroup.GET("/order/:iternalId/status", middleware.AuthMiddleware(authHandler.SSOClient), merchantHandler.GetOrderStatus)
+		merchantGroup.POST("/auth/sign-in", merchantHandler.Login)
+		merchantGroup.GET("/order", middleware.AuthMiddleware(authHandler.SSOClient), merchantHandler.GetOrders)
 	}
 
 	r.Run(":8080")

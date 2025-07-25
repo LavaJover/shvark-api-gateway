@@ -1289,8 +1289,195 @@
                 }
             }
         },
+        "/merchant/auth/sign-in": {
+            "post": {
+                "description": "sign-in endpoint",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "merchant"
+                ],
+                "summary": "sign-in handler",
+                "parameters": [
+                    {
+                        "description": "user credentials",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/merchant.LoginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/merchant.LoginResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/merchant/banks": {
+            "get": {
+                "description": "Get available banks",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "merchant"
+                ],
+                "summary": "Get banks",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/merchant/order": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Получение списка ордеров с фильтрацией, сортировкой и пагинацией",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "merchant"
+                ],
+                "summary": "Получить список ордеров",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Фильтр по ID сделки",
+                        "name": "dealId",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "DEPOSIT",
+                            "WITHDRAWAL",
+                            "PAYOUT"
+                        ],
+                        "type": "string",
+                        "description": "Тип ордера: DEPOSIT, WITHDRAWAL, PAYOUT",
+                        "name": "type",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "COMPLETED",
+                            "CANCELED",
+                            "FAILED",
+                            "DISPUTE",
+                            "PENDING"
+                        ],
+                        "type": "string",
+                        "description": "Статус ордера",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Начальная дата создания (формат: 2006-01-02T15:04:05Z)",
+                        "name": "timeOpeningStart",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Конечная дата создания (формат: 2006-01-02T15:04:05Z)",
+                        "name": "timeOpeningEnd",
+                        "in": "query"
+                    },
+                    {
+                        "type": "number",
+                        "description": "Минимальная сумма",
+                        "name": "amountMin",
+                        "in": "query"
+                    },
+                    {
+                        "type": "number",
+                        "description": "Максимальная сумма",
+                        "name": "amountMax",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 0,
+                        "description": "Номер страницы (начиная с 0)",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "description": "Размер страницы",
+                        "name": "size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Поле сортировки: id, deal_id, time_opening, time_expires, time_complete, type, status, amount",
+                        "name": "sort",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.GetOrdersResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/merchant/order/{accountID}/deposit": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Create new pay-in order",
                 "consumes": [
                     "application/json"
@@ -1331,6 +1518,49 @@
                         "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/merchant/order/{iternalId}/status": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get order status",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "merchant"
+                ],
+                "summary": "Get order status",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "merchant order ID",
+                        "name": "iternalId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/merchant.GetOrderStatusResponse"
                         }
                     },
                     "404": {
@@ -1827,6 +2057,18 @@
                         "type": "string",
                         "description": "Currency code",
                         "name": "currency",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Order ID",
+                        "name": "order_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Merchant order ID",
+                        "name": "merchant_order_id",
                         "in": "query"
                     }
                 ],
@@ -3046,7 +3288,7 @@
                         "BearerAuth": []
                     }
                 ],
-                "description": "Get trader transaction history",
+                "description": "Get trader transaction history with pagination",
                 "consumes": [
                     "application/json"
                 ],
@@ -3064,6 +3306,20 @@
                         "name": "traderID",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "description": "Items per page",
+                        "name": "limit",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -3440,12 +3696,182 @@
                 }
             }
         },
+        "github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_wallet_response.Pagination": {
+            "type": "object",
+            "properties": {
+                "currentPage": {
+                    "type": "integer"
+                },
+                "hasNextPage": {
+                    "type": "boolean"
+                },
+                "hasPrevPage": {
+                    "type": "boolean"
+                },
+                "itemsPerPage": {
+                    "type": "integer"
+                },
+                "totalItems": {
+                    "type": "integer"
+                },
+                "totalPages": {
+                    "type": "integer"
+                }
+            }
+        },
+        "handlers.Amount": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "currency": {
+                    "type": "string"
+                }
+            }
+        },
         "handlers.ErrorResponse": {
             "type": "object",
             "properties": {
                 "error": {
                     "type": "string",
                     "example": "invalid data"
+                }
+            }
+        },
+        "handlers.GetOrdersResponse": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/handlers.OrderResponse"
+                    }
+                },
+                "empty": {
+                    "type": "boolean"
+                },
+                "first": {
+                    "type": "boolean"
+                },
+                "last": {
+                    "type": "boolean"
+                },
+                "number": {
+                    "type": "integer"
+                },
+                "numberOfElements": {
+                    "type": "integer"
+                },
+                "pageable": {
+                    "$ref": "#/definitions/handlers.Pageable"
+                },
+                "size": {
+                    "type": "integer"
+                },
+                "sort": {
+                    "$ref": "#/definitions/handlers.Sort"
+                },
+                "totalElements": {
+                    "type": "integer"
+                },
+                "totalPages": {
+                    "type": "integer"
+                }
+            }
+        },
+        "handlers.OrderResponse": {
+            "type": "object",
+            "properties": {
+                "currencyRate": {
+                    "type": "number"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "requisites": {
+                    "$ref": "#/definitions/handlers.Requisites"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "storeName": {
+                    "type": "string"
+                },
+                "sumDeal": {
+                    "$ref": "#/definitions/handlers.Amount"
+                },
+                "sumInvoice": {
+                    "$ref": "#/definitions/handlers.Amount"
+                },
+                "timeComplete": {
+                    "type": "string"
+                },
+                "timeExpires": {
+                    "type": "string"
+                },
+                "timeOpening": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.Pageable": {
+            "type": "object",
+            "properties": {
+                "offset": {
+                    "type": "integer"
+                },
+                "pageNumber": {
+                    "type": "integer"
+                },
+                "pageSize": {
+                    "type": "integer"
+                },
+                "paged": {
+                    "type": "boolean"
+                },
+                "sort": {
+                    "$ref": "#/definitions/handlers.Sort"
+                },
+                "unpaged": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "handlers.Requisites": {
+            "type": "object",
+            "properties": {
+                "cardNumber": {
+                    "type": "string"
+                },
+                "holderName": {
+                    "type": "string"
+                },
+                "issuer": {
+                    "type": "string"
+                },
+                "phoneNumber": {
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.Sort": {
+            "type": "object",
+            "properties": {
+                "empty": {
+                    "type": "boolean"
+                },
+                "sorted": {
+                    "type": "boolean"
+                },
+                "unsorted": {
+                    "type": "boolean"
                 }
             }
         },
@@ -3520,7 +3946,7 @@
                     "type": "string"
                 },
                 "timeExpires": {
-                    "type": "integer"
+                    "type": "string"
                 }
             }
         },
@@ -3532,6 +3958,42 @@
                     "items": {
                         "$ref": "#/definitions/merchant.AccountBalance"
                     }
+                }
+            }
+        },
+        "merchant.GetOrderStatusResponse": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "merchant.LoginRequest": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "twoFaCode": {
+                    "type": "string"
+                }
+            }
+        },
+        "merchant.LoginResponse": {
+            "type": "object",
+            "properties": {
+                "apiKey": {
+                    "type": "string"
+                },
+                "dateTimeExpires": {
+                    "type": "string"
+                },
+                "token": {
+                    "type": "string"
                 }
             }
         },
@@ -4655,6 +5117,9 @@
                     "items": {
                         "$ref": "#/definitions/response.Transaction"
                     }
+                },
+                "pagination": {
+                    "$ref": "#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_wallet_response.Pagination"
                 }
             }
         },
@@ -4725,6 +5190,9 @@
             "type": "object",
             "properties": {
                 "access_token": {
+                    "type": "string"
+                },
+                "dateTimeExpires": {
                     "type": "string"
                 },
                 "refresh_token": {
@@ -4903,13 +5371,14 @@
                 "amount": {
                     "type": "number"
                 },
+                "createdAt": {
+                    "description": "Добавьте это поле",
+                    "type": "string"
+                },
                 "currency": {
                     "type": "string"
                 },
                 "id": {
-                    "type": "string"
-                },
-                "metadata": {
                     "type": "string"
                 },
                 "orderId": {

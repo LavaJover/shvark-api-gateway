@@ -20,5 +20,5 @@ type CreatePayInResponse struct {
 	Amount 			 float64 `json:"amount"`
 	AmountByCurrency float64 `json:"amountByCurrency"`
 	CurrencyRate 	 float64 `json:"currencyRate"`
-	TimeExpires 	 int64  `json:"timeExpires"`
+	TimeExpires 	 string  `json:"timeExpires"`
 }

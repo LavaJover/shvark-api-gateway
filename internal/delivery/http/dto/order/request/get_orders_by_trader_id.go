@@ -15,4 +15,6 @@ type OrderQueryParams struct {
 	DateFrom 	string 		`form:"date_from"`
 	DateTo		string   	`form:"date_to"`
 	Currency	string 		`form:"currency"`
+	OrderID 	string  	`form:"order_id"`
+	MerchantOrderID string 	`form:"merchant_order_id"`
 }

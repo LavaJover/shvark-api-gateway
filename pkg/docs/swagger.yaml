@@ -225,11 +225,122 @@ definitions:
       proof_url:
         type: string
     type: object
+  github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_wallet_response.Pagination:
+    properties:
+      currentPage:
+        type: integer
+      hasNextPage:
+        type: boolean
+      hasPrevPage:
+        type: boolean
+      itemsPerPage:
+        type: integer
+      totalItems:
+        type: integer
+      totalPages:
+        type: integer
+    type: object
+  handlers.Amount:
+    properties:
+      amount:
+        type: number
+      currency:
+        type: string
+    type: object
   handlers.ErrorResponse:
     properties:
       error:
         example: invalid data
         type: string
+    type: object
+  handlers.GetOrdersResponse:
+    properties:
+      content:
+        items:
+          $ref: '#/definitions/handlers.OrderResponse'
+        type: array
+      empty:
+        type: boolean
+      first:
+        type: boolean
+      last:
+        type: boolean
+      number:
+        type: integer
+      numberOfElements:
+        type: integer
+      pageable:
+        $ref: '#/definitions/handlers.Pageable'
+      size:
+        type: integer
+      sort:
+        $ref: '#/definitions/handlers.Sort'
+      totalElements:
+        type: integer
+      totalPages:
+        type: integer
+    type: object
+  handlers.OrderResponse:
+    properties:
+      currencyRate:
+        type: number
+      email:
+        type: string
+      id:
+        type: string
+      requisites:
+        $ref: '#/definitions/handlers.Requisites'
+      status:
+        type: string
+      storeName:
+        type: string
+      sumDeal:
+        $ref: '#/definitions/handlers.Amount'
+      sumInvoice:
+        $ref: '#/definitions/handlers.Amount'
+      timeComplete:
+        type: string
+      timeExpires:
+        type: string
+      timeOpening:
+        type: string
+      type:
+        type: string
+    type: object
+  handlers.Pageable:
+    properties:
+      offset:
+        type: integer
+      pageNumber:
+        type: integer
+      pageSize:
+        type: integer
+      paged:
+        type: boolean
+      sort:
+        $ref: '#/definitions/handlers.Sort'
+      unpaged:
+        type: boolean
+    type: object
+  handlers.Requisites:
+    properties:
+      cardNumber:
+        type: string
+      holderName:
+        type: string
+      issuer:
+        type: string
+      phoneNumber:
+        type: string
+    type: object
+  handlers.Sort:
+    properties:
+      empty:
+        type: boolean
+      sorted:
+        type: boolean
+      unsorted:
+        type: boolean
     type: object
   merchant.AccountBalance:
     properties:
@@ -278,7 +389,7 @@ definitions:
       phoneNumber:
         type: string
       timeExpires:
-        type: integer
+        type: string
     type: object
   merchant.GetAccountBalanceResponse:
     properties:
@@ -286,6 +397,29 @@ definitions:
         items:
           $ref: '#/definitions/merchant.AccountBalance'
         type: array
+    type: object
+  merchant.GetOrderStatusResponse:
+    properties:
+      status:
+        type: string
+    type: object
+  merchant.LoginRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      twoFaCode:
+        type: string
+    type: object
+  merchant.LoginResponse:
+    properties:
+      apiKey:
+        type: string
+      dateTimeExpires:
+        type: string
+      token:
+        type: string
     type: object
   merchant.WithdrawRequest:
     properties:
@@ -1016,6 +1150,8 @@ definitions:
         items:
           $ref: '#/definitions/response.Transaction'
         type: array
+      pagination:
+        $ref: '#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_wallet_response.Pagination'
     type: object
   response.GetTraderWalletAddressErrorResponse:
     properties:
@@ -1060,6 +1196,8 @@ definitions:
   response.LoginResponse:
     properties:
       access_token:
+        type: string
+      dateTimeExpires:
         type: string
       refresh_token:
         type: string
@@ -1175,11 +1313,12 @@ definitions:
     properties:
       amount:
         type: number
+      createdAt:
+        description: Добавьте это поле
+        type: string
       currency:
         type: string
       id:
-        type: string
-      metadata:
         type: string
       orderId:
         type: string
@@ -2048,6 +2187,128 @@ paths:
       summary: Withdraw crypto from account wallet
       tags:
       - merchant
+  /merchant/auth/sign-in:
+    post:
+      consumes:
+      - application/json
+      description: sign-in endpoint
+      parameters:
+      - description: user credentials
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/merchant.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/merchant.LoginResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: sign-in handler
+      tags:
+      - merchant
+  /merchant/banks:
+    get:
+      consumes:
+      - application/json
+      description: Get available banks
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Get banks
+      tags:
+      - merchant
+  /merchant/order:
+    get:
+      consumes:
+      - application/json
+      description: Получение списка ордеров с фильтрацией, сортировкой и пагинацией
+      parameters:
+      - description: Фильтр по ID сделки
+        in: query
+        name: dealId
+        type: string
+      - description: 'Тип ордера: DEPOSIT, WITHDRAWAL, PAYOUT'
+        enum:
+        - DEPOSIT
+        - WITHDRAWAL
+        - PAYOUT
+        in: query
+        name: type
+        type: string
+      - description: Статус ордера
+        enum:
+        - COMPLETED
+        - CANCELED
+        - FAILED
+        - DISPUTE
+        - PENDING
+        in: query
+        name: status
+        type: string
+      - description: 'Начальная дата создания (формат: 2006-01-02T15:04:05Z)'
+        in: query
+        name: timeOpeningStart
+        type: string
+      - description: 'Конечная дата создания (формат: 2006-01-02T15:04:05Z)'
+        in: query
+        name: timeOpeningEnd
+        type: string
+      - description: Минимальная сумма
+        in: query
+        name: amountMin
+        type: number
+      - description: Максимальная сумма
+        in: query
+        name: amountMax
+        type: number
+      - default: 0
+        description: Номер страницы (начиная с 0)
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Размер страницы
+        in: query
+        name: size
+        type: integer
+      - description: 'Поле сортировки: id, deal_id, time_opening, time_expires, time_complete,
+          type, status, amount'
+        in: query
+        name: sort
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.GetOrdersResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Получить список ордеров
+      tags:
+      - merchant
   /merchant/order/{accountID}/deposit:
     post:
       consumes:
@@ -2080,7 +2341,36 @@ paths:
           description: Not Found
           schema:
             $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Create new deposit order
+      tags:
+      - merchant
+  /merchant/order/{iternalId}/status:
+    get:
+      consumes:
+      - application/json
+      description: Get order status
+      parameters:
+      - description: merchant order ID
+        in: path
+        name: iternalId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/merchant.GetOrderStatusResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get order status
       tags:
       - merchant
   /orders:
@@ -2425,6 +2715,14 @@ paths:
       - description: Currency code
         in: query
         name: currency
+        type: string
+      - description: Order ID
+        in: query
+        name: order_id
+        type: string
+      - description: Merchant order ID
+        in: query
+        name: merchant_order_id
         type: string
       produces:
       - application/json
@@ -2964,13 +3262,23 @@ paths:
     get:
       consumes:
       - application/json
-      description: Get trader transaction history
+      description: Get trader transaction history with pagination
       parameters:
       - description: TraderID
         in: path
         name: traderID
         required: true
         type: string
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Items per page
+        in: query
+        name: limit
+        type: integer
       produces:
       - application/json
       responses:

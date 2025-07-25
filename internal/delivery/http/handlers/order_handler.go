@@ -128,6 +128,7 @@ func (h *OrderHandler) GetOrderByID(c *gin.Context) {
 			UpdatedAt:    response.Order.UpdatedAt.AsTime(),
 			CryptoRubRate:   response.Order.CryptoRubRate,
 			MerchantOrderID: response.Order.MerchantOrderId,
+			MerchantID: response.Order.MerchantId,
 			BankDetail: orderResponse.BankDetail{
 				ID:            response.Order.BankDetail.BankDetailId,
 				TraderID:      response.Order.BankDetail.TraderId,
@@ -182,6 +183,7 @@ func (h *OrderHandler) GetOrderByMerchantOrderID(c *gin.Context) {
 			UpdatedAt:    response.Order.UpdatedAt.AsTime(),
 			CryptoRubRate:   response.Order.CryptoRubRate,
 			MerchantOrderID: response.Order.MerchantOrderId,
+			MerchantID: response.Order.MerchantId,
 			BankDetail: orderResponse.BankDetail{
 				ID:            response.Order.BankDetail.BankDetailId,
 				TraderID:      response.Order.BankDetail.TraderId,
@@ -218,6 +220,8 @@ func (h *OrderHandler) GetOrderByMerchantOrderID(c *gin.Context) {
 // @Param date_from query string false "Date from (YYYY-MM-DD)"
 // @Param date_to query string false "Date to (YYYY-MM-DD)"
 // @Param currency query string false "Currency code"
+// @Param order_id query string false "Order ID"
+// @Param merchant_order_id query string false "Merchant order ID"
 // @Success 200 {object} orderResponse.GetOrdersByTraderIDResponse
 // @Failure 400 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
@@ -280,6 +284,7 @@ func (h *OrderHandler) GetOrdersByTraderID(c *gin.Context) {
 			UpdatedAt:    responseOrder.UpdatedAt.AsTime(),
 			CryptoRubRate:   responseOrder.CryptoRubRate,
 			MerchantOrderID: responseOrder.MerchantOrderId,
+			MerchantID: responseOrder.MerchantId,
 			BankDetail: orderResponse.BankDetail{
 				ID:            responseOrder.BankDetail.BankDetailId,
 				TraderID:      responseOrder.BankDetail.TraderId,

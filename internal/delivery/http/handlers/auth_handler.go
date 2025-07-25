@@ -113,6 +113,7 @@ func (h *AuthHandler) Login(c *gin.Context) {
 	c.JSON(http.StatusOK, authResponse.LoginResponse{
 		AccessToken: response.AccessToken,
 		RefreshToken: response.RefreshToken,
+		DateTimeExpires: response.TimeExp.AsTime().Format("2006-01-02 15:04:05"),
 	})
 }
 

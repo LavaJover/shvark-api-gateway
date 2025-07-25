@@ -338,12 +338,14 @@ func (h *WalletHandler) OffchainWithdraw(c *gin.Context) {
 }
 
 // @Summary Get trader transactions history
-// @Description Get trader transaction history
+// @Description Get trader transaction history with pagination
 // @Tags wallets
 // @Security BearerAuth
 // @Accept json
 // @Produce json
 // @Param traderID path string true "TraderID"
+// @Param page query int false "Page number" default(1)
+// @Param limit query int false "Items per page" default(10)
 // @Success 200 {object} walletResponse.GetTraderHistoryResponse
 // @Failure 400 {object} walletResponse.GetTraderHistoryErrorResponse
 // @Failure 500 {object} walletResponse.GetTraderHistoryErrorResponse
@@ -357,11 +359,22 @@ func (h *WalletHandler) GetTraderHistory(c *gin.Context) {
 		return
 	}
 
-	proxyResp, err := http.Get(fmt.Sprintf("http://%s/wallets/%s/history", h.WalletClient.Addr, traderID))
+	// Формируем URL с передачей параметров пагинации
+	walletURL := fmt.Sprintf("http://%s/wallets/%s/history", h.WalletClient.Addr, traderID)
+	
+	// Переносим query-параметры из оригинального запроса
+	queryParams := c.Request.URL.Query()
+	if len(queryParams) > 0 {
+		walletURL += "?" + queryParams.Encode()
+	}
+
+	proxyResp, err := http.Get(walletURL)
 	if err != nil {
 		c.JSON(http.StatusBadGateway, gin.H{"error": err.Error()})
 		return
 	}
+	defer proxyResp.Body.Close() // Важно закрывать тело
+
 	proxyRespBody, err := io.ReadAll(proxyResp.Body)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to read wallet-service response body"})
@@ -371,6 +384,8 @@ func (h *WalletHandler) GetTraderHistory(c *gin.Context) {
 	if proxyResp.StatusCode >= 200 && proxyResp.StatusCode < 300 {
 		var response walletResponse.GetTraderHistoryResponse
 		if err := json.Unmarshal(proxyRespBody, &response); err != nil {
+			// Логируем ошибку парсинга
+			slog.Error("failed to parse wallet-service response", "error", err)
 			c.Data(proxyResp.StatusCode, "application/json", proxyRespBody)
 			return
 		}
@@ -379,6 +394,7 @@ func (h *WalletHandler) GetTraderHistory(c *gin.Context) {
 		return
 	}
 
+	// Проксируем ошибки как есть
 	c.Data(proxyResp.StatusCode, "application/json", proxyRespBody)
 }
 
