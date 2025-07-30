@@ -9,6 +9,7 @@ import (
 	"github.com/LavaJover/shvark-api-gateway/internal/client"
 	adminRequest "github.com/LavaJover/shvark-api-gateway/internal/delivery/http/dto/admin/request"
 	adminResponse "github.com/LavaJover/shvark-api-gateway/internal/delivery/http/dto/admin/response"
+	orderpb "github.com/LavaJover/shvark-order-service/proto/gen"
 	"github.com/gin-gonic/gin"
 )
 
@@ -641,4 +642,113 @@ func (h *AdminHandler) DeleteUserWithdrawalRules(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, adminResponse.DeleteWithdrawalRulesResponse{})
+}
+
+// @Summary Create new team relation
+// @Description Create new team relation
+// @Tags admin
+// @Accept json
+// @Produce json
+// @Param input body adminRequest.CreateTeamRelationRequest true "new relation"
+// @Success 201 {string} string "Success"
+// @Failure 400 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /admin/teams/relations/create [post] 
+func (h *AdminHandler) CreateTeamRelation(c *gin.Context) {
+	var request adminRequest.CreateTeamRelationRequest
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	_, err := h.OrderClient.CreateTeamRelation(
+		&orderpb.CreateTeamRelationRequest{
+			TeamLeadId: request.TeamLeadID,
+			TraderId: request.TraderID,
+			Commission: request.TeamRelationParams.Commission,
+		},
+	)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{"message": "success"})
+}
+
+// @Summary Update team relation
+// @Description Update team relation
+// @Tags admin
+// @Accept json
+// @Produce json
+// @Param input body adminRequest.UpdateTeamRelationRequest true "update relation"
+// @Success 200 {string} string "Success"
+// @Failure 400 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /admin/teams/relations/update [patch]
+func (h *AdminHandler) UpdateRelationParams(c *gin.Context) {
+	var request adminRequest.UpdateTeamRelationRequest
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	_, err := h.OrderClient.UpdateTeamRelationParams(
+		&orderpb.UpdateRelationParamsRequest{
+			Relation: &orderpb.TeamRelationship{
+				Id: request.RelationID,
+				Commission: request.TeamRelationParams.Commission,
+			},
+		},
+	)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "success"})
+}
+
+// @Summary Get relations by teamLead id
+// @Description get relations by teamLead ID
+// @Tags admin
+// @Accept json
+// @Produce json
+// @Param teamLeadID path string true "teamLeadID"
+// @Success 200 {object} adminResponse.TeamRelationsResponse
+// @Failure 400 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /admin/teams/relations/team-lead/{teamLeadID} [get]
+func (h *AdminHandler) GetRelationsByTeamLeadID(c *gin.Context) {
+	teamLeadID := c.Param("teamLeadID")
+	if teamLeadID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "teamLeadID path param misses"})
+		return
+	}
+
+	response, err := h.OrderClient.GetTeamRelationsByTeamLeadID(
+		&orderpb.GetRelationsByTeamLeadIDRequest{
+			TeamLeadId: teamLeadID,
+		},
+	)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	teamRelations := make([]adminResponse.TeamRelation, len(response.TeamRelations))
+	for i, relation := range response.TeamRelations {
+		teamRelations[i] = adminResponse.TeamRelation{
+			ID: relation.Id,
+			TraderID: relation.TraderId,
+			TeamLeadID: relation.TeamLeadId,
+			TeamRelationRarams: adminResponse.TeamRelationRarams{
+				Commission: relation.Commission,
+			},
+		}
+	}
+
+	c.JSON(http.StatusOK, adminResponse.TeamRelationsResponse{
+		TeamRelations: teamRelations,
+	})
 }

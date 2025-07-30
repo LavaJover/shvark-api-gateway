@@ -638,6 +638,15 @@ definitions:
       ttl:
         type: string
     type: object
+  request.CreateTeamRelationRequest:
+    properties:
+      teamLeadId:
+        type: string
+      teamRelationParams:
+        $ref: '#/definitions/request.TeamRelationParams'
+      traderId:
+        type: string
+    type: object
   request.CreateTeamRequest:
     properties:
       login:
@@ -794,6 +803,11 @@ definitions:
       user_id:
         type: string
     type: object
+  request.TeamRelationParams:
+    properties:
+      commission:
+        type: number
+    type: object
   request.Traffic:
     properties:
       enabled:
@@ -815,6 +829,13 @@ definitions:
     properties:
       bank_detail:
         $ref: '#/definitions/request.BankDetail'
+    type: object
+  request.UpdateTeamRelationRequest:
+    properties:
+      relationId:
+        type: string
+      teamRelationParams:
+        $ref: '#/definitions/request.TeamRelationParams'
     type: object
   request.ValidateTokenRequest:
     properties:
@@ -1292,6 +1313,29 @@ definitions:
       qr_url:
         type: string
     type: object
+  response.TeamRelation:
+    properties:
+      id:
+        type: string
+      teamLeadId:
+        type: string
+      teamRelationRarams:
+        $ref: '#/definitions/response.TeamRelationRarams'
+      traderId:
+        type: string
+    type: object
+  response.TeamRelationRarams:
+    properties:
+      commission:
+        type: number
+    type: object
+  response.TeamRelationsResponse:
+    properties:
+      teamRelations:
+        items:
+          $ref: '#/definitions/response.TeamRelation'
+        type: array
+    type: object
   response.Traffic:
     properties:
       enabled:
@@ -1700,6 +1744,95 @@ paths:
       security:
       - BearerAuth: []
       summary: Create new team
+      tags:
+      - admin
+  /admin/teams/relations/create:
+    post:
+      consumes:
+      - application/json
+      description: Create new team relation
+      parameters:
+      - description: new relation
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/request.CreateTeamRelationRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Success
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Create new team relation
+      tags:
+      - admin
+  /admin/teams/relations/team-lead/{teamLeadID}:
+    get:
+      consumes:
+      - application/json
+      description: get relations by teamLead ID
+      parameters:
+      - description: teamLeadID
+        in: path
+        name: teamLeadID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.TeamRelationsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Get relations by teamLead id
+      tags:
+      - admin
+  /admin/teams/relations/update:
+    patch:
+      consumes:
+      - application/json
+      description: Update team relation
+      parameters:
+      - description: update relation
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/request.UpdateTeamRelationRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Update team relation
       tags:
       - admin
   /admin/traders:

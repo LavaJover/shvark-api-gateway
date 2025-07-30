@@ -17,6 +17,7 @@ type OrderClient struct {
 	service orderpb.OrderServiceClient
 	trafficService orderpb.TrafficServiceClient
 	bankDetailService orderpb.BankDetailServiceClient
+	teamRelationsService orderpb.TeamRelationsServiceClient
 }
 
 func NewOrderClient(addr string) (*OrderClient, error) {
@@ -39,6 +40,7 @@ func NewOrderClient(addr string) (*OrderClient, error) {
 		service: orderpb.NewOrderServiceClient(conn),
 		trafficService: orderpb.NewTrafficServiceClient(conn),
 		bankDetailService: orderpb.NewBankDetailServiceClient(conn),
+		teamRelationsService: orderpb.NewTeamRelationsServiceClient(conn),
 	}, nil
 }
 
@@ -411,6 +413,36 @@ func (c *OrderClient) GetOrders(r *orderpb.GetOrdersRequest) (*orderpb.GetOrders
 	defer cancel()
 
 	return c.service.GetOrders(
+		ctx,
+		r,
+	)
+}
+
+func (c *OrderClient) CreateTeamRelation(r *orderpb.CreateTeamRelationRequest) (*orderpb.CreateTeamRelationResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	return c.teamRelationsService.CreateTeamRelation(
+		ctx,
+		r,
+	)
+}
+
+func (c *OrderClient) UpdateTeamRelationParams(r *orderpb.UpdateRelationParamsRequest) (*orderpb.UpdateRelationParamsResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	return c.teamRelationsService.UpdateRelationParams(
+		ctx,
+		r,
+	)
+}
+
+func (c *OrderClient) GetTeamRelationsByTeamLeadID(r *orderpb.GetRelationsByTeamLeadIDRequest) (*orderpb.GetRelationsByTeamLeadIDResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	return c.teamRelationsService.GetRelationsByTeamLeadID(
 		ctx,
 		r,
 	)

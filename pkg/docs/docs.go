@@ -532,6 +532,142 @@ const docTemplate = `{
                 }
             }
         },
+        "/admin/teams/relations/create": {
+            "post": {
+                "description": "Create new team relation",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin"
+                ],
+                "summary": "Create new team relation",
+                "parameters": [
+                    {
+                        "description": "new relation",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.CreateTeamRelationRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Success",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/teams/relations/team-lead/{teamLeadID}": {
+            "get": {
+                "description": "get relations by teamLead ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin"
+                ],
+                "summary": "Get relations by teamLead id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "teamLeadID",
+                        "name": "teamLeadID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.TeamRelationsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/teams/relations/update": {
+            "patch": {
+                "description": "Update team relation",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin"
+                ],
+                "summary": "Update team relation",
+                "parameters": [
+                    {
+                        "description": "update relation",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.UpdateTeamRelationRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/admin/traders": {
             "get": {
                 "description": "Get traders",
@@ -4329,6 +4465,20 @@ const docTemplate = `{
                 }
             }
         },
+        "request.CreateTeamRelationRequest": {
+            "type": "object",
+            "properties": {
+                "teamLeadId": {
+                    "type": "string"
+                },
+                "teamRelationParams": {
+                    "$ref": "#/definitions/request.TeamRelationParams"
+                },
+                "traderId": {
+                    "type": "string"
+                }
+            }
+        },
         "request.CreateTeamRequest": {
             "type": "object",
             "properties": {
@@ -4568,6 +4718,14 @@ const docTemplate = `{
                 }
             }
         },
+        "request.TeamRelationParams": {
+            "type": "object",
+            "properties": {
+                "commission": {
+                    "type": "number"
+                }
+            }
+        },
         "request.Traffic": {
             "type": "object",
             "properties": {
@@ -4599,6 +4757,17 @@ const docTemplate = `{
             "properties": {
                 "bank_detail": {
                     "$ref": "#/definitions/request.BankDetail"
+                }
+            }
+        },
+        "request.UpdateTeamRelationRequest": {
+            "type": "object",
+            "properties": {
+                "relationId": {
+                    "type": "string"
+                },
+                "teamRelationParams": {
+                    "$ref": "#/definitions/request.TeamRelationParams"
                 }
             }
         },
@@ -5339,6 +5508,42 @@ const docTemplate = `{
             "properties": {
                 "qr_url": {
                     "type": "string"
+                }
+            }
+        },
+        "response.TeamRelation": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "teamLeadId": {
+                    "type": "string"
+                },
+                "teamRelationRarams": {
+                    "$ref": "#/definitions/response.TeamRelationRarams"
+                },
+                "traderId": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.TeamRelationRarams": {
+            "type": "object",
+            "properties": {
+                "commission": {
+                    "type": "number"
+                }
+            }
+        },
+        "response.TeamRelationsResponse": {
+            "type": "object",
+            "properties": {
+                "teamRelations": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/response.TeamRelation"
+                    }
                 }
             }
         },

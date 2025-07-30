@@ -194,6 +194,9 @@ func main() {
 		adminGroup.POST("/wallets/withdraw/rules", adminHandler.SetWithdrawalRules)
 		adminGroup.GET("/wallets/withdraw/rules/:userId", adminHandler.GetUserWithdrawalRules)
 		adminGroup.DELETE("/wallets/withdraw/rules/:userId", adminHandler.DeleteUserWithdrawalRules)
+		adminGroup.POST("/teams/relations/create", adminHandler.CreateTeamRelation)
+		adminGroup.PATCH("/teams/relations/update", adminHandler.UpdateRelationParams)
+		adminGroup.GET("/teams/relations/team-lead/:teamLeadID", adminHandler.GetRelationsByTeamLeadID)
 	}
 
 	merchantHandler := handlers.NewMerchanHandler(ordersHandler.OrderClient, walletClient, userHandler.UserClient, authHandler.SSOClient)
