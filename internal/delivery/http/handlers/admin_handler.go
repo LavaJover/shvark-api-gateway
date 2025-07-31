@@ -9,7 +9,9 @@ import (
 	"github.com/LavaJover/shvark-api-gateway/internal/client"
 	adminRequest "github.com/LavaJover/shvark-api-gateway/internal/delivery/http/dto/admin/request"
 	adminResponse "github.com/LavaJover/shvark-api-gateway/internal/delivery/http/dto/admin/response"
+	orderResponse "github.com/LavaJover/shvark-api-gateway/internal/delivery/http/dto/order/response"
 	orderpb "github.com/LavaJover/shvark-order-service/proto/gen"
+	userpb "github.com/LavaJover/shvark-user-service/proto/gen"
 	"github.com/gin-gonic/gin"
 )
 
@@ -750,5 +752,174 @@ func (h *AdminHandler) GetRelationsByTeamLeadID(c *gin.Context) {
 
 	c.JSON(http.StatusOK, adminResponse.TeamRelationsResponse{
 		TeamRelations: teamRelations,
+	})
+}
+
+// @Summary Delete team relationship
+// @Description Delete team relationship
+// @Tags admin
+// @Accept json
+// @Produce json
+// @Param relationID path string true "id of relationship"
+// @Success 200 {string} string "Success"
+// @Failure 404 {object} ErrorResponse
+// @Router /admin/teams/relations/{relationID}/delete [delete]
+func (h *AdminHandler) DeleteTeamRelationship(c *gin.Context) {
+	relationID := c.Param("relationID")
+	_, err := h.OrderClient.DeleteTeamRelationship(
+		&orderpb.DeleteTeamRelationshipRequest{
+			RelationId: relationID,
+		},
+	)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "failed to delete relationship"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Success"})
+}
+
+// @Summary Promote trader to team lead
+// @Description Promote trader to team lead
+// @Tags admin
+// @Accept json
+// @Produce json
+// @Param traderID path string true "trader ID to be promoted to teamlead"
+// @Success 200 {string} string "Success"
+// @Failure 404 {object} ErrorResponse
+// @Router /admin/teams/traders/{traderID}/promote-to-teamlead [post] 
+func (h *AdminHandler) PromoteToTeamLead(c *gin.Context) {
+	traderID := c.Param("traderID")
+	_, err := h.UserClient.PromoteToTeamLead(
+		&userpb.PromoteToTeamLeadRequest{
+			UserId: traderID,
+		},
+	)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "failed to promote trader to teamlead"})
+		return
+	}
+	_, err = h.AuthzClient.AssignRole(traderID, "teamlead")
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "failed to assign teamlead role"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Success"})
+}
+
+// @Summary Demote teamlead
+// @Description Demote teamlead to trader
+// @Tags admin
+// @Accept json
+// @Produce json
+// @Param teamleadID path string true "teamlead ID to be demoted"
+// @Success 200 {string} string "Success"
+// @Failure 404 {object} ErrorResponse
+// @Router /admin/teams/teamleads/{teamleadID}/demote [post] 
+func (h *AdminHandler) DemoteTeamLead(c *gin.Context) {
+	teamleadID := c.Param("teamleadID")
+
+	_, err := h.UserClient.DemoteTeamLead(
+		&userpb.DemoteTeamLeadRequest{
+			TeamLeadId: teamleadID,
+		},
+	)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "failed to demote teamlead"})
+		return
+	}
+	_, err = h.AuthzClient.RevokeRole(teamleadID, "teamlead")
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "failed to assign teamlead role"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "Success"})
+}
+
+// @Summary Get users by role
+// @Description Get users filtered by role
+// @Tags admin
+// @Accept json
+// @Produce json
+// @Param role query string false "user role"
+// @Success 200 {object} adminResponse.GetUsersResponse
+// @Failure 404 {object} ErrorResponse
+// @Router /admin/users [get]
+func (h *AdminHandler) GetUsersByRole(c *gin.Context) {
+	role := c.Query("role")
+	resp, err := h.UserClient.GetUsersByRole(
+		&userpb.GetUsersByRoleRequest{
+			Role: role,
+		},
+	)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "failed to find users"})
+		return
+	}
+	users := make([]adminResponse.User, len(resp.Users))
+    for i, u := range resp.Users {
+        users[i] = adminResponse.User{
+            ID:        u.UserId,
+            Login:     u.Login,
+            Role:      u.Role,
+			Username: u.Username,
+        }
+    }
+    
+    // Возвращаем успешный ответ
+    c.JSON(http.StatusOK, adminResponse.GetUsersResponse{
+        Users: users,
+    })
+}
+
+// @Summary 	Get order statistics
+// @Description Get order statistics
+// @Tags 		admin
+// @Security 	BearerAuth
+// @Accept 		json
+// @Produce 	json
+// @Param 		traderID  query string true "trader ID"
+// @Param       date_from query string true "Дата начала (RFC3339 format, e.g. 2025-07-21T00:00:00Z)"
+// @Param       date_to   query string true "Дата конца (RFC3339 format, e.g. 2025-07-21T23:59:59Z)"
+// @Success 200 {object} orderResponse.GetOrderStatsResponse
+// @Failure 401 {object} ErrorResponse
+// @Failure 404 {object} ErrorResponse
+// @Router /admin/orders/statistics [get]
+func (h *AdminHandler) GetTraderOrderStats(c *gin.Context) {
+	traderID := c.Query("traderID")
+
+	dateFromStr := c.Query("date_from")
+	dateToStr := c.Query("date_to")
+
+	dateFrom, err := time.Parse(time.RFC3339, dateFromStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid date_from format, expected RFC3339"})
+		return
+	}
+
+	dateTo, err := time.Parse(time.RFC3339, dateToStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid date_to format, expected RFC3339"})
+		return
+	}
+	resp, err := h.OrderClient.GetOrderStats(
+		traderID,
+		dateFrom,
+		dateTo,
+	)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "no stats was found"})
+		return
+	}
+	c.JSON(http.StatusOK, orderResponse.GetOrderStatsResponse{
+		TotalOrders: resp.TotalOrders,
+		SucceedOrders: resp.SucceedOrders,
+		CanceledOrders: resp.CanceledOrders,
+		ProcessedAmountFiat: float64(resp.ProcessedAmountFiat),
+		ProcessedAmountCrypto: float64(resp.ProcessedAmountCrypto),
+		CanceledAmountFiat: float64(resp.CanceledAmountFiat),
+		CanceledAmountCrypto: float64(resp.CanceledAmountCrypto),
+		IncomeCrypto: float64(resp.IncomeCrypto),
 	})
 }

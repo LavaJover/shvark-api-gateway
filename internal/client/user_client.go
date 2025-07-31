@@ -115,3 +115,33 @@ func (c *UserClient) GetMerchants() (*userpb.GetMerchantsResponse, error) {
 		&userpb.GetMerchantsRequest{},
 	)
 }
+
+func (c *UserClient) PromoteToTeamLead(r *userpb.PromoteToTeamLeadRequest) (*userpb.PromoteToTeamLeadResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	return c.service.PromoteToTeamLead(
+		ctx,
+		r,
+	)
+}
+
+func (c *UserClient) DemoteTeamLead(r *userpb.DemoteTeamLeadRequest) (*userpb.DemoteTeamLeadResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	return c.service.DemoteTeamLead(
+		ctx,
+		r,
+	)
+}
+
+func (c *UserClient) GetUsersByRole(r *userpb.GetUsersByRoleRequest) (*userpb.GetUsersByRoleResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	return c.service.GetUsersByRole(
+		ctx,
+		r,
+	)
+}

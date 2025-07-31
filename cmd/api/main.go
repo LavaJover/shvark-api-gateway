@@ -136,8 +136,6 @@ func main() {
 		orderGroup.GET("/trader/:traderUUID", ordersHandler.GetOrdersByTraderID)
 		orderGroup.POST("/approve", ordersHandler.ApproveOrder)
 		orderGroup.POST("/cancel", ordersHandler.CancelOrder)
-		orderGroup.POST("/disputes/open", ordersHandler.OpenOrderDispute)
-		orderGroup.POST("/disputes/resolve", ordersHandler.ResolveOrderDispute)	
 		orderGroup.GET("/merchant/:id", ordersHandler.GetOrderByMerchantOrderID)
 		orderGroup.GET("/statistics", ordersHandler.GetOrderStats)
 	}
@@ -154,6 +152,7 @@ func main() {
 		walletGroup.GET("/:traderID/balance", middleware.RequireSelfOrAdmin(authzHandler.AuthzClient, "traderID"), walletHandler.GetTraderBalance)
 		walletGroup.GET("/:traderID/address", middleware.RequireSelfOrAdmin(authzHandler.AuthzClient, "traderID"), walletHandler.GetTraderWalletAddress)
 		walletGroup.POST("/offchain-withdraw", middleware.AuthMiddleware(authHandler.SSOClient), walletHandler.OffchainWithdraw)
+		walletGroup.GET("/:traderID/commission-profit", walletHandler.GetCommissionProfit)
 	}
 
 	// payments for merchant
@@ -197,6 +196,11 @@ func main() {
 		adminGroup.POST("/teams/relations/create", adminHandler.CreateTeamRelation)
 		adminGroup.PATCH("/teams/relations/update", adminHandler.UpdateRelationParams)
 		adminGroup.GET("/teams/relations/team-lead/:teamLeadID", adminHandler.GetRelationsByTeamLeadID)
+		adminGroup.DELETE("/teams/relations/:relationID/delete", adminHandler.DeleteTeamRelationship)
+		adminGroup.POST("/teams/traders/:traderID/promote-to-teamlead", adminHandler.PromoteToTeamLead)
+		adminGroup.POST("/teams/teamleads/:teamleadID/demote", adminHandler.DemoteTeamLead)
+		adminGroup.GET("/users", adminHandler.GetUsersByRole)
+		adminGroup.GET("/orders/statistics", adminHandler.GetTraderOrderStats)
 	}
 
 	merchantHandler := handlers.NewMerchanHandler(ordersHandler.OrderClient, walletClient, userHandler.UserClient, authHandler.SSOClient)

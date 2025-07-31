@@ -487,3 +487,78 @@ func (h WalletHandler) GetTraderWalletAddress(c *gin.Context) {
 
 	c.Data(proxyResp.StatusCode, "application/json", proxyRespBody)
 }
+
+// @Summary Get commission profit
+// @Description Get total commission profit for user in specified period
+// @Tags wallets
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param traderID path string true "Trader ID"
+// @Param from query string true "Start date (ISO 8601 format)"
+// @Param to query string true "End date (ISO 8601 format)"
+// @Success 200 {object} walletResponse.CommissionProfitResponse
+// @Failure 400 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Failure 502 {object} ErrorResponse
+// @Router /wallets/{traderID}/commission-profit [get]
+func (h *WalletHandler) GetCommissionProfit(c *gin.Context) {
+    traderID := c.Param("traderID")
+    from := c.Query("from")
+    to := c.Query("to")
+
+    slog.Info("commission profit request", 
+        "traderID", traderID, 
+        "from", from, 
+        "to", to)
+
+    // Validate parameters
+    if traderID == "" || from == "" || to == "" {
+        c.JSON(http.StatusBadRequest, gin.H{
+            "error": "traderID, from and to parameters are required",
+        })
+        return
+    }
+
+    // Create request body for wallet-service
+    requestBody := map[string]string{
+        "traderId": traderID,
+        "from":     from,
+        "to":       to,
+    }
+    jsonBody, _ := json.Marshal(requestBody)
+
+    // Make request to wallet-service
+    walletURL := fmt.Sprintf("http://%s/wallets/commission-profit", h.WalletClient.Addr)
+    resp, err := http.Post(walletURL, "application/json", bytes.NewBuffer(jsonBody))
+    if err != nil {
+        slog.Error("wallet-service request failed", "error", err)
+        c.JSON(http.StatusBadGateway, gin.H{
+            "error": "failed to connect to wallet-service",
+        })
+        return
+    }
+    defer resp.Body.Close()
+
+    // Handle wallet-service response
+    body, err := io.ReadAll(resp.Body)
+    if err != nil {
+        slog.Error("failed to read wallet-service response", "error", err)
+        c.JSON(http.StatusInternalServerError, gin.H{
+            "error": "failed to read wallet-service response",
+        })
+        return
+    }
+
+    // Forward response with original status code
+    if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+        var successResp walletResponse.CommissionProfitResponse
+        if err := json.Unmarshal(body, &successResp); err == nil {
+            c.JSON(resp.StatusCode, successResp)
+            return
+        }
+    }
+
+    // Forward error responses as-is
+    c.Data(resp.StatusCode, "application/json", body)
+}

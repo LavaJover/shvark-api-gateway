@@ -742,11 +742,6 @@ definitions:
       txHash:
         type: string
     type: object
-  request.OpenOrderDisputeRequest:
-    properties:
-      order_id:
-        type: string
-    type: object
   request.RegisterRequest:
     properties:
       login:
@@ -775,11 +770,6 @@ definitions:
       rewardPercent:
         type: number
       traderId:
-        type: string
-    type: object
-  request.ResolveOrderDisputeRequest:
-    properties:
-      order_id:
         type: string
     type: object
   request.RevokeRoleRequest:
@@ -911,6 +901,19 @@ definitions:
         type: boolean
     required:
     - allowed
+    type: object
+  response.CommissionProfitResponse:
+    properties:
+      currency:
+        type: string
+      from:
+        type: string
+      to:
+        type: string
+      totalCommission:
+        type: number
+      traderId:
+        type: string
     type: object
   response.CreateBankDetailResponse:
     properties:
@@ -1230,11 +1233,6 @@ definitions:
     type: object
   response.OffchainWithdrawResponse:
     type: object
-  response.OpenOrderDisputeResponse:
-    properties:
-      message:
-        type: string
-    type: object
   response.PaymentDetails:
     properties:
       bank:
@@ -1271,11 +1269,6 @@ definitions:
         type: number
       reward:
         type: number
-    type: object
-  response.ResolveOrderDisputeResponse:
-    properties:
-      message:
-        type: string
     type: object
   response.RevokeRoleResponse:
     properties:
@@ -1714,6 +1707,47 @@ paths:
       summary: Get order disputes
       tags:
       - admin
+  /admin/orders/statistics:
+    get:
+      consumes:
+      - application/json
+      description: Get order statistics
+      parameters:
+      - description: trader ID
+        in: query
+        name: traderID
+        required: true
+        type: string
+      - description: Дата начала (RFC3339 format, e.g. 2025-07-21T00:00:00Z)
+        in: query
+        name: date_from
+        required: true
+        type: string
+      - description: Дата конца (RFC3339 format, e.g. 2025-07-21T23:59:59Z)
+        in: query
+        name: date_to
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.GetOrderStatsResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get order statistics
+      tags:
+      - admin
   /admin/teams/create:
     post:
       consumes:
@@ -1744,6 +1778,31 @@ paths:
       security:
       - BearerAuth: []
       summary: Create new team
+      tags:
+      - admin
+  /admin/teams/relations/{relationID}/delete:
+    delete:
+      consumes:
+      - application/json
+      description: Delete team relationship
+      parameters:
+      - description: id of relationship
+        in: path
+        name: relationID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Delete team relationship
       tags:
       - admin
   /admin/teams/relations/create:
@@ -1833,6 +1892,56 @@ paths:
           schema:
             $ref: '#/definitions/handlers.ErrorResponse'
       summary: Update team relation
+      tags:
+      - admin
+  /admin/teams/teamleads/{teamleadID}/demote:
+    post:
+      consumes:
+      - application/json
+      description: Demote teamlead to trader
+      parameters:
+      - description: teamlead ID to be demoted
+        in: path
+        name: teamleadID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Demote teamlead
+      tags:
+      - admin
+  /admin/teams/traders/{traderID}/promote-to-teamlead:
+    post:
+      consumes:
+      - application/json
+      description: Promote trader to team lead
+      parameters:
+      - description: trader ID to be promoted to teamlead
+        in: path
+        name: traderID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Promote trader to team lead
       tags:
       - admin
   /admin/traders:
@@ -1954,6 +2063,30 @@ paths:
       security:
       - BearerAuth: []
       summary: Get traffic records
+      tags:
+      - admin
+  /admin/users:
+    get:
+      consumes:
+      - application/json
+      description: Get users filtered by role
+      parameters:
+      - description: user role
+        in: query
+        name: role
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.GetUsersResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Get users by role
       tags:
       - admin
   /admin/wallets/withdraw/rules:
@@ -2645,78 +2778,6 @@ paths:
       summary: Cancel order by order uuid
       tags:
       - orders
-  /orders/disputes/open:
-    post:
-      consumes:
-      - application/json
-      description: Open order dispute by order uuid
-      parameters:
-      - description: Order UUID
-        in: body
-        name: input
-        required: true
-        schema:
-          $ref: '#/definitions/request.OpenOrderDisputeRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/response.OpenOrderDisputeResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/handlers.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/handlers.ErrorResponse'
-        "502":
-          description: Bad Gateway
-          schema:
-            $ref: '#/definitions/handlers.ErrorResponse'
-      security:
-      - BearerAuth: []
-      summary: Open order dispute by order uuid
-      tags:
-      - orders
-  /orders/disputes/resolve:
-    post:
-      consumes:
-      - application/json
-      description: Resolve order dispute by order uuid
-      parameters:
-      - description: Order UUID
-        in: body
-        name: input
-        required: true
-        schema:
-          $ref: '#/definitions/request.ResolveOrderDisputeRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/response.ResolveOrderDisputeResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/handlers.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/handlers.ErrorResponse'
-        "502":
-          description: Bad Gateway
-          schema:
-            $ref: '#/definitions/handlers.ErrorResponse'
-      security:
-      - BearerAuth: []
-      summary: Resolve order dispute by order uuid
-      tags:
-      - orders
   /orders/merchant/{id}:
     get:
       consumes:
@@ -3389,6 +3450,51 @@ paths:
       security:
       - BearerAuth: []
       summary: Get trader crypto balance
+      tags:
+      - wallets
+  /wallets/{traderID}/commission-profit:
+    get:
+      consumes:
+      - application/json
+      description: Get total commission profit for user in specified period
+      parameters:
+      - description: Trader ID
+        in: path
+        name: traderID
+        required: true
+        type: string
+      - description: Start date (ISO 8601 format)
+        in: query
+        name: from
+        required: true
+        type: string
+      - description: End date (ISO 8601 format)
+        in: query
+        name: to
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.CommissionProfitResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get commission profit
       tags:
       - wallets
   /wallets/{traderID}/history:

@@ -374,66 +374,6 @@ func (h *OrderHandler) CancelOrder(c *gin.Context) {
 	})
 }
 
-// @Summary Open order dispute by order uuid
-// @Description Open order dispute by order uuid
-// @Tags orders
-// @Security BearerAuth
-// @Accept json
-// @Produce json
-// @Param input body orderRequest.OpenOrderDisputeRequest true "Order UUID"
-// @Success 200 {object} orderResponse.OpenOrderDisputeResponse
-// @Failure 400 {object} ErrorResponse
-// @Failure 500 {object} ErrorResponse
-// @Failure 502 {object} ErrorResponse
-// @Router /orders/disputes/open [post]
-func (h *OrderHandler) OpenOrderDispute(c *gin.Context) {
-	var request orderRequest.OpenOrderDisputeRequest
-	if err := c.ShouldBindJSON(&request); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-	orderID := request.OrderID
-	response, err := h.OrderClient.OpenOrderDispute(orderID)
-	if err != nil {
-		c.JSON(http.StatusBadGateway, gin.H{"error": err.Error()})
-		return
-	}
-
-	c.JSON(http.StatusOK, orderResponse.OpenOrderDisputeResponse{
-		Message: response.Message,
-	})
-}
-
-// @Summary Resolve order dispute by order uuid
-// @Description Resolve order dispute by order uuid
-// @Tags orders
-// @Security BearerAuth
-// @Accept json
-// @Produce json
-// @Param input body orderRequest.ResolveOrderDisputeRequest true "Order UUID"
-// @Success 200 {object} orderResponse.ResolveOrderDisputeResponse
-// @Failure 400 {object} ErrorResponse
-// @Failure 500 {object} ErrorResponse
-// @Failure 502 {object} ErrorResponse
-// @Router /orders/disputes/resolve [post]
-func (h *OrderHandler) ResolveOrderDispute(c *gin.Context) {
-	var request orderRequest.ResolveOrderDisputeRequest
-	if err := c.ShouldBindJSON(&request); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-	orderID := request.OrderID
-	response, err := h.OrderClient.ResolveOrderDispute(orderID)
-	if err != nil {
-		c.JSON(http.StatusBadGateway, gin.H{"error": err.Error()})
-		return
-	}
-
-	c.JSON(http.StatusOK, orderResponse.ResolveOrderDisputeResponse{
-		Message: response.Message,
-	})
-}
-
 // @Summary 	Get order statistics
 // @Description Get order statistics
 // @Tags 		orders

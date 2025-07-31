@@ -17,6 +17,8 @@ github.com/LavaJover/shvark-order-service v0.0.39 h1:93UBn8EJKLgYczY4Ap/EdrqJtZa
 github.com/LavaJover/shvark-order-service v0.0.39/go.mod h1:5XztLEpoP2BjxrjGjm1qBrwvabVJPXeq9O/ldntjltY=
 github.com/LavaJover/shvark-order-service v0.0.40 h1:0nJdnTx4WSHfK48lxMAefqU+tBxLZMwahheDAVz1SSg=
 github.com/LavaJover/shvark-order-service v0.0.40/go.mod h1:5XztLEpoP2BjxrjGjm1qBrwvabVJPXeq9O/ldntjltY=
+github.com/LavaJover/shvark-order-service v0.0.41 h1:Xtq2AbTPkeEGT/0tgNBHeOQWHJYC7eAqxUQu2HMv1MQ=
+github.com/LavaJover/shvark-order-service v0.0.41/go.mod h1:JN1jRLBy2coLVBduB+wDI6R8hQJFZvTAEdM0DvVNtjA=
 github.com/LavaJover/shvark-profile-service v0.0.0-20250519161935-955e6b16225d h1:xuRct1ICwKAOcrXokgOy2AF1YdvKl0ku9GIqAZLyGsc=
 github.com/LavaJover/shvark-profile-service v0.0.0-20250519161935-955e6b16225d/go.mod h1:xSLMdyF68a2I1L23yzsOsVNQkRuXblIsp6WhLlIY9ak=
 github.com/LavaJover/shvark-sso-service v0.0.4 h1:+fv8qHSOZFIecfifqwWs+kXtykgdYHEwj3ycufYfcI8=
@@ -25,6 +27,8 @@ github.com/LavaJover/shvark-sso-service v0.0.5 h1:BarxgYKq097gwlq/BgUfp0K9rpTObg
 github.com/LavaJover/shvark-sso-service v0.0.5/go.mod h1:M5DThZ8V9NGYQg0s68/GraAemyZ3gpu6uzdds/uuKqU=
 github.com/LavaJover/shvark-user-service v0.0.7 h1:Rm+vKy+VSMTTEm/VHejdwzAE7qqXwesPs7FzLDyHA9A=
 github.com/LavaJover/shvark-user-service v0.0.7/go.mod h1:/U/fTTKpGkY7DMNs8nQ6xqLKGCY1WW3jZio2WQOEEfw=
+github.com/LavaJover/shvark-user-service v0.0.8 h1:GoYuaWJx4krk3FFnx9y5y9/efLM6c1xgETZE88/ZHX8=
+github.com/LavaJover/shvark-user-service v0.0.8/go.mod h1:/U/fTTKpGkY7DMNs8nQ6xqLKGCY1WW3jZio2WQOEEfw=
 github.com/bytedance/sonic v1.13.2 h1:8/H1FempDZqC4VqjptGo14QQlJx8VdZJegxs6wwfqpQ=
 github.com/bytedance/sonic v1.13.2/go.mod h1:o68xyaF9u2gvVBuGHPlUVCy+ZfmNNO5ETf1+KgkJhz4=
 github.com/bytedance/sonic/loader v0.1.1/go.mod h1:ncP89zfokxS5LZrJxl5z0UJcsk4M4yY2JpfqGeCtNLU=
