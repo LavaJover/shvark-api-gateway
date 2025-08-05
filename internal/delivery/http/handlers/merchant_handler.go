@@ -93,7 +93,7 @@ func (h *MerchantHandler) CreatePayIn(c *gin.Context) {
 		Amount: orderServiceResponse.Order.AmountFiat,
 		AmountByCurrency: orderServiceResponse.Order.AmountCrypto,
 		CurrencyRate: orderServiceResponse.Order.CryptoRubRate,
-		TimeExpires: orderServiceResponse.Order.ExpiresAt.AsTime().UTC().Format("2006-01-02 15:04:05 GMT"),
+		TimeExpires: orderServiceResponse.Order.ExpiresAt.AsTime().UTC().Format("2006-01-02T15:04:05Z"),
 	})
 }
 
