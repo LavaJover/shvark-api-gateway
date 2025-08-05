@@ -65,7 +65,7 @@ func (h *MerchantHandler) CreatePayIn(c *gin.Context) {
 		Currency: request.Currency,
 		Country: "Russia",
 		ClientId: "",
-		ExpiresAt: timestamppb.New(time.Now().Add(1*time.Minute)),
+		ExpiresAt: timestamppb.New(time.Now().Add(20*time.Minute)),
 		MerchantOrderId: request.IternalID,
 		Shuffle: 0,
 		CallbackUrl: request.CallbackUrl,
