@@ -1034,6 +1034,15 @@ definitions:
       frozen:
         type: number
     type: object
+  response.GetAllOrdersResponse:
+    properties:
+      orders:
+        items:
+          $ref: '#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_order_response.Order'
+        type: array
+      pagination:
+        $ref: '#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_order_response.Pagination'
+    type: object
   response.GetBankDetailByIDResponse:
     properties:
       bank_detail:
@@ -2704,6 +2713,102 @@ paths:
       security:
       - BearerAuth: []
       summary: Get order by orderID
+      tags:
+      - orders
+  /orders/all:
+    get:
+      consumes:
+      - application/json
+      description: Возвращает список сделок с возможностью фильтрации, сортировки
+        и пагинации
+      parameters:
+      - description: ID трейдера
+        in: query
+        name: trader_id
+        type: string
+      - description: ID мерчанта
+        in: query
+        name: merchant_id
+        type: string
+      - description: ID сделки
+        in: query
+        name: order_id
+        type: string
+      - description: ID заказа мерчанта
+        in: query
+        name: merchant_order_id
+        type: string
+      - description: Статус сделки
+        in: query
+        name: status
+        type: string
+      - description: Код банка
+        in: query
+        name: bank_code
+        type: string
+      - description: Начало периода создания (RFC3339)
+        in: query
+        name: time_opening_start
+        type: string
+      - description: Конец периода создания (RFC3339)
+        in: query
+        name: time_opening_end
+        type: string
+      - description: Минимальная сумма
+        in: query
+        name: amount_min
+        type: number
+      - description: Максимальная сумма
+        in: query
+        name: amount_max
+        type: number
+      - description: Тип сделки
+        in: query
+        name: type
+        type: string
+      - description: Платежная система
+        in: query
+        name: payment_system
+        type: string
+      - description: ID устройства
+        in: query
+        name: device_id
+        type: string
+      - default: 1
+        description: Номер страницы
+        in: query
+        name: page
+        required: true
+        type: integer
+      - default: 50
+        description: Лимит на страницу
+        in: query
+        name: limit
+        required: true
+        type: integer
+      - description: 'Поле сортировки (amount_fiat, created_at, expires_at) и направление
+          (ASC/DESC), например: amount_fiat DESC'
+        in: query
+        name: sort
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.GetAllOrdersResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Получить список сделок с фильтрацией
       tags:
       - orders
   /orders/approve:

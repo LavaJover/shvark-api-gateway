@@ -1,15 +1,19 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/LavaJover/shvark-api-gateway/internal/client"
+	"github.com/LavaJover/shvark-api-gateway/internal/common"
 	orderRequest "github.com/LavaJover/shvark-api-gateway/internal/delivery/http/dto/order/request"
 	orderResponse "github.com/LavaJover/shvark-api-gateway/internal/delivery/http/dto/order/response"
 	orderpb "github.com/LavaJover/shvark-order-service/proto/gen"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -430,4 +434,206 @@ func (h *OrderHandler) GetOrderStats(c *gin.Context) {
 		CanceledAmountCrypto: float64(resp.CanceledAmountCrypto),
 		IncomeCrypto: float64(resp.IncomeCrypto),
 	})
+}
+
+// GetAllOrders godoc
+// @Summary Получить список сделок с фильтрацией
+// @Description Возвращает список сделок с возможностью фильтрации, сортировки и пагинации
+// @Tags orders
+// @Security BearerAuth 
+// @Accept json
+// @Produce json
+// @Param trader_id             query string  false "ID трейдера"
+// @Param merchant_id           query string  false "ID мерчанта"
+// @Param order_id              query string  false "ID сделки"
+// @Param merchant_order_id     query string  false "ID заказа мерчанта"
+// @Param status                query string  false "Статус сделки"
+// @Param bank_code             query string  false "Код банка"
+// @Param time_opening_start    query string  false "Начало периода создания (RFC3339)"
+// @Param time_opening_end      query string  false "Конец периода создания (RFC3339)"
+// @Param amount_min            query number  false "Минимальная сумма"
+// @Param amount_max            query number  false "Максимальная сумма"
+// @Param type                  query string  false "Тип сделки"
+// @Param payment_system        query string  false "Платежная система"
+// @Param device_id             query string  false "ID устройства"
+// @Param page                  query int     true  "Номер страницы" default(1)
+// @Param limit                 query int     true  "Лимит на страницу" default(50)
+// @Param sort                  query string  false "Поле сортировки (amount_fiat, created_at, expires_at) и направление (ASC/DESC), например: amount_fiat DESC"
+// @Success 200 {object} orderResponse.GetAllOrdersResponse
+// @Failure 400 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /orders/all [get]
+func (h *OrderHandler) GetAllOrders(c *gin.Context) {
+    // Парсим параметры запроса
+    request, err := parseGetAllOrdersRequest(c)
+    if err != nil {
+        common.RespondWithError(c, http.StatusBadRequest, err.Error())
+        return
+    }
+
+    // Вызываем gRPC сервис
+    grpcResponse, err := h.OrderClient.GetAllOrders(request)
+    if err != nil {
+        statusCode := common.GrpcCodeToHTTP(status.Code(err))
+        common.RespondWithError(c, statusCode, fmt.Sprintf("Order service error: %v", err))
+        return
+    }
+
+	response := transformResponse(grpcResponse)
+
+    c.JSON(http.StatusOK, response)
+}
+
+// Преобразование gRPC ответа в нашу структуру
+func transformResponse(grpcRes *orderpb.GetAllOrdersResponse) *orderResponse.GetAllOrdersResponse {
+    response := &orderResponse.GetAllOrdersResponse{
+        Orders:     make([]orderResponse.Order, len(grpcRes.Orders)),
+        Pagination: transformPagination(grpcRes.Pagination),
+    }
+    
+    for i, grpcOrder := range grpcRes.Orders {
+        response.Orders[i] = transformOrder(grpcOrder)
+    }
+    
+    return response
+}
+
+func transformPagination(grpcPagination *orderpb.Pagination) orderResponse.Pagination {
+    return orderResponse.Pagination{
+        CurrentPage:  grpcPagination.CurrentPage,
+        TotalPages:   grpcPagination.TotalPages,
+        TotalItems:   grpcPagination.TotalItems,
+        ItemsPerPage: grpcPagination.ItemsPerPage,
+    }
+}
+
+func transformOrder(grpcOrder *orderpb.Order) orderResponse.Order {
+    // Преобразуем банковские детали
+    bankDetail := orderResponse.BankDetail{}
+    if grpcOrder.BankDetail != nil {
+        bd := grpcOrder.BankDetail
+        bankDetail = orderResponse.BankDetail{
+            ID:            bd.BankDetailId,
+            TraderID:      bd.TraderId,
+            Currency:      bd.Currency,
+            Country:       bd.Country,
+            MinAmount:     bd.MinAmount,
+            MaxAmount:     bd.MaxAmount,
+            BankName:      bd.BankName,
+            PaymentSystem: bd.PaymentSystem,
+            Enabled:       bd.Enabled,
+            Owner:         bd.Owner,
+            CardNumber:    bd.CardNumber,
+            Phone:         bd.Phone,
+        }
+        
+        // Преобразуем задержку в строку
+        if bd.Delay != nil {
+            bankDetail.Delay = bd.Delay.AsDuration().String()
+        }
+    }
+    
+    // Преобразуем временные метки
+    var expiresAt, createdAt, updatedAt time.Time
+    if grpcOrder.ExpiresAt != nil {
+        expiresAt = grpcOrder.ExpiresAt.AsTime()
+    }
+    if grpcOrder.CreatedAt != nil {
+        createdAt = grpcOrder.CreatedAt.AsTime()
+    }
+    if grpcOrder.UpdatedAt != nil {
+        updatedAt = grpcOrder.UpdatedAt.AsTime()
+    }
+    
+    return orderResponse.Order{
+        OrderID:         grpcOrder.OrderId,
+        Status:          grpcOrder.Status,
+        AmountFiat:      grpcOrder.AmountFiat,
+        AmountCrypto:    grpcOrder.AmountCrypto,
+        ExpiresAt:       expiresAt,
+        BankDetail:      bankDetail,
+        TraderReward:    grpcOrder.TraderRewardPercent,
+        CryptoRubRate:   grpcOrder.CryptoRubRate,
+        CreatedAt:       createdAt,
+        UpdatedAt:       updatedAt,
+        MerchantID:      grpcOrder.MerchantId,
+        MerchantOrderID: grpcOrder.MerchantOrderId,
+    }
+}
+
+// Вспомогательная функция для создания строкового указателя
+func strPtr(s string) *string {
+    if s == "" {
+        return nil
+    }
+    return &s
+}
+
+// Вспомогательная функция для парсинга параметров
+func parseGetAllOrdersRequest(c *gin.Context) (*orderpb.GetAllOrdersRequest, error) {
+    // Парсим основные параметры
+    page, err := strconv.ParseInt(c.DefaultQuery("page", "1"), 10, 32)
+    if err != nil || page < 1 {
+        return nil, fmt.Errorf("invalid page parameter")
+    }
+
+    limit, err := strconv.ParseInt(c.DefaultQuery("limit", "50"), 10, 32)
+    if err != nil || limit < 1 || limit > 100 {
+        return nil, fmt.Errorf("limit must be between 1 and 100")
+    }
+
+    // Для float полей используем указатели
+    var amountMin, amountMax *float64
+    if min := c.Query("amount_min"); min != "" {
+        if val, err := strconv.ParseFloat(min, 64); err == nil {
+            amountMin = &val
+        }
+    }
+    if max := c.Query("amount_max"); max != "" {
+        if val, err := strconv.ParseFloat(max, 64); err == nil {
+            amountMax = &val
+        }
+    }
+
+    // Парсим временные параметры
+    var timeStart, timeEnd *timestamppb.Timestamp
+    if ts := c.Query("time_opening_start"); ts != "" {
+        t, err := time.Parse(time.RFC3339, ts)
+        if err != nil {
+            return nil, fmt.Errorf("invalid time_opening_start format")
+        }
+        timeStart = timestamppb.New(t)
+    }
+
+    if ts := c.Query("time_opening_end"); ts != "" {
+        t, err := time.Parse(time.RFC3339, ts)
+        if err != nil {
+            return nil, fmt.Errorf("invalid time_opening_end format")
+        }
+        timeEnd = timestamppb.New(t)
+    }
+
+    // Создаем запрос
+    req := &orderpb.GetAllOrdersRequest{
+        Page:              int32(page),
+        Limit:             int32(limit),
+        AmountMin:         amountMin,  // теперь *float64
+        AmountMax:         amountMax,  // теперь *float64
+        TimeOpeningStart:  timeStart,
+        TimeOpeningEnd:    timeEnd,
+    }
+
+    // Устанавливаем строковые параметры как указатели
+    req.TraderId = strPtr(c.Query("trader_id"))
+    req.MerchantId = strPtr(c.Query("merchant_id"))
+    req.OrderId = strPtr(c.Query("order_id"))
+    req.MerchantOrderId = strPtr(c.Query("merchant_order_id"))
+    req.Status = strPtr(c.Query("status"))
+    req.BankCode = strPtr(c.Query("bank_code"))
+    req.Type = strPtr(c.Query("type"))
+    req.PaymentSystem = strPtr(c.Query("payment_system"))
+    req.DeviceId = strPtr(c.Query("device_id"))
+    req.Sort = strPtr(c.Query("sort"))
+
+    return req, nil
 }

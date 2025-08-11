@@ -138,6 +138,7 @@ func main() {
 		orderGroup.POST("/cancel", ordersHandler.CancelOrder)
 		orderGroup.GET("/merchant/:id", ordersHandler.GetOrderByMerchantOrderID)
 		orderGroup.GET("/statistics", ordersHandler.GetOrderStats)
+		orderGroup.GET("/all", ordersHandler.GetAllOrders)
 	}
 
 	// wallet-service
