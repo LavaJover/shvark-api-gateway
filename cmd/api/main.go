@@ -216,5 +216,18 @@ func main() {
 		merchantGroup.GET("/order", middleware.AuthMiddleware(authHandler.SSOClient), merchantHandler.GetOrders)
 	}
 
+	// init device handler
+	deviceHandler, err := handlers.NewDeviceHandler(ordersHandler.OrderClient)
+	if err != nil {
+		log.Printf("failed to init device handler")
+	}
+	deviceGroup := r.Group("/api/v1/devices")
+	{
+		deviceGroup.POST("", deviceHandler.CreateDevice)
+		deviceGroup.GET("/:traderId", deviceHandler.GetTraderDevices)
+		deviceGroup.PATCH("/:deviceId/edit", deviceHandler.EditDevice)
+		deviceGroup.DELETE("/:deviceId", deviceHandler.DeleteDevice)
+	}
+
 	r.Run(":8080")
 }

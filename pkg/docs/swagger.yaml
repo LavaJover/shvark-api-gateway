@@ -1,5 +1,50 @@
 basePath: /api/v1
 definitions:
+  device.CreateDeviceRequest:
+    properties:
+      deviceName:
+        type: string
+      enabled:
+        type: boolean
+      traderId:
+        type: string
+    type: object
+  device.CreateDeviceResponse:
+    type: object
+  device.DeleteDeviceResponse:
+    type: object
+  device.Device:
+    properties:
+      deviceId:
+        type: string
+      deviceName:
+        type: string
+      enabled:
+        type: boolean
+      traderId:
+        type: string
+    type: object
+  device.EditDeviceParams:
+    properties:
+      deviceName:
+        type: string
+      enabled:
+        type: boolean
+    type: object
+  device.EditDeviceRequest:
+    properties:
+      editDeviceParams:
+        $ref: '#/definitions/device.EditDeviceParams'
+    type: object
+  device.EditDeviceResponse:
+    type: object
+  device.GetTraderDevicesResponse:
+    properties:
+      devices:
+        items:
+          $ref: '#/definitions/device.Device'
+        type: array
+    type: object
   github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_admin_request.CreateDisputeRequest:
     properties:
       dispute_amount_fiat:
@@ -2367,6 +2412,117 @@ paths:
       summary: Get bank details stats
       tags:
       - banking
+  /devices:
+    post:
+      consumes:
+      - application/json
+      description: Create new logic device for atomatic
+      parameters:
+      - description: new device data
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/device.CreateDeviceRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/device.CreateDeviceResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Create new device
+      tags:
+      - devices
+  /devices/{deviceId}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete exact device by id
+      parameters:
+      - description: device ID
+        in: path
+        name: deviceId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/device.DeleteDeviceResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Delete device
+      tags:
+      - devices
+  /devices/{deviceId}/edit:
+    patch:
+      consumes:
+      - application/json
+      description: Edit device params
+      parameters:
+      - description: device edit params
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/device.EditDeviceRequest'
+      - description: ID of device to edit
+        in: path
+        name: deviceId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/device.EditDeviceResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Edit device
+      tags:
+      - devices
+  /devices/{traderId}:
+    get:
+      consumes:
+      - application/json
+      description: Get trader devices
+      parameters:
+      - description: trader ID
+        in: path
+        name: traderId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/device.GetTraderDevicesResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Get trader devices
+      tags:
+      - devices
   /login:
     post:
       consumes:

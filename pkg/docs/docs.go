@@ -1493,6 +1493,175 @@ const docTemplate = `{
                 }
             }
         },
+        "/devices": {
+            "post": {
+                "description": "Create new logic device for atomatic",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "devices"
+                ],
+                "summary": "Create new device",
+                "parameters": [
+                    {
+                        "description": "new device data",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/device.CreateDeviceRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/device.CreateDeviceResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/devices/{deviceId}": {
+            "delete": {
+                "description": "Delete exact device by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "devices"
+                ],
+                "summary": "Delete device",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "device ID",
+                        "name": "deviceId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/device.DeleteDeviceResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/devices/{deviceId}/edit": {
+            "patch": {
+                "description": "Edit device params",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "devices"
+                ],
+                "summary": "Edit device",
+                "parameters": [
+                    {
+                        "description": "device edit params",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/device.EditDeviceRequest"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "ID of device to edit",
+                        "name": "deviceId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/device.EditDeviceResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/devices/{traderId}": {
+            "get": {
+                "description": "Get trader devices",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "devices"
+                ],
+                "summary": "Get trader devices",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "trader ID",
+                        "name": "traderId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/device.GetTraderDevicesResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/login": {
             "post": {
                 "description": "Log in user account",
@@ -3802,6 +3971,76 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "device.CreateDeviceRequest": {
+            "type": "object",
+            "properties": {
+                "deviceName": {
+                    "type": "string"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "traderId": {
+                    "type": "string"
+                }
+            }
+        },
+        "device.CreateDeviceResponse": {
+            "type": "object"
+        },
+        "device.DeleteDeviceResponse": {
+            "type": "object"
+        },
+        "device.Device": {
+            "type": "object",
+            "properties": {
+                "deviceId": {
+                    "type": "string"
+                },
+                "deviceName": {
+                    "type": "string"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "traderId": {
+                    "type": "string"
+                }
+            }
+        },
+        "device.EditDeviceParams": {
+            "type": "object",
+            "properties": {
+                "deviceName": {
+                    "type": "string"
+                },
+                "enabled": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "device.EditDeviceRequest": {
+            "type": "object",
+            "properties": {
+                "editDeviceParams": {
+                    "$ref": "#/definitions/device.EditDeviceParams"
+                }
+            }
+        },
+        "device.EditDeviceResponse": {
+            "type": "object"
+        },
+        "device.GetTraderDevicesResponse": {
+            "type": "object",
+            "properties": {
+                "devices": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/device.Device"
+                    }
+                }
+            }
+        },
         "github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_admin_request.CreateDisputeRequest": {
             "type": "object",
             "properties": {

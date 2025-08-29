@@ -18,6 +18,7 @@ type OrderClient struct {
 	trafficService orderpb.TrafficServiceClient
 	bankDetailService orderpb.BankDetailServiceClient
 	teamRelationsService orderpb.TeamRelationsServiceClient
+	deviceService orderpb.DeviceServiceClient
 }
 
 func NewOrderClient(addr string) (*OrderClient, error) {
@@ -41,6 +42,7 @@ func NewOrderClient(addr string) (*OrderClient, error) {
 		trafficService: orderpb.NewTrafficServiceClient(conn),
 		bankDetailService: orderpb.NewBankDetailServiceClient(conn),
 		teamRelationsService: orderpb.NewTeamRelationsServiceClient(conn),
+		deviceService: orderpb.NewDeviceServiceClient(conn),
 	}, nil
 }
 
@@ -439,6 +441,46 @@ func (c *OrderClient) GetAllOrders(r *orderpb.GetAllOrdersRequest) (*orderpb.Get
 	defer cancel()
 
 	return c.service.GetAllOrders(
+		ctx,
+		r,
+	)
+}
+
+func (c *OrderClient) CreateDevice(r *orderpb.CreateDeviceRequest) (*orderpb.CreateDeviceResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	return c.deviceService.CreateDevice(
+		ctx,
+		r,
+	)
+}
+
+func (c *OrderClient) DeleteDevice(r *orderpb.DeleteDeviceRequest) (*orderpb.DeleteDeviceResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	return c.deviceService.DeleteDevice(
+		ctx,
+		r,
+	)
+}
+
+func (c *OrderClient) EditeDevice(r *orderpb.EditDeviceRequest) (*orderpb.EditDeviceResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	return c.deviceService.EditDevice(
+		ctx,
+		r,
+	)
+}
+
+func (c *OrderClient) GetTraderDevices(r *orderpb.GetTraderDevicesRequest) (*orderpb.GetTraderDevicesResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	return c.deviceService.GetTraderDevices(
 		ctx,
 		r,
 	)
