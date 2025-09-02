@@ -1493,6 +1493,78 @@ const docTemplate = `{
                 }
             }
         },
+        "/banking/requisites": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Returns list of bank details",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "banking"
+                ],
+                "summary": "Get list of bank details",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Trader ID (UUID)",
+                        "name": "trader_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Bank Code",
+                        "name": "bank_code",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "BankDetails is On/Off",
+                        "name": "enabled",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Payment System",
+                        "name": "payment_system",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "page size",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.GetBankDetailsResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/devices": {
             "post": {
                 "description": "Create new logic device for atomatic",
@@ -4238,6 +4310,23 @@ const docTemplate = `{
                 }
             }
         },
+        "github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_banking_response.Pagination": {
+            "type": "object",
+            "properties": {
+                "current_page": {
+                    "type": "integer"
+                },
+                "items_per_page": {
+                    "type": "integer"
+                },
+                "total_items": {
+                    "type": "integer"
+                },
+                "total_pages": {
+                    "type": "integer"
+                }
+            }
+        },
         "github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_order_response.BankDetail": {
             "type": "object",
             "properties": {
@@ -5657,6 +5746,20 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_banking_response.BankDetail"
                     }
+                }
+            }
+        },
+        "response.GetBankDetailsResponse": {
+            "type": "object",
+            "properties": {
+                "bank_details": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_banking_response.BankDetail"
+                    }
+                },
+                "pagination": {
+                    "$ref": "#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_banking_response.Pagination"
                 }
             }
         },

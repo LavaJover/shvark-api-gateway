@@ -174,6 +174,17 @@ definitions:
       trader_id:
         type: string
     type: object
+  github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_banking_response.Pagination:
+    properties:
+      current_page:
+        type: integer
+      items_per_page:
+        type: integer
+      total_items:
+        type: integer
+      total_pages:
+        type: integer
+    type: object
   github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_order_response.BankDetail:
     properties:
       bank_name:
@@ -1099,6 +1110,15 @@ definitions:
         items:
           $ref: '#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_banking_response.BankDetail'
         type: array
+    type: object
+  response.GetBankDetailsResponse:
+    properties:
+      bank_details:
+        items:
+          $ref: '#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_banking_response.BankDetail'
+        type: array
+      pagination:
+        $ref: '#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_banking_response.Pagination'
     type: object
   response.GetBankDetailsStatsResponse:
     properties:
@@ -2410,6 +2430,52 @@ paths:
       security:
       - BearerAuth: []
       summary: Get bank details stats
+      tags:
+      - banking
+  /banking/requisites:
+    get:
+      consumes:
+      - application/json
+      description: Returns list of bank details
+      parameters:
+      - description: Trader ID (UUID)
+        in: query
+        name: trader_id
+        type: string
+      - description: Bank Code
+        in: query
+        name: bank_code
+        type: string
+      - description: BankDetails is On/Off
+        in: query
+        name: enabled
+        type: boolean
+      - description: Payment System
+        in: query
+        name: payment_system
+        type: string
+      - description: page
+        in: query
+        name: page
+        type: integer
+      - description: page size
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.GetBankDetailsResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get list of bank details
       tags:
       - banking
   /devices:

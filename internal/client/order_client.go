@@ -485,3 +485,13 @@ func (c *OrderClient) GetTraderDevices(r *orderpb.GetTraderDevicesRequest) (*ord
 		r,
 	)
 }
+
+func (c *OrderClient) GetBankDetails(r *orderpb.GetBankDetailsRequest) (*orderpb.GetBankDetailsResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	return c.bankDetailService.GetBankDetails(
+		ctx,
+		r,
+	)
+}

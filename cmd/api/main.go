@@ -126,6 +126,7 @@ func main() {
 		bankingGroup.PATCH("/details", bankingHandler.UpdateBankDetail)
 		bankingGroup.GET("/details", bankingHandler.GetBankDetailsByTraderID)
 		bankingGroup.GET("/details/stats/:traderID", bankingHandler.GetBankDetailsStats)
+		bankingGroup.GET("/requisites", bankingHandler.GetBankDetails)
 	}
 
 	// orders-service
@@ -229,5 +230,12 @@ func main() {
 		deviceGroup.DELETE("/:deviceId", deviceHandler.DeleteDevice)
 	}
 
+	automaticHandler := handlers.NewAutomaticHandler()
+	automaticGroup := r.Group("/api/v1/automatic")
+	{
+		automaticGroup.POST("/process-sms", automaticHandler.Sms)
+		automaticGroup.POST("/liveness", automaticHandler.Live)
+		automaticGroup.POST("/auth", automaticHandler.Auth)
+	}
 	r.Run(":8080")
 }

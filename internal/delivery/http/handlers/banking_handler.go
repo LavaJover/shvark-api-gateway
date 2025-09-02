@@ -10,7 +10,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"google.golang.org/protobuf/types/known/durationpb"
-
 	bankingRequest "github.com/LavaJover/shvark-api-gateway/internal/delivery/http/dto/banking/request"
 	bankingResponse "github.com/LavaJover/shvark-api-gateway/internal/delivery/http/dto/banking/response"
 )
@@ -331,5 +330,80 @@ func (h *BankingHandler) GetBankDetailsStats(c *gin.Context) {
 
 	c.JSON(http.StatusOK, bankingResponse.GetBankDetailsStatsResponse{
 		Stats: stats,
+	})
+}
+
+// @Summary Get list of bank details
+// @Description Returns list of bank details
+// @Tags banking
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param trader_id query string false "Trader ID (UUID)"
+// @Param bank_code query string false "Bank Code"
+// @Param enabled query bool false "BankDetails is On/Off"
+// @Param payment_system query string false "Payment System"
+// @Param page query int false "page"
+// @Param limit query int false "page size"
+// @Param bank_detail_id string false "bank detail ID"
+// @Success 200 {object} bankingResponse.GetBankDetailsResponse
+// @Failure 404 {object} ErrorResponse
+// @Router /banking/requisites [get]
+func (h *BankingHandler) GetBankDetails(c *gin.Context) {
+	var query bankingRequest.GetBankDetailsQuery
+	if err := c.ShouldBindQuery(&query); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	request := orderpb.GetBankDetailsRequest{
+		TraderId: query.TraderID,
+		BankCode: query.BankCode,
+		Enabled: query.Enabled,
+		PaymentSystem: query.PaymentSystem,
+		BankDetailId: query.BankDetailID,
+		Page: int32(query.Page),
+		Limit: int32(query.Limit),
+	}
+	resp, err := h.OrderClient.GetBankDetails(&request)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		return
+	}
+	bankDetailsResponse := make([]bankingResponse.BankDetail, len(resp.BankDetails))
+	for i, bankDetail := range resp.BankDetails {
+		bankDetailsResponse[i] = bankingResponse.BankDetail{
+			ID: bankDetail.BankDetailId,
+			TraderID: bankDetail.TraderId,
+			Currency: bankDetail.Currency,
+			Country: bankDetail.Country,
+			MinAmount: bankDetail.MinAmount,
+			MaxAmount: bankDetail.MaxAmount,
+			BankName: bankDetail.BankName,
+			PaymentSystem: bankDetail.PaymentSystem,
+			Enabled: bankDetail.Enabled,
+			Delay: bankDetail.Delay.Seconds,
+			CardNumber: bankDetail.CardNumber,
+			Phone: bankDetail.Phone,
+			Owner: bankDetail.Owner,
+			MaxOrdersSimultaneosly: bankDetail.MaxOrdersSimultaneosly,
+			MaxAmountDay: bankDetail.MaxAmountDay,
+			MaxAmountMonth: bankDetail.MaxAmountMonth,
+			MaxQuantityDay: int32(bankDetail.MaxQuantityDay),
+			MaxQuantityMonth: int32(bankDetail.MaxQuantityMonth),
+			DeviceID: bankDetail.DeviceId,
+			InflowCurrency: bankDetail.InflowCurrency,
+			BankCode: bankDetail.BankCode,
+			NspkCode: bankDetail.NspkCode,
+		}
+	}
+
+	c.JSON(http.StatusOK, bankingResponse.GetBankDetailsResponse{
+		BankDetails: bankDetailsResponse,
+		Pagination: bankingResponse.Pagination{
+			CurrentPage: resp.Pagination.CurrentPage,
+			TotalPages: resp.Pagination.TotalPages,
+			TotalItems: resp.Pagination.TotalItems,
+			ItemsPerPage: resp.Pagination.ItemsPerPage,
+		},
 	})
 }
