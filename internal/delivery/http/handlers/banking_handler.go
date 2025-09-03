@@ -345,7 +345,7 @@ func (h *BankingHandler) GetBankDetailsStats(c *gin.Context) {
 // @Param payment_system query string false "Payment System"
 // @Param page query int false "page"
 // @Param limit query int false "page size"
-// @Param bank_detail_id string false "bank detail ID"
+// @Param bank_detail_id query string false "bank detail ID"
 // @Success 200 {object} bankingResponse.GetBankDetailsResponse
 // @Failure 404 {object} ErrorResponse
 // @Router /banking/requisites [get]

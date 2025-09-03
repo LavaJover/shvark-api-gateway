@@ -344,17 +344,13 @@ func (c *OrderClient) GetBankDetailsStatsByTraderID(getStatsRequest *orderpb.Get
 }
 
 
-func (c *OrderClient) GetOrderDisputes(page, limit int64, status string) (*orderpb.GetOrderDisputesResponse, error) {
+func (c *OrderClient) GetOrderDisputes(r *orderpb.GetOrderDisputesRequest) (*orderpb.GetOrderDisputesResponse, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
 	return c.service.GetOrderDisputes(
 		ctx,
-		&orderpb.GetOrderDisputesRequest{
-			Page: page,
-			Limit: limit,
-			Status: status,
-		},
+		r,
 	)
 }
 

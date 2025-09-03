@@ -457,6 +457,30 @@ const docTemplate = `{
                         "description": "Filter by status",
                         "name": "status",
                         "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter by trader",
+                        "name": "traderId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter by merchant",
+                        "name": "merchantId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter by dispute ID",
+                        "name": "disputeId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter by order ID",
+                        "name": "orderId",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -472,8 +496,8 @@ const docTemplate = `{
                             "$ref": "#/definitions/handlers.ErrorResponse"
                         }
                     },
-                    "502": {
-                        "description": "Bad Gateway",
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/handlers.ErrorResponse"
                         }
@@ -1547,6 +1571,12 @@ const docTemplate = `{
                         "description": "page size",
                         "name": "limit",
                         "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "bank detail ID",
+                        "name": "bank_detail_id",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -1556,8 +1586,8 @@ const docTemplate = `{
                             "$ref": "#/definitions/response.GetBankDetailsResponse"
                         }
                     },
-                    "500": {
-                        "description": "Internal Server Error",
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/handlers.ErrorResponse"
                         }

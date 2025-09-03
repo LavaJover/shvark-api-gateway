@@ -24,8 +24,12 @@ type GetDisputeInfoRequest struct {
 	DisputeID string `json:"dispute_id"`
 }
 
-type GeOrderDisputesRequest struct {
-	Page 	int64 	`json:"page"`
-	Limit 	int64 	`json:"limit"`
-	Status 	string 	`json:"status"`
+type GetOrderDisputesQuery struct {
+	TraderID   *string `form:"traderId"`
+	MerchantID *string `form:"merchantId"`
+	OrderID    *string `form:"orderId"`
+	DisputeID  *string `form:"disputeId"`
+	Status 	   *string `form:"status"`
+	Page 	   int		`form:"page"`
+	Limit 	   int 		`form:"limit"`  	
 }

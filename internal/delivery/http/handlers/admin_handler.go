@@ -1,9 +1,7 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
-	"strconv"
 	"time"
 
 	"github.com/LavaJover/shvark-api-gateway/internal/client"
@@ -467,35 +465,30 @@ func (h *AdminHandler) GetMerchants(c *gin.Context) {
 // @Param page query int false "Page number" default(1) minimum(1)
 // @Param limit query int false "Items per page" default(10) minimum(1) maximum(100)
 // @Param status query string false "Filter by status"
+// @Param traderId query string false "Filter by trader"
+// @Param merchantId query string false "Filter by merchant"
+// @Param disputeId query string false "Filter by dispute ID"
+// @Param orderId query string false "Filter by order ID"
 // @Success 200 {object} adminResponse.GetOrderDisputesResponse
 // @Failure 400 {object} ErrorResponse
-// @Failure 502 {object} ErrorResponse
+// @Failure 404 {object} ErrorResponse
 // @Router /admin/orders/disputes [get]
 func (h *AdminHandler) GetOrderDisputes(c *gin.Context) {
-	// Параметры по умолчанию
-	const (
-		defaultPage  = 1
-		defaultLimit = 10
-		maxLimit     = 100
-	)
-
-	page, err := strconv.Atoi(c.DefaultQuery("page", fmt.Sprintf("%d", defaultPage)))
-	if err != nil || page < 1 {
-		c.JSON(http.StatusBadRequest, ErrorResponse{Error: "invalid page parameter"})
+	var query adminRequest.GetOrderDisputesQuery
+	if err := c.ShouldBindQuery(&query); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
-	// Получаем и парсим limit
-	limit, err := strconv.Atoi(c.DefaultQuery("limit", fmt.Sprintf("%d", defaultLimit)))
-	if err != nil || limit < 1 || limit > maxLimit {
-		c.JSON(http.StatusBadRequest, ErrorResponse{Error: "invalid limit parameter"})
-		return
+	req := orderpb.GetOrderDisputesRequest{
+		Page: int64(query.Page),
+		Limit: int64(query.Limit),
+		Status: query.Status,
+		TraderId: query.TraderID,
+		DisputeId: query.DisputeID,
+		MerchantId: query.MerchantID,
+		OrderId: query.OrderID,
 	}
-
-	// Получаем статус (необязательный)
-	status := c.Query("status")
-
-	response, err := h.OrderClient.GetOrderDisputes(int64(page), int64(limit), status)
+	response, err := h.OrderClient.GetOrderDisputes(&req)
 	if err != nil {
 		c.JSON(http.StatusBadGateway,ErrorResponse{Error: err.Error()})
 		return

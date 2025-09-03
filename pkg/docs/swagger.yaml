@@ -1763,6 +1763,22 @@ paths:
         in: query
         name: status
         type: string
+      - description: Filter by trader
+        in: query
+        name: traderId
+        type: string
+      - description: Filter by merchant
+        in: query
+        name: merchantId
+        type: string
+      - description: Filter by dispute ID
+        in: query
+        name: disputeId
+        type: string
+      - description: Filter by order ID
+        in: query
+        name: orderId
+        type: string
       produces:
       - application/json
       responses:
@@ -1774,8 +1790,8 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/handlers.ErrorResponse'
-        "502":
-          description: Bad Gateway
+        "404":
+          description: Not Found
           schema:
             $ref: '#/definitions/handlers.ErrorResponse'
       summary: Get order disputes
@@ -2462,6 +2478,10 @@ paths:
         in: query
         name: limit
         type: integer
+      - description: bank detail ID
+        in: query
+        name: bank_detail_id
+        type: string
       produces:
       - application/json
       responses:
@@ -2469,8 +2489,8 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/response.GetBankDetailsResponse'
-        "500":
-          description: Internal Server Error
+        "404":
+          description: Not Found
           schema:
             $ref: '#/definitions/handlers.ErrorResponse'
       security:
