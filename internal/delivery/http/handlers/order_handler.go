@@ -265,6 +265,8 @@ func (h *OrderHandler) GetOrdersByTraderID(c *gin.Context) {
 				DateFrom:      timestamppb.New(dateFrom),
 				DateTo:        timestamppb.New(dateTo),
 				Currency:      request.Currency,
+				OrderId: 	   request.OrderID,
+				MerchantOrderId: request.MerchantOrderID,
 			},
 		},
 	)
