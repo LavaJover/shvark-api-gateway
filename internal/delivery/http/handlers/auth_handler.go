@@ -24,15 +24,24 @@ import (
 
 type AuthHandler struct {
 	SSOClient *client.SSOClient
+	userClient *client.UserClient
 }
 
-func NewAuthHandler(addr string) (*AuthHandler, error) {
+func NewAuthHandler(addr string, userAddr string) (*AuthHandler, error) {
 	ssoClient, err := client.NewSSOClient(addr)
 	if err != nil {
 		return nil, err
 	}
 
-	return &AuthHandler{SSOClient: ssoClient}, nil
+	userClient, err := client.NewUserClient(userAddr)
+	if err != nil {
+		return nil, err
+	}
+
+	return &AuthHandler{
+		SSOClient: ssoClient,
+		userClient: userClient,
+	}, nil
 }
 
 // @Summary User registration
@@ -235,3 +244,36 @@ func (h *AuthHandler) Verify2FA(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, authResponse.Verify2FAResponse{})
 }
+
+// // @Summary on/off 2Fa
+// // @Description Enable/Disable 2Fa
+// // @Tags auth
+// // @Security BearerAuth
+// // @Accept json
+// // @Produce json
+// // @Param input body authRequest.SetTwoFaStatusRequest true "2FA status"
+// // @Success 200 {object} authResponse.SetTwoFaStatusResponse
+// // @Failure 400 {object} ErrorResponse
+// // @Failure 502 {object} ErrorResponse
+// // @Router /2fa/status [post]
+// func (h *AuthHandler) SetTwoFaStatus(c *gin.Context) {
+// 	userID := c.GetString("userID")
+// 	if userID == "" {
+// 		c.JSON(http.StatusUnauthorized, ErrorResponse{Error: "userID missed"})
+// 		return
+// 	}
+// 	var request authRequest.SetTwoFaStatusRequest
+// 	if err := c.ShouldBindJSON(&request); err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+// 		return
+// 	}
+
+// 	_, err := h.userClient.SetTwoFaEnabled(&userpb.SetTwoFaEnabledRequest{
+// 		UserId: userID,
+// 		Enabled: request.Enabled,
+// 	})
+// 	if err != nil {
+
+// 	}
+
+// }

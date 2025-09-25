@@ -145,3 +145,13 @@ func (c *UserClient) GetUsersByRole(r *userpb.GetUsersByRoleRequest) (*userpb.Ge
 		r,
 	)
 }
+
+func (c *UserClient) SetTwoFaEnabled(r *userpb.SetTwoFaEnabledRequest) (*userpb.SetTwoFaEnabledResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	return c.service.SetTwoFaEnabled(
+		ctx,
+		r,
+	)
+}

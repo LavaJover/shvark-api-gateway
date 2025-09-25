@@ -37,18 +37,18 @@ func main() {
 	docs.SwaggerInfo.Schemes = []string{cfg.SwaggerConfig.Schemes, "https"}
 	docs.SwaggerInfo.BasePath = cfg.SwaggerConfig.BasePath
 
-	// init sso-client
-	ssoAddr := fmt.Sprintf("%s:%s", cfg.SSOService.Host, cfg.SSOService.Port)
-	authHandler, err := handlers.NewAuthHandler(ssoAddr)
-	if err != nil {
-		log.Printf("failed to init auth handler: %v\n", err)
-	}
-
 	// init user-client
 	userAddr := fmt.Sprintf("%s:%s", cfg.UserService.Host, cfg.UserService.Port)
 	userHandler, err := handlers.NewUserHandler(userAddr)
 	if err != nil {
 		log.Printf("failed to init user handler: %v", err)
+	}
+
+	// init sso-client
+	ssoAddr := fmt.Sprintf("%s:%s", cfg.SSOService.Host, cfg.SSOService.Port)
+	authHandler, err := handlers.NewAuthHandler(ssoAddr, userAddr)
+	if err != nil {
+		log.Printf("failed to init auth handler: %v\n", err)
 	}
 
 	// init authz-client
