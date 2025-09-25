@@ -205,7 +205,7 @@ func (h *AdminHandler) EditTraffic(c *gin.Context) {
 // @Produce json
 // @Param trafficId path string true "traffic ID"
 // @Failure 404 {object} ErrorResponse
-// @Router /admin/traffic/{id} [delete]
+// @Router /admin/traffic/{trafficId} [delete]
 func (h *AdminHandler) DeleteTraffic(c *gin.Context) {
 	trafficID := c.Param("trafficId")
 
