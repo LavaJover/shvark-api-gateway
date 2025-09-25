@@ -183,6 +183,7 @@ func main() {
 		adminGroup.POST("/merchants/create", adminHandler.CreateMerchant)
 		adminGroup.POST("/traffic/create", adminHandler.CreateTraffic)
 		adminGroup.PATCH("/traffic/edit", adminHandler.EditTraffic)
+		adminGroup.DELETE("/traffic/delete", adminHandler.DeleteTraffic)
 		adminGroup.GET("/traffic/records", adminHandler.GetTrafficRecords)
 		adminGroup.POST("/disputes/create", adminHandler.CreateDispute)
 		adminGroup.POST("/disputes/accept", adminHandler.AcceptDispute)

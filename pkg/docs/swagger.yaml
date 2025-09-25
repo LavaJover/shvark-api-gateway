@@ -2053,6 +2053,27 @@ paths:
       summary: Get traders
       tags:
       - admin
+  /admin/traffic/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete traffic record
+      parameters:
+      - description: traffic ID
+        in: path
+        name: trafficId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Delete traffic record
+      tags:
+      - admin
   /admin/traffic/create:
     post:
       consumes:

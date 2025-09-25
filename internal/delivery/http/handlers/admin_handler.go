@@ -198,6 +198,26 @@ func (h *AdminHandler) EditTraffic(c *gin.Context) {
 	})
 }
 
+// @Summary Delete traffic record
+// @Description Delete traffic record
+// @Tags admin
+// @Accept json
+// @Produce json
+// @Param trafficId path string true "traffic ID"
+// @Failure 404 {object} ErrorResponse
+// @Router /admin/traffic/{id} [delete]
+func (h *AdminHandler) DeleteTraffic(c *gin.Context) {
+	trafficID := c.Param("trafficId")
+
+	err := h.OrderClient.DeleteTraffic(trafficID)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"success": true})
+}
+
 // @Summary Get traffic records
 // @Description Get traffic records
 // @Tags admin

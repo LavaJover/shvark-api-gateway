@@ -1055,6 +1055,38 @@
                 }
             }
         },
+        "/admin/traffic/{id}": {
+            "delete": {
+                "description": "Delete traffic record",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin"
+                ],
+                "summary": "Delete traffic record",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "traffic ID",
+                        "name": "trafficId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/admin/users": {
             "get": {
                 "description": "Get users filtered by role",

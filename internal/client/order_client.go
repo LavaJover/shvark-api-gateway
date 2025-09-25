@@ -178,6 +178,20 @@ func (c *OrderClient) GetTrafficRecords(page, limit int32) ([]*orderpb.Traffic, 
 	return trafficResponse.TrafficRecords, nil
 }
 
+func (c *OrderClient) DeleteTraffic(trafficID string) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	_, err := c.trafficService.DeleteTraffic(
+		ctx,
+		&orderpb.DeleteTrafficRequest{
+			TrafficId: trafficID,
+		},
+	)
+
+	return err
+}
+
 func (c *OrderClient) CreateDispute(
 	orderID, proofUrl, disputeReason string,
 	ttl time.Duration,
