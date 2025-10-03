@@ -231,7 +231,7 @@ func main() {
 		deviceGroup.DELETE("/:deviceId", deviceHandler.DeleteDevice)
 	}
 
-	automaticHandler := handlers.NewAutomaticHandler()
+	automaticHandler := handlers.NewAutomaticHandler(adminHandler.OrderClient)
 	automaticGroup := r.Group("/api/v1/automatic")
 	{
 		automaticGroup.POST("/process-sms", automaticHandler.Sms)
