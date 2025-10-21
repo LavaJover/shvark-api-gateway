@@ -238,5 +238,16 @@ func main() {
 		automaticGroup.POST("/liveness", automaticHandler.Live)
 		automaticGroup.POST("/auth", automaticHandler.Auth)
 	}
+
+	trafficHandler := handlers.NewTrafficHandler(adminHandler.OrderClient)
+	trafficGroup := r.Group("/api/v1/traffic")
+	{
+		trafficGroup.PATCH("/traders/:traderID", trafficHandler.SetTraderLockTrafficStatus)
+		trafficGroup.PATCH("/merchants/:merchantID", trafficHandler.SetMerchantLockTrafficStatus)
+		trafficGroup.PATCH("/:trafficID/manual", trafficHandler.SetManuallyLockTrafficStatus)
+		trafficGroup.PATCH("/antifraud/:traderID", trafficHandler.SetAntifraudLockTrafficStatus)
+		trafficGroup.GET("/:trafficID/lock-statuses", trafficHandler.GetTrafficLockStatuses)
+		trafficGroup.GET("/:trafficID/unlocked", trafficHandler.CheckTrafficUnlocked)
+	}
 	r.Run(":8080")
 }

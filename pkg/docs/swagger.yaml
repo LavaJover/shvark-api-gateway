@@ -336,6 +336,19 @@ definitions:
       totalPages:
         type: integer
     type: object
+  handlers.LockStatusesResponse:
+    properties:
+      antifraud_unlocked:
+        type: boolean
+      manually_unlocked:
+        type: boolean
+      merchant_unlocked:
+        type: boolean
+      trader_unlocked:
+        type: boolean
+      traffic_id:
+        type: string
+    type: object
   handlers.OrderResponse:
     properties:
       currencyRate:
@@ -396,6 +409,13 @@ definitions:
       sorted:
         type: boolean
       unsorted:
+        type: boolean
+    type: object
+  handlers.TrafficUnlockedResponse:
+    properties:
+      traffic_id:
+        type: string
+      unlocked:
         type: boolean
     type: object
   merchant.AccountBalance:
@@ -713,19 +733,6 @@ definitions:
         type: string
     type: object
   request.CreateTrafficRequest:
-    properties:
-      enabled:
-        type: boolean
-      merchant_id:
-        type: string
-      platform_fee:
-        type: number
-      trader_id:
-        type: string
-      trader_priority:
-        type: number
-      trader_reward:
-        type: number
     type: object
   request.CreateWalletRequest:
     properties:
@@ -761,8 +768,26 @@ definitions:
     type: object
   request.EditTrafficRequest:
     properties:
-      traffic:
-        $ref: '#/definitions/request.Traffic'
+      activity_params:
+        $ref: '#/definitions/request.TrafficActivityParams'
+      antifraud_params:
+        $ref: '#/definitions/request.TrafficAntifraudParams'
+      business_params:
+        $ref: '#/definitions/request.TrafficBusinessParams'
+      enabled:
+        type: boolean
+      id:
+        type: string
+      merchant_id:
+        type: string
+      platform_fee:
+        type: number
+      trader_id:
+        type: string
+      trader_priority:
+        type: number
+      trader_reward:
+        type: number
     type: object
   request.FreezeDisputeRequest:
     properties:
@@ -854,22 +879,23 @@ definitions:
       commission:
         type: number
     type: object
-  request.Traffic:
+  request.TrafficActivityParams:
     properties:
-      enabled:
+      antifraud_unlocked:
         type: boolean
-      id:
-        type: string
-      merchant_id:
-        type: string
-      platform_fee:
-        type: number
-      trader_id:
-        type: string
-      trader_priority:
-        type: number
-      trader_reward:
-        type: number
+      manually_unlocked:
+        type: boolean
+      merchant_unlocked:
+        type: boolean
+      trader_unlocked:
+        type: boolean
+    type: object
+  request.TrafficAntifraudParams:
+    properties:
+      antifraud_required:
+        type: boolean
+    type: object
+  request.TrafficBusinessParams:
     type: object
   request.UpdateBankDetailRequest:
     properties:
@@ -1405,20 +1431,54 @@ definitions:
     type: object
   response.Traffic:
     properties:
+      activityParams:
+        allOf:
+        - $ref: '#/definitions/response.TrafficActivityParams'
+        description: Гибкие параметры
+      antifraudParams:
+        allOf:
+        - $ref: '#/definitions/response.TrafficAntifraudParams'
+        description: Для антифрода
+      businessParams:
+        allOf:
+        - $ref: '#/definitions/response.TrafficBusinessParams'
+        description: Бизнес-параметры
       enabled:
+        description: для админов
         type: boolean
       id:
         type: string
-      merchant_id:
+      merchantID:
         type: string
-      platform_fee:
+      platformFee:
         type: number
-      trader_id:
+      traderID:
         type: string
-      trader_priority:
+      traderPriority:
         type: number
-      trader_reward:
+      traderRewardPercent:
         type: number
+    type: object
+  response.TrafficActivityParams:
+    properties:
+      antifraudUnlocked:
+        type: boolean
+      manuallyUnlocked:
+        type: boolean
+      merchantUnlocked:
+        type: boolean
+      traderUnlocked:
+        type: boolean
+    type: object
+  response.TrafficAntifraudParams:
+    properties:
+      antifraudRequired:
+        type: boolean
+    type: object
+  response.TrafficBusinessParams:
+    properties:
+      merchantDealsDuration:
+        type: string
     type: object
   response.Transaction:
     properties:
@@ -2053,7 +2113,7 @@ paths:
       summary: Get traders
       tags:
       - admin
-  /admin/traffic/{id}:
+  /admin/traffic/{trafficId}:
     delete:
       consumes:
       - application/json
@@ -3691,6 +3751,192 @@ paths:
       summary: User registration
       tags:
       - auth
+  /traffic/{trafficID}/lock-statuses:
+    get:
+      consumes:
+      - application/json
+      description: Get all lock statuses for specific traffic record
+      parameters:
+      - description: traffic record ID
+        in: path
+        name: trafficID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.LockStatusesResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Get traffic lock statuses
+      tags:
+      - traffic
+  /traffic/{trafficID}/manual:
+    patch:
+      consumes:
+      - application/json
+      description: On/Off manual traffic lock status for specific traffic record
+      parameters:
+      - description: traffic record ID
+        in: path
+        name: trafficID
+        required: true
+        type: string
+      - description: is unlocked
+        in: query
+        name: unlocked
+        required: true
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Set manual traffic lock status
+      tags:
+      - traffic
+  /traffic/{trafficID}/unlocked:
+    get:
+      consumes:
+      - application/json
+      description: Check if traffic is unlocked by any method
+      parameters:
+      - description: traffic record ID
+        in: path
+        name: trafficID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.TrafficUnlockedResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Check if traffic is unlocked
+      tags:
+      - traffic
+  /traffic/antifraud/{traderID}:
+    patch:
+      consumes:
+      - application/json
+      description: On/Off antifraud traffic lock status
+      parameters:
+      - description: trader ID
+        in: path
+        name: traderID
+        required: true
+        type: string
+      - description: is unlocked
+        in: query
+        name: unlocked
+        required: true
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Set antifraud traffic lock status
+      tags:
+      - traffic
+  /traffic/merchants/{merchantID}:
+    patch:
+      consumes:
+      - application/json
+      description: On/Off merchant traffic lock status
+      parameters:
+      - description: merchant ID
+        in: path
+        name: merchantID
+        required: true
+        type: string
+      - description: is unlocked
+        in: query
+        name: unlocked
+        required: true
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Set merchant traffic lock status
+      tags:
+      - traffic
+  /traffic/traders/{traderID}:
+    patch:
+      consumes:
+      - application/json
+      description: On/Off trader traffic lock status
+      parameters:
+      - description: trader ID
+        in: path
+        name: traderID
+        required: true
+        type: string
+      - description: is unlocked
+        in: query
+        name: unlocked
+        required: true
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Set trader traffic lock status
+      tags:
+      - traffic
   /users/{id}:
     get:
       consumes:

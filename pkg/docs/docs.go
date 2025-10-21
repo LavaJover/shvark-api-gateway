@@ -1058,7 +1058,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/admin/traffic/{id}": {
+        "/admin/traffic/{trafficId}": {
             "delete": {
                 "description": "Delete traffic record",
                 "consumes": [
@@ -3429,6 +3429,286 @@ const docTemplate = `{
                 }
             }
         },
+        "/traffic/antifraud/{traderID}": {
+            "patch": {
+                "description": "On/Off antifraud traffic lock status",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "traffic"
+                ],
+                "summary": "Set antifraud traffic lock status",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "trader ID",
+                        "name": "traderID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "is unlocked",
+                        "name": "unlocked",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "Bad Gateway",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/traffic/merchants/{merchantID}": {
+            "patch": {
+                "description": "On/Off merchant traffic lock status",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "traffic"
+                ],
+                "summary": "Set merchant traffic lock status",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "merchant ID",
+                        "name": "merchantID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "is unlocked",
+                        "name": "unlocked",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "Bad Gateway",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/traffic/traders/{traderID}": {
+            "patch": {
+                "description": "On/Off trader traffic lock status",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "traffic"
+                ],
+                "summary": "Set trader traffic lock status",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "trader ID",
+                        "name": "traderID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "is unlocked",
+                        "name": "unlocked",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "Bad Gateway",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/traffic/{trafficID}/lock-statuses": {
+            "get": {
+                "description": "Get all lock statuses for specific traffic record",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "traffic"
+                ],
+                "summary": "Get traffic lock statuses",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "traffic record ID",
+                        "name": "trafficID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.LockStatusesResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "Bad Gateway",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/traffic/{trafficID}/manual": {
+            "patch": {
+                "description": "On/Off manual traffic lock status for specific traffic record",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "traffic"
+                ],
+                "summary": "Set manual traffic lock status",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "traffic record ID",
+                        "name": "trafficID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "is unlocked",
+                        "name": "unlocked",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "Bad Gateway",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/traffic/{trafficID}/unlocked": {
+            "get": {
+                "description": "Check if traffic is unlocked by any method",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "traffic"
+                ],
+                "summary": "Check if traffic is unlocked",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "traffic record ID",
+                        "name": "trafficID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.TrafficUnlockedResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "Bad Gateway",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/users/{id}": {
             "get": {
                 "description": "Get user by UUID",
@@ -4620,6 +4900,26 @@ const docTemplate = `{
                 }
             }
         },
+        "handlers.LockStatusesResponse": {
+            "type": "object",
+            "properties": {
+                "antifraud_unlocked": {
+                    "type": "boolean"
+                },
+                "manually_unlocked": {
+                    "type": "boolean"
+                },
+                "merchant_unlocked": {
+                    "type": "boolean"
+                },
+                "trader_unlocked": {
+                    "type": "boolean"
+                },
+                "traffic_id": {
+                    "type": "string"
+                }
+            }
+        },
         "handlers.OrderResponse": {
             "type": "object",
             "properties": {
@@ -4711,6 +5011,17 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "unsorted": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "handlers.TrafficUnlockedResponse": {
+            "type": "object",
+            "properties": {
+                "traffic_id": {
+                    "type": "string"
+                },
+                "unlocked": {
                     "type": "boolean"
                 }
             }
@@ -5195,27 +5506,7 @@ const docTemplate = `{
             }
         },
         "request.CreateTrafficRequest": {
-            "type": "object",
-            "properties": {
-                "enabled": {
-                    "type": "boolean"
-                },
-                "merchant_id": {
-                    "type": "string"
-                },
-                "platform_fee": {
-                    "type": "number"
-                },
-                "trader_id": {
-                    "type": "string"
-                },
-                "trader_priority": {
-                    "type": "number"
-                },
-                "trader_reward": {
-                    "type": "number"
-                }
-            }
+            "type": "object"
         },
         "request.CreateWalletRequest": {
             "type": "object",
@@ -5269,8 +5560,35 @@ const docTemplate = `{
         "request.EditTrafficRequest": {
             "type": "object",
             "properties": {
-                "traffic": {
-                    "$ref": "#/definitions/request.Traffic"
+                "activity_params": {
+                    "$ref": "#/definitions/request.TrafficActivityParams"
+                },
+                "antifraud_params": {
+                    "$ref": "#/definitions/request.TrafficAntifraudParams"
+                },
+                "business_params": {
+                    "$ref": "#/definitions/request.TrafficBusinessParams"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "merchant_id": {
+                    "type": "string"
+                },
+                "platform_fee": {
+                    "type": "number"
+                },
+                "trader_id": {
+                    "type": "string"
+                },
+                "trader_priority": {
+                    "type": "number"
+                },
+                "trader_reward": {
+                    "type": "number"
                 }
             }
         },
@@ -5411,31 +5729,33 @@ const docTemplate = `{
                 }
             }
         },
-        "request.Traffic": {
+        "request.TrafficActivityParams": {
             "type": "object",
             "properties": {
-                "enabled": {
+                "antifraud_unlocked": {
                     "type": "boolean"
                 },
-                "id": {
-                    "type": "string"
+                "manually_unlocked": {
+                    "type": "boolean"
                 },
-                "merchant_id": {
-                    "type": "string"
+                "merchant_unlocked": {
+                    "type": "boolean"
                 },
-                "platform_fee": {
-                    "type": "number"
-                },
-                "trader_id": {
-                    "type": "string"
-                },
-                "trader_priority": {
-                    "type": "number"
-                },
-                "trader_reward": {
-                    "type": "number"
+                "trader_unlocked": {
+                    "type": "boolean"
                 }
             }
+        },
+        "request.TrafficAntifraudParams": {
+            "type": "object",
+            "properties": {
+                "antifraud_required": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "request.TrafficBusinessParams": {
+            "type": "object"
         },
         "request.UpdateBankDetailRequest": {
             "type": "object",
@@ -6267,26 +6587,84 @@ const docTemplate = `{
         "response.Traffic": {
             "type": "object",
             "properties": {
+                "activityParams": {
+                    "description": "Гибкие параметры",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/response.TrafficActivityParams"
+                        }
+                    ]
+                },
+                "antifraudParams": {
+                    "description": "Для антифрода",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/response.TrafficAntifraudParams"
+                        }
+                    ]
+                },
+                "businessParams": {
+                    "description": "Бизнес-параметры",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/response.TrafficBusinessParams"
+                        }
+                    ]
+                },
                 "enabled": {
+                    "description": "для админов",
                     "type": "boolean"
                 },
                 "id": {
                     "type": "string"
                 },
-                "merchant_id": {
+                "merchantID": {
                     "type": "string"
                 },
-                "platform_fee": {
+                "platformFee": {
                     "type": "number"
                 },
-                "trader_id": {
+                "traderID": {
                     "type": "string"
                 },
-                "trader_priority": {
+                "traderPriority": {
                     "type": "number"
                 },
-                "trader_reward": {
+                "traderRewardPercent": {
                     "type": "number"
+                }
+            }
+        },
+        "response.TrafficActivityParams": {
+            "type": "object",
+            "properties": {
+                "antifraudUnlocked": {
+                    "type": "boolean"
+                },
+                "manuallyUnlocked": {
+                    "type": "boolean"
+                },
+                "merchantUnlocked": {
+                    "type": "boolean"
+                },
+                "traderUnlocked": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "response.TrafficAntifraudParams": {
+            "type": "object",
+            "properties": {
+                "antifraudRequired": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "response.TrafficBusinessParams": {
+            "type": "object",
+            "properties": {
+                "merchantDealsDuration": {
+                    "type": "string"
                 }
             }
         },

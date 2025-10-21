@@ -11,6 +11,7 @@ import (
 	orderpb "github.com/LavaJover/shvark-order-service/proto/gen"
 	userpb "github.com/LavaJover/shvark-user-service/proto/gen"
 	"github.com/gin-gonic/gin"
+	"google.golang.org/protobuf/types/known/durationpb"
 )
 
 type AdminHandler struct {
@@ -149,14 +150,26 @@ func (h *AdminHandler) CreateTraffic(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, ErrorResponse{Error: err.Error()})
 		return
 	}
-	err := h.OrderClient.AddTraffic(
-		request.MerchantID,
-		request.TraderID,
-		request.TraderReward,
-		request.TraderPriority,
-		request.PlatformFee,
-		request.Enabled,
-	)
+	err := h.OrderClient.AddTraffic(&orderpb.AddTrafficRequest{
+		MerchantId: request.MerchantID,
+		TraderId: request.TraderID,
+		TraderRewardPercent: request.TraderReward,
+		TraderPriority: request.TraderPriority,
+		Enabled: request.Enabled,
+		PlatformFee: request.PlatformFee,
+		ActivityParams: &orderpb.TrafficActivityParameters{
+			MerchantUnlocked: request.TrafficActivityParams.MerchantUnlocked,
+			TraderUnlocked: request.TrafficActivityParams.TraderUnlocked,
+			ManuallyUnlocked: request.TrafficActivityParams.ManuallyUnlocked,
+			AntifraudUnlocked: request.TrafficActivityParams.AntifraudUnlocked,
+		},
+		AntifraudParams: &orderpb.TrafficAntifraudParameters{
+			AntifraudRequired: request.TrafficAntifraudParams.AntifraudRequired,
+		},
+		BusinessParams: &orderpb.TrafficBusinessParameters{
+			MerchantDealsDuration: durationpb.New(request.TrafficBusinessParams.MerchantDealsDuration),
+		},
+	})
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, ErrorResponse{Error: err.Error()})
 		return
@@ -183,19 +196,47 @@ func (h *AdminHandler) EditTraffic(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, ErrorResponse{Error: err.Error()})
 		return
 	}
-	err := h.OrderClient.EditTraffic(
-		request.Traffic.ID,
-		request.Traffic.TraderReward,
-		request.Traffic.TraderPriority,
-		request.Traffic.PlatformFee,
-		request.Traffic.Enabled,
-	)
+
+	// Преобразуем HTTP запрос в gRPC запрос
+	editRequest := &orderpb.EditTrafficRequest{
+		Id:            request.ID,
+		MerchantId:    request.MerchantID,
+		TraderId:      request.TraderID,
+		TraderReward:  request.TraderReward,
+		TraderProirity: request.TraderPriority,
+		PlatformFee:   request.PlatformFee,
+		Enabled:       request.Enabled,
+	}
+
+	// Преобразуем вложенные структуры, если они переданы
+	if request.ActivityParams != nil {
+		editRequest.ActivityParams = &orderpb.TrafficActivityParameters{
+			MerchantUnlocked:  request.ActivityParams.MerchantUnlocked,
+			TraderUnlocked:    request.ActivityParams.TraderUnlocked,
+			AntifraudUnlocked: request.ActivityParams.AntifraudUnlocked,
+			ManuallyUnlocked:  request.ActivityParams.ManuallyUnlocked,
+		}
+	}
+
+	if request.AntifraudParams != nil {
+		editRequest.AntifraudParams = &orderpb.TrafficAntifraudParameters{
+			AntifraudRequired: request.AntifraudParams.AntifraudRequired,
+		}
+	}
+
+	if request.BusinessParams != nil {
+		editRequest.BusinessParams = &orderpb.TrafficBusinessParameters{
+			MerchantDealsDuration: durationpb.New(request.BusinessParams.MerchantDealsDuration),
+		}
+	}
+
+	err := h.OrderClient.EditTraffic(editRequest)
 	if err != nil {
 		c.JSON(http.StatusBadGateway, ErrorResponse{Error: err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, adminResponse.EditTrafficResponse{
-	})
+
+	c.JSON(http.StatusOK, gin.H{"message": "success"})
 }
 
 // @Summary Delete traffic record
@@ -256,10 +297,22 @@ func (h *AdminHandler) GetTrafficRecords(c *gin.Context) {
 			ID: trafficResp.Id,
 			MerchantID: trafficResp.MerchantId,
 			TraderID: trafficResp.TraderId,
-			TraderReward: trafficResp.TraderRewardPercent,
-			TraderPriority: trafficResp.TraderPriority,
+			TraderRewardPercent: trafficResp.TraderRewardPercent,
 			PlatformFee: trafficResp.PlatformFee,
+			TraderPriority: trafficResp.TraderPriority,
 			Enabled: trafficResp.Enabled,
+			ActivityParams: adminResponse.TrafficActivityParams{
+				MerchantUnlocked: trafficResp.ActivityParams.MerchantUnlocked,
+				TraderUnlocked: trafficResp.ActivityParams.TraderUnlocked,
+				AntifraudUnlocked: trafficResp.ActivityParams.AntifraudUnlocked,
+				ManuallyUnlocked: trafficResp.ActivityParams.ManuallyUnlocked,
+			},
+			AntifraudParams: adminResponse.TrafficAntifraudParams{
+				AntifraudRequired: trafficResp.AntifraudParams.AntifraudRequired,
+			},
+			BusinessParams: adminResponse.TrafficBusinessParams{
+				MerchantDealsDuration: trafficResp.BusinessParams.MerchantDealsDuration.AsDuration().String(),
+			},
 		}
 	}
 

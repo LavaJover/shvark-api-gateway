@@ -114,47 +114,64 @@ func (c *OrderClient) CancelOrder(orderID string) (*orderpb.CancelOrderResponse,
 	)
 }
 
-func (c *OrderClient) AddTraffic(
-	merchantID, traderID string,
-	traderReward, traderPriority, platformFee float64,
-	enabled bool,
-	) error {
+func (c *OrderClient) SetTraderLockTrafficStatus(r *orderpb.SetTraderLockTrafficStatusRequest) (*orderpb.SetTraderLockTrafficStatusResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	return c.trafficService.SetTraderLockTrafficStatus(
+		ctx,
+		r,
+	)
+}
+
+func (c *OrderClient) SetMerchantLockTrafficStatus(r *orderpb.SetMerchantLockTrafficStatusRequest) (*orderpb.SetMerchantLockTrafficStatusResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	return c.trafficService.SetMerchantLockTrafficStatus(
+		ctx,
+		r,
+	)
+}
+
+func (c *OrderClient) SetManuallyLockTrafficStatus(r *orderpb.SetManuallyLockTrafficStatusRequest) (*orderpb.SetManuallyLockTrafficStatusResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	return c.trafficService.SetManuallyLockTrafficStatus(
+		ctx,
+		r,
+	)
+}
+
+func (c *OrderClient) SetAntifraudLockTrafficStatus(r *orderpb.SetAntifraudLockTrafficStatusRequest) (*orderpb.SetAntifraudLockTrafficStatusResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	return c.trafficService.SetAntifraudLockTrafficStatus(
+		ctx,
+		r,
+	)
+}
+
+func (c *OrderClient) AddTraffic(r *orderpb.AddTrafficRequest) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
 	_, err := c.trafficService.AddTraffic(
 		ctx,
-		&orderpb.AddTrafficRequest{
-			MerchantId: merchantID,
-			TraderId: traderID,
-			TraderRewardPercent: traderReward,
-			TraderPriority: traderPriority,
-			Enabled: enabled,
-			PlatformFee: platformFee,
-		},
+		r,
 	)
 	return err
 }
 
-func (c *OrderClient) EditTraffic(
-	trafficID string,
-	traderReward, traderPriority, platformFee float64,
-	enabled bool,
-) error {
+func (c *OrderClient) EditTraffic(r *orderpb.EditTrafficRequest) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
 	_, err := c.trafficService.EditTraffic(
 		ctx,
-		&orderpb.EditTrafficRequest{
-			Traffic: &orderpb.Traffic{
-				Id: trafficID,
-				TraderRewardPercent: traderReward,
-				TraderPriority: traderPriority,
-				Enabled: enabled,
-				PlatformFee: platformFee,
-			},
-		},
+		r,
 	)
 
 	return err
@@ -514,4 +531,20 @@ func (c *OrderClient) ProcessAutomaticPayment(ctx context.Context, grpcReq *orde
 		ctx,
 		grpcReq,
 	)
+}
+
+// GetTrafficLockStatuses получает статусы блокировки трафика
+func (c *OrderClient) GetTrafficLockStatuses(r *orderpb.GetTrafficLockStatusesRequest) (*orderpb.GetTrafficLockStatusesResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	return c.trafficService.GetTrafficLockStatuses(ctx, r)
+}
+
+// CheckTrafficUnlocked проверяет, разблокирован ли трафик
+func (c *OrderClient) CheckTrafficUnlocked(r *orderpb.CheckTrafficUnlockedRequest) (*orderpb.CheckTrafficUnlockedResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	return c.trafficService.CheckTrafficUnlocked(ctx, r)
 }
