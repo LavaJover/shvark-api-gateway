@@ -11,4 +11,5 @@ type EditTrafficRequest struct {
 	ActivityParams 			*TrafficActivityParams 	`json:"activity_params"`
 	AntifraudParams 		*TrafficAntifraudParams 	`json:"antifraud_params"`
 	BusinessParams 			*TrafficBusinessParams 	`json:"business_params"`
+	Name					*string					`json:"name"`
 }

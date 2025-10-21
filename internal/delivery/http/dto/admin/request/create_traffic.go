@@ -12,6 +12,7 @@ type CreateTrafficRequest struct {
 	TrafficActivityParams 	TrafficActivityParams 	`json:"traffic_activity_params"`
 	TrafficAntifraudParams 	TrafficAntifraudParams 	`json:"traffic_antifraud_params"`
 	TrafficBusinessParams 	TrafficBusinessParams 	`json:"traffic_business_params"`
+	Name					string 	`json:"name"`
 }
 
 type Traffic struct {
@@ -25,6 +26,7 @@ type Traffic struct {
 	TrafficActivityParams 	TrafficActivityParams 	`json:"traffic_activity_params"`
 	TrafficAntifraudParams 	TrafficAntifraudParams 	`json:"traffic_antifraud_params"`
 	TrafficBusinessParams 	TrafficBusinessParams 	`json:"traffic_business_params"`
+	Name					string 					`json:"name"`
 }
 
 type TrafficActivityParams struct {

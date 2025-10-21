@@ -157,6 +157,7 @@ func (h *AdminHandler) CreateTraffic(c *gin.Context) {
 		TraderPriority: request.TraderPriority,
 		Enabled: request.Enabled,
 		PlatformFee: request.PlatformFee,
+		Name: request.Name,
 		ActivityParams: &orderpb.TrafficActivityParameters{
 			MerchantUnlocked: request.TrafficActivityParams.MerchantUnlocked,
 			TraderUnlocked: request.TrafficActivityParams.TraderUnlocked,
@@ -206,6 +207,7 @@ func (h *AdminHandler) EditTraffic(c *gin.Context) {
 		TraderProirity: request.TraderPriority,
 		PlatformFee:   request.PlatformFee,
 		Enabled:       request.Enabled,
+		Name: 	request.Name,
 	}
 
 	// Преобразуем вложенные структуры, если они переданы
@@ -301,6 +303,7 @@ func (h *AdminHandler) GetTrafficRecords(c *gin.Context) {
 			PlatformFee: trafficResp.PlatformFee,
 			TraderPriority: trafficResp.TraderPriority,
 			Enabled: trafficResp.Enabled,
+			Name: trafficResp.Name,
 			ActivityParams: adminResponse.TrafficActivityParams{
 				MerchantUnlocked: trafficResp.ActivityParams.MerchantUnlocked,
 				TraderUnlocked: trafficResp.ActivityParams.TraderUnlocked,
