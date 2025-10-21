@@ -39,4 +39,5 @@ type Order struct {
 	UpdatedAt    	time.Time  `json:"updated_at"`
 	MerchantID 		string 		`json:"merchant_id"`
 	MerchantOrderID string 		`json:"merchant_order_id"`
+	DeviceId		string   `json:"device_id"`
 }

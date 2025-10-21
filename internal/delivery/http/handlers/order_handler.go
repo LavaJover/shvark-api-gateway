@@ -291,6 +291,7 @@ func (h *OrderHandler) GetOrdersByTraderID(c *gin.Context) {
 			CryptoRubRate:   responseOrder.CryptoRubRate,
 			MerchantOrderID: responseOrder.MerchantOrderId,
 			MerchantID: responseOrder.MerchantId,
+			DeviceId: responseOrder.BankDetail.DeviceId,
 			BankDetail: orderResponse.BankDetail{
 				ID:            responseOrder.BankDetail.BankDetailId,
 				TraderID:      responseOrder.BankDetail.TraderId,
