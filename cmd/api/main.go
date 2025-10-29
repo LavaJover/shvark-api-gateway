@@ -248,6 +248,33 @@ func main() {
 		trafficGroup.PATCH("/antifraud/:traderID", trafficHandler.SetAntifraudLockTrafficStatus)
 		trafficGroup.GET("/:trafficID/lock-statuses", trafficHandler.GetTrafficLockStatuses)
 		trafficGroup.GET("/:trafficID/unlocked", trafficHandler.CheckTrafficUnlocked)
+		trafficGroup.GET("/traders/:traderID", trafficHandler.GetTraderTraffic)
 	}
+
+    // Антифрод роуты
+    antiFraudHandler := handlers.NewAntiFraudHandler(adminHandler.OrderClient)
+    
+    antifraud := r.Group("/api/v1/antifraud")
+    {
+        // Проверка трейдеров
+        antifraud.POST("/traders/:traderID/check", antiFraudHandler.CheckTrader)
+        antifraud.POST("/traders/:traderID/process", antiFraudHandler.ProcessTraderCheck)
+        
+        // Управление правилами
+        antifraud.POST("/rules", antiFraudHandler.CreateRule)
+        antifraud.GET("/rules", antiFraudHandler.GetRules)
+        antifraud.GET("/rules/:ruleID", antiFraudHandler.GetRule)
+        antifraud.PATCH("/rules/:ruleID", antiFraudHandler.UpdateRule)
+        antifraud.DELETE("/rules/:ruleID", antiFraudHandler.DeleteRule)
+        
+        // Аудит
+        antifraud.GET("/audit-logs", antiFraudHandler.GetAuditLogs)
+        antifraud.GET("/traders/:traderID/audit-history", antiFraudHandler.GetTraderAuditHistory)
+
+		// Manual unlock - НОВОЕ
+		antifraud.POST("/traders/:traderID/manual-unlock", antiFraudHandler.ManualUnlock)
+		antifraud.POST("/traders/:traderID/reset-grace-period", antiFraudHandler.ResetGracePeriod)
+		antifraud.GET("/traders/:traderID/unlock-history", antiFraudHandler.GetUnlockHistory) // НОВОЕ
+    }
 	r.Run(":8080")
 }

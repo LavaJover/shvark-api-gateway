@@ -1247,6 +1247,444 @@ const docTemplate = `{
                 }
             }
         },
+        "/antifraud/audit-logs": {
+            "get": {
+                "description": "Get antifraud audit logs with optional filters",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "antifraud"
+                ],
+                "summary": "Get audit logs",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Filter by trader ID",
+                        "name": "trader_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter from date (RFC3339)",
+                        "name": "from_date",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter to date (RFC3339)",
+                        "name": "to_date",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Show only failed checks",
+                        "name": "only_failed",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 50,
+                        "description": "Limit results",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 0,
+                        "description": "Offset results",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.GetAuditLogsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "Bad Gateway",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/antifraud/rules": {
+            "get": {
+                "description": "Get list of antifraud rules",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "antifraud"
+                ],
+                "summary": "Get antifraud rules",
+                "parameters": [
+                    {
+                        "type": "boolean",
+                        "description": "Get only active rules",
+                        "name": "active_only",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.GetRulesResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "Bad Gateway",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create a new antifraud rule",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "antifraud"
+                ],
+                "summary": "Create antifraud rule",
+                "parameters": [
+                    {
+                        "description": "Rule data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handlers.CreateRuleRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.CreateRuleResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "Bad Gateway",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/antifraud/rules/{ruleID}": {
+            "get": {
+                "description": "Get a specific antifraud rule by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "antifraud"
+                ],
+                "summary": "Get antifraud rule",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Rule ID",
+                        "name": "ruleID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.AntiFraudRuleResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "Bad Gateway",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete an antifraud rule",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "antifraud"
+                ],
+                "summary": "Delete antifraud rule",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Rule ID",
+                        "name": "ruleID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.DeleteRuleResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "Bad Gateway",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Update an existing antifraud rule",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "antifraud"
+                ],
+                "summary": "Update antifraud rule",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Rule ID",
+                        "name": "ruleID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Update data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handlers.UpdateRuleRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.UpdateRuleResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "Bad Gateway",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/antifraud/traders/{traderID}/audit-history": {
+            "get": {
+                "description": "Get audit history for a specific trader",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "antifraud"
+                ],
+                "summary": "Get trader audit history",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Trader ID",
+                        "name": "traderID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "description": "Limit results",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.GetTraderAuditHistoryResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "Bad Gateway",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/antifraud/traders/{traderID}/check": {
+            "post": {
+                "description": "Check trader against all active antifraud rules",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "antifraud"
+                ],
+                "summary": "Check trader",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Trader ID",
+                        "name": "traderID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.CheckTraderResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "Bad Gateway",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/antifraud/traders/{traderID}/process": {
+            "post": {
+                "description": "Check trader and update traffic status",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "antifraud"
+                ],
+                "summary": "Process trader check",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Trader ID",
+                        "name": "traderID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ProcessTraderCheckResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "Bad Gateway",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/banking/details": {
             "post": {
                 "security": [
@@ -4731,6 +5169,9 @@ const docTemplate = `{
                 "crypto_rub_rate": {
                     "type": "number"
                 },
+                "device_id": {
+                    "type": "string"
+                },
                 "expires_at": {
                     "type": "string"
                 },
@@ -4850,12 +5291,168 @@ const docTemplate = `{
                 }
             }
         },
+        "handlers.AntiFraudRuleResponse": {
+            "type": "object",
+            "properties": {
+                "config": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "priority": {
+                    "type": "integer"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.AuditLogResponse": {
+            "type": "object",
+            "properties": {
+                "all_passed": {
+                    "type": "boolean"
+                },
+                "checked_at": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "results": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/handlers.CheckResultResponse"
+                    }
+                },
+                "trader_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.CheckResultResponse": {
+            "type": "object",
+            "properties": {
+                "details": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "message": {
+                    "type": "string"
+                },
+                "passed": {
+                    "type": "boolean"
+                },
+                "rule_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.CheckTraderResponse": {
+            "type": "object",
+            "properties": {
+                "all_passed": {
+                    "type": "boolean"
+                },
+                "checked_at": {
+                    "type": "string"
+                },
+                "failed_rules": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "results": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/handlers.CheckResultResponse"
+                    }
+                },
+                "trader_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.CreateRuleRequest": {
+            "type": "object",
+            "required": [
+                "config",
+                "name",
+                "type"
+            ],
+            "properties": {
+                "config": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "name": {
+                    "type": "string"
+                },
+                "priority": {
+                    "type": "integer"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.CreateRuleResponse": {
+            "type": "object",
+            "properties": {
+                "rule": {
+                    "$ref": "#/definitions/handlers.AntiFraudRuleResponse"
+                }
+            }
+        },
+        "handlers.DeleteRuleResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
         "handlers.ErrorResponse": {
             "type": "object",
             "properties": {
                 "error": {
                     "type": "string",
                     "example": "invalid data"
+                }
+            }
+        },
+        "handlers.GetAuditLogsResponse": {
+            "type": "object",
+            "properties": {
+                "logs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/handlers.AuditLogResponse"
+                    }
+                },
+                "total": {
+                    "type": "integer"
                 }
             }
         },
@@ -4897,6 +5494,28 @@ const docTemplate = `{
                 },
                 "totalPages": {
                     "type": "integer"
+                }
+            }
+        },
+        "handlers.GetRulesResponse": {
+            "type": "object",
+            "properties": {
+                "rules": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/handlers.AntiFraudRuleResponse"
+                    }
+                }
+            }
+        },
+        "handlers.GetTraderAuditHistoryResponse": {
+            "type": "object",
+            "properties": {
+                "logs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/handlers.AuditLogResponse"
+                    }
                 }
             }
         },
@@ -4984,6 +5603,17 @@ const docTemplate = `{
                 }
             }
         },
+        "handlers.ProcessTraderCheckResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
         "handlers.Requisites": {
             "type": "object",
             "properties": {
@@ -5022,6 +5652,32 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "unlocked": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "handlers.UpdateRuleRequest": {
+            "type": "object",
+            "properties": {
+                "config": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "priority": {
+                    "type": "integer"
+                }
+            }
+        },
+        "handlers.UpdateRuleResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "success": {
                     "type": "boolean"
                 }
             }
@@ -5506,7 +6162,39 @@ const docTemplate = `{
             }
         },
         "request.CreateTrafficRequest": {
-            "type": "object"
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean"
+                },
+                "merchant_id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "platform_fee": {
+                    "type": "number"
+                },
+                "trader_id": {
+                    "type": "string"
+                },
+                "trader_priority": {
+                    "type": "number"
+                },
+                "trader_reward": {
+                    "type": "number"
+                },
+                "traffic_activity_params": {
+                    "$ref": "#/definitions/request.TrafficActivityParams"
+                },
+                "traffic_antifraud_params": {
+                    "$ref": "#/definitions/request.TrafficAntifraudParams"
+                },
+                "traffic_business_params": {
+                    "$ref": "#/definitions/request.TrafficBusinessParams"
+                }
+            }
         },
         "request.CreateWalletRequest": {
             "type": "object",
@@ -5576,6 +6264,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "merchant_id": {
+                    "type": "string"
+                },
+                "name": {
                     "type": "string"
                 },
                 "platform_fee": {
@@ -5755,7 +6446,12 @@ const docTemplate = `{
             }
         },
         "request.TrafficBusinessParams": {
-            "type": "object"
+            "type": "object",
+            "properties": {
+                "merchant_deals_duration": {
+                    "type": "string"
+                }
+            }
         },
         "request.UpdateBankDetailRequest": {
             "type": "object",
@@ -6587,7 +7283,7 @@ const docTemplate = `{
         "response.Traffic": {
             "type": "object",
             "properties": {
-                "activityParams": {
+                "activity_params": {
                     "description": "Гибкие параметры",
                     "allOf": [
                         {
@@ -6595,7 +7291,7 @@ const docTemplate = `{
                         }
                     ]
                 },
-                "antifraudParams": {
+                "antifraud_params": {
                     "description": "Для антифрода",
                     "allOf": [
                         {
@@ -6603,7 +7299,7 @@ const docTemplate = `{
                         }
                     ]
                 },
-                "businessParams": {
+                "business_params": {
                     "description": "Бизнес-параметры",
                     "allOf": [
                         {
@@ -6612,25 +7308,28 @@ const docTemplate = `{
                     ]
                 },
                 "enabled": {
-                    "description": "для админов",
+                    "description": "для админов ` + "`" + `json:\"enabled\"` + "`" + `",
                     "type": "boolean"
                 },
                 "id": {
                     "type": "string"
                 },
-                "merchantID": {
+                "merchant_id": {
                     "type": "string"
                 },
-                "platformFee": {
-                    "type": "number"
-                },
-                "traderID": {
+                "name": {
                     "type": "string"
                 },
-                "traderPriority": {
+                "platform_fee": {
                     "type": "number"
                 },
-                "traderRewardPercent": {
+                "trader_id": {
+                    "type": "string"
+                },
+                "trader_priority": {
+                    "type": "number"
+                },
+                "trader_reward_percent": {
                     "type": "number"
                 }
             }
@@ -6638,16 +7337,16 @@ const docTemplate = `{
         "response.TrafficActivityParams": {
             "type": "object",
             "properties": {
-                "antifraudUnlocked": {
+                "antifraud_unlocked": {
                     "type": "boolean"
                 },
-                "manuallyUnlocked": {
+                "manually_unlocked": {
                     "type": "boolean"
                 },
-                "merchantUnlocked": {
+                "merchant_unlocked": {
                     "type": "boolean"
                 },
-                "traderUnlocked": {
+                "trader_unlocked": {
                     "type": "boolean"
                 }
             }
@@ -6655,7 +7354,7 @@ const docTemplate = `{
         "response.TrafficAntifraudParams": {
             "type": "object",
             "properties": {
-                "antifraudRequired": {
+                "antifraud_required": {
                     "type": "boolean"
                 }
             }
@@ -6663,7 +7362,7 @@ const docTemplate = `{
         "response.TrafficBusinessParams": {
             "type": "object",
             "properties": {
-                "merchantDealsDuration": {
+                "merchant_deals_duration": {
                     "type": "string"
                 }
             }

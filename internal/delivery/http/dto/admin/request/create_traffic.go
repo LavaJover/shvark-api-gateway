@@ -1,7 +1,5 @@
 package request
 
-import "time"
-
 type CreateTrafficRequest struct {
 	MerchantID 				string 		`json:"merchant_id"`
 	TraderID 				string 		`json:"trader_id"`
@@ -41,5 +39,5 @@ type TrafficAntifraudParams struct {
 }
 
 type TrafficBusinessParams struct {
-	MerchantDealsDuration time.Duration `json:"merchant_deals_duration"`
+	MerchantDealsDuration string `json:"merchant_deals_duration"`
 }

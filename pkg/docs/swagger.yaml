@@ -226,6 +226,8 @@ definitions:
         type: string
       crypto_rub_rate:
         type: number
+      device_id:
+        type: string
       expires_at:
         type: string
       merchant_id:
@@ -303,11 +305,114 @@ definitions:
       currency:
         type: string
     type: object
+  handlers.AntiFraudRuleResponse:
+    properties:
+      config:
+        additionalProperties: true
+        type: object
+      created_at:
+        type: string
+      id:
+        type: string
+      is_active:
+        type: boolean
+      name:
+        type: string
+      priority:
+        type: integer
+      type:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  handlers.AuditLogResponse:
+    properties:
+      all_passed:
+        type: boolean
+      checked_at:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      results:
+        items:
+          $ref: '#/definitions/handlers.CheckResultResponse'
+        type: array
+      trader_id:
+        type: string
+    type: object
+  handlers.CheckResultResponse:
+    properties:
+      details:
+        additionalProperties: true
+        type: object
+      message:
+        type: string
+      passed:
+        type: boolean
+      rule_name:
+        type: string
+    type: object
+  handlers.CheckTraderResponse:
+    properties:
+      all_passed:
+        type: boolean
+      checked_at:
+        type: string
+      failed_rules:
+        items:
+          type: string
+        type: array
+      results:
+        items:
+          $ref: '#/definitions/handlers.CheckResultResponse'
+        type: array
+      trader_id:
+        type: string
+    type: object
+  handlers.CreateRuleRequest:
+    properties:
+      config:
+        additionalProperties: true
+        type: object
+      name:
+        type: string
+      priority:
+        type: integer
+      type:
+        type: string
+    required:
+    - config
+    - name
+    - type
+    type: object
+  handlers.CreateRuleResponse:
+    properties:
+      rule:
+        $ref: '#/definitions/handlers.AntiFraudRuleResponse'
+    type: object
+  handlers.DeleteRuleResponse:
+    properties:
+      message:
+        type: string
+      success:
+        type: boolean
+    type: object
   handlers.ErrorResponse:
     properties:
       error:
         example: invalid data
         type: string
+    type: object
+  handlers.GetAuditLogsResponse:
+    properties:
+      logs:
+        items:
+          $ref: '#/definitions/handlers.AuditLogResponse'
+        type: array
+      total:
+        type: integer
     type: object
   handlers.GetOrdersResponse:
     properties:
@@ -335,6 +440,20 @@ definitions:
         type: integer
       totalPages:
         type: integer
+    type: object
+  handlers.GetRulesResponse:
+    properties:
+      rules:
+        items:
+          $ref: '#/definitions/handlers.AntiFraudRuleResponse'
+        type: array
+    type: object
+  handlers.GetTraderAuditHistoryResponse:
+    properties:
+      logs:
+        items:
+          $ref: '#/definitions/handlers.AuditLogResponse'
+        type: array
     type: object
   handlers.LockStatusesResponse:
     properties:
@@ -391,6 +510,13 @@ definitions:
       unpaged:
         type: boolean
     type: object
+  handlers.ProcessTraderCheckResponse:
+    properties:
+      message:
+        type: string
+      success:
+        type: boolean
+    type: object
   handlers.Requisites:
     properties:
       cardNumber:
@@ -416,6 +542,23 @@ definitions:
       traffic_id:
         type: string
       unlocked:
+        type: boolean
+    type: object
+  handlers.UpdateRuleRequest:
+    properties:
+      config:
+        additionalProperties: true
+        type: object
+      is_active:
+        type: boolean
+      priority:
+        type: integer
+    type: object
+  handlers.UpdateRuleResponse:
+    properties:
+      message:
+        type: string
+      success:
         type: boolean
     type: object
   merchant.AccountBalance:
@@ -733,6 +876,27 @@ definitions:
         type: string
     type: object
   request.CreateTrafficRequest:
+    properties:
+      enabled:
+        type: boolean
+      merchant_id:
+        type: string
+      name:
+        type: string
+      platform_fee:
+        type: number
+      trader_id:
+        type: string
+      trader_priority:
+        type: number
+      trader_reward:
+        type: number
+      traffic_activity_params:
+        $ref: '#/definitions/request.TrafficActivityParams'
+      traffic_antifraud_params:
+        $ref: '#/definitions/request.TrafficAntifraudParams'
+      traffic_business_params:
+        $ref: '#/definitions/request.TrafficBusinessParams'
     type: object
   request.CreateWalletRequest:
     properties:
@@ -779,6 +943,8 @@ definitions:
       id:
         type: string
       merchant_id:
+        type: string
+      name:
         type: string
       platform_fee:
         type: number
@@ -896,6 +1062,9 @@ definitions:
         type: boolean
     type: object
   request.TrafficBusinessParams:
+    properties:
+      merchant_deals_duration:
+        type: string
     type: object
   request.UpdateBankDetailRequest:
     properties:
@@ -1431,53 +1600,55 @@ definitions:
     type: object
   response.Traffic:
     properties:
-      activityParams:
+      activity_params:
         allOf:
         - $ref: '#/definitions/response.TrafficActivityParams'
         description: Гибкие параметры
-      antifraudParams:
+      antifraud_params:
         allOf:
         - $ref: '#/definitions/response.TrafficAntifraudParams'
         description: Для антифрода
-      businessParams:
+      business_params:
         allOf:
         - $ref: '#/definitions/response.TrafficBusinessParams'
         description: Бизнес-параметры
       enabled:
-        description: для админов
+        description: для админов `json:"enabled"`
         type: boolean
       id:
         type: string
-      merchantID:
+      merchant_id:
         type: string
-      platformFee:
-        type: number
-      traderID:
+      name:
         type: string
-      traderPriority:
+      platform_fee:
         type: number
-      traderRewardPercent:
+      trader_id:
+        type: string
+      trader_priority:
+        type: number
+      trader_reward_percent:
         type: number
     type: object
   response.TrafficActivityParams:
     properties:
-      antifraudUnlocked:
+      antifraud_unlocked:
         type: boolean
-      manuallyUnlocked:
+      manually_unlocked:
         type: boolean
-      merchantUnlocked:
+      merchant_unlocked:
         type: boolean
-      traderUnlocked:
+      trader_unlocked:
         type: boolean
     type: object
   response.TrafficAntifraudParams:
     properties:
-      antifraudRequired:
+      antifraud_required:
         type: boolean
     type: object
   response.TrafficBusinessParams:
     properties:
-      merchantDealsDuration:
+      merchant_deals_duration:
         type: string
     type: object
   response.Transaction:
@@ -2339,6 +2510,296 @@ paths:
       summary: Get withdrawal rules
       tags:
       - admin
+  /antifraud/audit-logs:
+    get:
+      consumes:
+      - application/json
+      description: Get antifraud audit logs with optional filters
+      parameters:
+      - description: Filter by trader ID
+        in: query
+        name: trader_id
+        type: string
+      - description: Filter from date (RFC3339)
+        in: query
+        name: from_date
+        type: string
+      - description: Filter to date (RFC3339)
+        in: query
+        name: to_date
+        type: string
+      - description: Show only failed checks
+        in: query
+        name: only_failed
+        type: boolean
+      - default: 50
+        description: Limit results
+        in: query
+        name: limit
+        type: integer
+      - default: 0
+        description: Offset results
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.GetAuditLogsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Get audit logs
+      tags:
+      - antifraud
+  /antifraud/rules:
+    get:
+      consumes:
+      - application/json
+      description: Get list of antifraud rules
+      parameters:
+      - description: Get only active rules
+        in: query
+        name: active_only
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.GetRulesResponse'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Get antifraud rules
+      tags:
+      - antifraud
+    post:
+      consumes:
+      - application/json
+      description: Create a new antifraud rule
+      parameters:
+      - description: Rule data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.CreateRuleRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.CreateRuleResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Create antifraud rule
+      tags:
+      - antifraud
+  /antifraud/rules/{ruleID}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete an antifraud rule
+      parameters:
+      - description: Rule ID
+        in: path
+        name: ruleID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.DeleteRuleResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Delete antifraud rule
+      tags:
+      - antifraud
+    get:
+      consumes:
+      - application/json
+      description: Get a specific antifraud rule by ID
+      parameters:
+      - description: Rule ID
+        in: path
+        name: ruleID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.AntiFraudRuleResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Get antifraud rule
+      tags:
+      - antifraud
+    patch:
+      consumes:
+      - application/json
+      description: Update an existing antifraud rule
+      parameters:
+      - description: Rule ID
+        in: path
+        name: ruleID
+        required: true
+        type: string
+      - description: Update data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.UpdateRuleRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.UpdateRuleResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Update antifraud rule
+      tags:
+      - antifraud
+  /antifraud/traders/{traderID}/audit-history:
+    get:
+      consumes:
+      - application/json
+      description: Get audit history for a specific trader
+      parameters:
+      - description: Trader ID
+        in: path
+        name: traderID
+        required: true
+        type: string
+      - default: 10
+        description: Limit results
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.GetTraderAuditHistoryResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Get trader audit history
+      tags:
+      - antifraud
+  /antifraud/traders/{traderID}/check:
+    post:
+      consumes:
+      - application/json
+      description: Check trader against all active antifraud rules
+      parameters:
+      - description: Trader ID
+        in: path
+        name: traderID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.CheckTraderResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Check trader
+      tags:
+      - antifraud
+  /antifraud/traders/{traderID}/process:
+    post:
+      consumes:
+      - application/json
+      description: Check trader and update traffic status
+      parameters:
+      - description: Trader ID
+        in: path
+        name: traderID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.ProcessTraderCheckResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Process trader check
+      tags:
+      - antifraud
   /banking/details:
     patch:
       consumes:

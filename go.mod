@@ -5,7 +5,7 @@ go 1.23.2
 require (
 	github.com/LavaJover/shvark-authz-service v0.0.0-20250518135159-e47df48e9c1c
 	github.com/LavaJover/shvark-banking-service v0.0.6
-	github.com/LavaJover/shvark-order-service v0.0.43-0.20251021031944-a6d1f179c6b8
+	github.com/LavaJover/shvark-order-service v0.0.43-0.20251029063929-0c846408603b
 	github.com/LavaJover/shvark-profile-service v0.0.0-20250519161935-955e6b16225d
 	github.com/LavaJover/shvark-sso-service v0.0.5
 	github.com/LavaJover/shvark-user-service v0.0.8

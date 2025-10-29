@@ -39,6 +39,16 @@ github.com/LavaJover/shvark-order-service v0.0.43-0.20251021024636-bad66f7831b2 
 github.com/LavaJover/shvark-order-service v0.0.43-0.20251021024636-bad66f7831b2/go.mod h1:odqXEOM0M9ywViYHq8l1sFu1TJumnfLFqGPX8gA2Vks=
 github.com/LavaJover/shvark-order-service v0.0.43-0.20251021031944-a6d1f179c6b8 h1:Cg4rk/gp4KzlDZLho0h6skWbYB6q0K+n1x2jn6Qzs6M=
 github.com/LavaJover/shvark-order-service v0.0.43-0.20251021031944-a6d1f179c6b8/go.mod h1:odqXEOM0M9ywViYHq8l1sFu1TJumnfLFqGPX8gA2Vks=
+github.com/LavaJover/shvark-order-service v0.0.43-0.20251028220912-7e35dfc52c4d h1:aZldlK4P7mA+FBkMIvd3SdL9iITnFmLvPLA6iQ+rI4I=
+github.com/LavaJover/shvark-order-service v0.0.43-0.20251028220912-7e35dfc52c4d/go.mod h1:odqXEOM0M9ywViYHq8l1sFu1TJumnfLFqGPX8gA2Vks=
+github.com/LavaJover/shvark-order-service v0.0.43-0.20251029025258-0553f5d0bf6f h1:czTW7fQaYdG4PljPjlKfGKUz7Zmb4gHZjAQ43xKwFMM=
+github.com/LavaJover/shvark-order-service v0.0.43-0.20251029025258-0553f5d0bf6f/go.mod h1:odqXEOM0M9ywViYHq8l1sFu1TJumnfLFqGPX8gA2Vks=
+github.com/LavaJover/shvark-order-service v0.0.43-0.20251029043343-42cc445ba72f h1:/b0ZG8SvEh1LaCv7EOD2/snTua77/egcHWRnVri5wao=
+github.com/LavaJover/shvark-order-service v0.0.43-0.20251029043343-42cc445ba72f/go.mod h1:odqXEOM0M9ywViYHq8l1sFu1TJumnfLFqGPX8gA2Vks=
+github.com/LavaJover/shvark-order-service v0.0.43-0.20251029063710-625661c5f5fd h1:SmnqdlSO4wiTddhswk7kTog0KwH2sJmgo/oa3W0PtBc=
+github.com/LavaJover/shvark-order-service v0.0.43-0.20251029063710-625661c5f5fd/go.mod h1:odqXEOM0M9ywViYHq8l1sFu1TJumnfLFqGPX8gA2Vks=
+github.com/LavaJover/shvark-order-service v0.0.43-0.20251029063929-0c846408603b h1:A83RLZ9d7spAqHM5H/hp0yKsaXbhioR2wonv8W5WKlc=
+github.com/LavaJover/shvark-order-service v0.0.43-0.20251029063929-0c846408603b/go.mod h1:odqXEOM0M9ywViYHq8l1sFu1TJumnfLFqGPX8gA2Vks=
 github.com/LavaJover/shvark-profile-service v0.0.0-20250519161935-955e6b16225d h1:xuRct1ICwKAOcrXokgOy2AF1YdvKl0ku9GIqAZLyGsc=
 github.com/LavaJover/shvark-profile-service v0.0.0-20250519161935-955e6b16225d/go.mod h1:xSLMdyF68a2I1L23yzsOsVNQkRuXblIsp6WhLlIY9ak=
 github.com/LavaJover/shvark-sso-service v0.0.4 h1:+fv8qHSOZFIecfifqwWs+kXtykgdYHEwj3ycufYfcI8=

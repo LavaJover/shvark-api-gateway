@@ -247,3 +247,92 @@ type TrafficUnlockedResponse struct {
 	TrafficID string `json:"traffic_id"`
 	Unlocked  bool   `json:"unlocked"`
 }
+
+type TrafficRecordResponse struct {
+    ID                  string  `json:"id"`
+    MerchantID          string  `json:"merchant_id"`
+    TraderID            string  `json:"trader_id"`
+    TraderRewardPercent float64 `json:"trader_reward_percent"`
+    PlatformFee         float64 `json:"platform_fee"`
+    TraderPriority      float64 `json:"trader_priority"`
+    Enabled             bool    `json:"enabled"`
+    Name                string  `json:"name"`
+    ActivityParams      struct {
+        MerchantUnlocked  bool `json:"merchant_unlocked"`
+        TraderUnlocked    bool `json:"trader_unlocked"`
+        AntifraudUnlocked bool `json:"antifraud_unlocked"`
+        ManuallyUnlocked  bool `json:"manually_unlocked"`
+    } `json:"activity_params"`
+    AntifraudParams struct {
+        AntifraudRequired bool `json:"antifraud_required"`
+    } `json:"antifraud_params"`
+    BusinessParams struct {
+        MerchantDealsDuration int64 `json:"merchant_deals_duration"`
+    } `json:"business_params"`
+}
+
+type GetTraderTrafficResponse struct {
+    Records []TrafficRecordResponse `json:"records"`
+}
+
+// @Summary Get trader traffic
+// @Description Get all traffic records for a trader
+// @Tags traffic
+// @Accept json
+// @Produce json
+// @Param traderID path string true "Trader ID"
+// @Success 200 {object} GetTraderTrafficResponse
+// @Failure 400 {object} ErrorResponse
+// @Failure 502 {object} ErrorResponse
+// @Router /traffic/traders/{traderID} [get]
+func (h *TrafficHandler) GetTraderTraffic(c *gin.Context) {
+    traderID := c.Param("traderID")
+    if traderID == "" {
+        c.JSON(http.StatusBadRequest, ErrorResponse{Error: "traderID is required"})
+        return
+    }
+
+    response, err := h.orderClient.GetTraderTraffic(&orderpb.GetTraderTrafficRequest{
+        TraderId: traderID,
+    })
+
+    if err != nil {
+        c.JSON(http.StatusBadGateway, ErrorResponse{Error: err.Error()})
+        return
+    }
+
+    records := make([]TrafficRecordResponse, 0, len(response.Records))
+    for _, rec := range response.Records {
+        record := TrafficRecordResponse{
+            ID:                  rec.Id,
+            MerchantID:          rec.MerchantId,
+            TraderID:            rec.TraderId,
+            TraderRewardPercent: rec.TraderRewardPercent,
+            PlatformFee:         rec.PlatformFee,
+            TraderPriority:      rec.TraderPriority,
+            Enabled:             rec.Enabled,
+            Name:                rec.Name,
+        }
+        
+        if rec.ActivityParams != nil {
+            record.ActivityParams.MerchantUnlocked = rec.ActivityParams.MerchantUnlocked
+            record.ActivityParams.TraderUnlocked = rec.ActivityParams.TraderUnlocked
+            record.ActivityParams.AntifraudUnlocked = rec.ActivityParams.AntifraudUnlocked
+            record.ActivityParams.ManuallyUnlocked = rec.ActivityParams.ManuallyUnlocked
+        }
+        
+        if rec.AntifraudParams != nil {
+            record.AntifraudParams.AntifraudRequired = rec.AntifraudParams.AntifraudRequired
+        }
+        
+        if rec.BusinessParams != nil {
+            record.BusinessParams.MerchantDealsDuration = rec.BusinessParams.MerchantDealsDuration.Seconds
+        }
+        
+        records = append(records, record)
+    }
+
+    c.JSON(http.StatusOK, GetTraderTrafficResponse{
+        Records: records,
+    })
+}

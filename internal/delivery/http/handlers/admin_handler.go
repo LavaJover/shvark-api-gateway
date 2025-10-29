@@ -150,7 +150,13 @@ func (h *AdminHandler) CreateTraffic(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, ErrorResponse{Error: err.Error()})
 		return
 	}
-	err := h.OrderClient.AddTraffic(&orderpb.AddTrafficRequest{
+	duration, err := time.ParseDuration(request.TrafficBusinessParams.MerchantDealsDuration)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "failed to parse deals time parameter"})
+		return
+	}
+
+	err = h.OrderClient.AddTraffic(&orderpb.AddTrafficRequest{
 		MerchantId: request.MerchantID,
 		TraderId: request.TraderID,
 		TraderRewardPercent: request.TraderReward,
@@ -168,7 +174,7 @@ func (h *AdminHandler) CreateTraffic(c *gin.Context) {
 			AntifraudRequired: request.TrafficAntifraudParams.AntifraudRequired,
 		},
 		BusinessParams: &orderpb.TrafficBusinessParameters{
-			MerchantDealsDuration: durationpb.New(request.TrafficBusinessParams.MerchantDealsDuration),
+			MerchantDealsDuration: durationpb.New(duration),
 		},
 	})
 	if err != nil {
@@ -227,8 +233,13 @@ func (h *AdminHandler) EditTraffic(c *gin.Context) {
 	}
 
 	if request.BusinessParams != nil {
+		duration, err := time.ParseDuration(request.BusinessParams.MerchantDealsDuration)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "failed to parse deals time parameter"})
+			return
+		}
 		editRequest.BusinessParams = &orderpb.TrafficBusinessParameters{
-			MerchantDealsDuration: durationpb.New(request.BusinessParams.MerchantDealsDuration),
+			MerchantDealsDuration: durationpb.New(duration),
 		}
 	}
 
