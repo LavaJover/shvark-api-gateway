@@ -242,7 +242,7 @@ func main() {
 	}
 
 	automaticHandler := handlers.NewAutomaticHandler(adminHandler.OrderClient)
-	automaticGroup := r.Group("/api/v1/automatic")
+	automaticGroup := r.Group("/api/v1/automatic", middleware.AuthMiddleware(adminHandler.SSOClient))
 	{
 		automaticGroup.POST("/process-sms", automaticHandler.Sms)
 		automaticGroup.POST("/liveness", automaticHandler.Live)
