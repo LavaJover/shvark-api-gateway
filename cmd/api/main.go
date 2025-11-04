@@ -77,7 +77,12 @@ func main() {
 	}
 
 	// init payments handlet
-	paymentHandler, err := handlers.NewPaymentHandler(ordersHandler.OrderClient)
+	paymentHandler, err := handlers.NewPaymentHandler(
+		bankingHandler.OrderClient,
+		walletHandler.WalletClient,
+		userHandler.UserClient,
+		authHandler.SSOClient,
+	)
 	if err != nil {
 		log.Printf("failed to init payment handler")
 	}
@@ -158,13 +163,18 @@ func main() {
 	}
 
 	// payments for merchant
-	paymentsGroup := r.Group("/api/v1/payments")
+	paymentsGroup := r.Group("/api/v1/payments", middleware.AuthMiddleware(authHandler.SSOClient))
 	{
 		paymentsGroup.POST("/in/h2h", paymentHandler.CreateH2HPayIn)
 		paymentsGroup.GET("/in/h2h/:id", paymentHandler.GetH2HPayInInfo)
 		paymentsGroup.POST("/in/h2h/:id/cancel", paymentHandler.CancelPayIn)
 		paymentsGroup.POST("/in/h2h/:id/arbitrage/link", paymentHandler.OpenPayInArbitrageLink)
 		paymentsGroup.GET("/in/h2h/:id/arbitrage/info", paymentHandler.GetPayInArbitrageInfo)
+		paymentsGroup.GET("/accounts/balance", paymentHandler.GetAccountBalance)
+		paymentsGroup.GET("/order/:orderId/status", paymentHandler.GetOrderStatus)
+		paymentsGroup.GET("/order", paymentHandler.GetOrders)
+		paymentsGroup.POST("/accounts/withdraw/create", paymentHandler.Withdraw)
+		paymentsGroup.POST("/accounts/auth/sign-in", paymentHandler.Login)
 	}
 
 	walletAddr := fmt.Sprintf("%s:%s", cfg.WalletService.Host, cfg.WalletService.Port)

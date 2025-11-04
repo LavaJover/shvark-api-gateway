@@ -1641,6 +1641,59 @@ const docTemplate = `{
                 }
             }
         },
+        "/antifraud/traders/{traderID}/manual-unlock": {
+            "post": {
+                "description": "Manually unlock trader with grace period",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "antifraud"
+                ],
+                "summary": "Manual unlock trader",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Trader ID",
+                        "name": "traderID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Unlock data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ManualUnlockRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ManualUnlockResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "Bad Gateway",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/antifraud/traders/{traderID}/process": {
             "post": {
                 "description": "Check trader and update traffic status",
@@ -1668,6 +1721,101 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/handlers.ProcessTraderCheckResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "Bad Gateway",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/antifraud/traders/{traderID}/reset-grace-period": {
+            "post": {
+                "description": "Reset grace period for trader",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "antifraud"
+                ],
+                "summary": "Reset grace period",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Trader ID",
+                        "name": "traderID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ResetGracePeriodResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "Bad Gateway",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/antifraud/traders/{traderID}/unlock-history": {
+            "get": {
+                "description": "Get history of manual unlocks for trader",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "antifraud"
+                ],
+                "summary": "Get unlock history",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Trader ID",
+                        "name": "traderID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "default": 20,
+                        "description": "Limit results",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.GetUnlockHistoryResponse"
                         }
                     },
                     "400": {
@@ -2254,7 +2402,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/request.LoginRequest"
+                            "$ref": "#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_auth_request.LoginRequest"
                         }
                     }
                 ],
@@ -2262,7 +2410,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.LoginResponse"
+                            "$ref": "#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_auth_response.LoginResponse"
                         }
                     },
                     "400": {
@@ -3277,6 +3425,149 @@ const docTemplate = `{
                 }
             }
         },
+        "/payments/accounts/auth/sign-in": {
+            "post": {
+                "description": "sign-in endpoint",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "payments"
+                ],
+                "summary": "sign-in handler",
+                "parameters": [
+                    {
+                        "description": "user credentials",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/merchant.LoginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/merchant.LoginResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/payments/accounts/balance": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get account balance",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "payments"
+                ],
+                "summary": "Get balance",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/merchant.GetAccountBalanceResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "Bad Gateway",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/payments/accounts/withdraw/create": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Withdraw USDT",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "payments"
+                ],
+                "summary": "Withdraw crypto from account wallet",
+                "parameters": [
+                    {
+                        "description": "withdraw data",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/merchant.WithdrawRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/merchant.WithdrawResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "Bad Gateway",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/payments/in/h2h": {
             "post": {
                 "description": "Create new Pay-In using host-to-host method",
@@ -3521,6 +3812,171 @@ const docTemplate = `{
                         "description": "Bad Gateway",
                         "schema": {
                             "$ref": "#/definitions/response.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/payments/order": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Получение списка ордеров с фильтрацией, сортировкой и пагинацией",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "payments"
+                ],
+                "summary": "Получить список ордеров",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Фильтр по ID сделки",
+                        "name": "dealId",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "DEPOSIT",
+                            "WITHDRAWAL",
+                            "PAYOUT"
+                        ],
+                        "type": "string",
+                        "description": "Тип ордера: DEPOSIT, WITHDRAWAL, PAYOUT",
+                        "name": "type",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "COMPLETED",
+                            "CANCELED",
+                            "FAILED",
+                            "DISPUTE",
+                            "PENDING"
+                        ],
+                        "type": "string",
+                        "description": "Статус ордера",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Начальная дата создания (формат: 2006-01-02T15:04:05Z)",
+                        "name": "timeOpeningStart",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Конечная дата создания (формат: 2006-01-02T15:04:05Z)",
+                        "name": "timeOpeningEnd",
+                        "in": "query"
+                    },
+                    {
+                        "type": "number",
+                        "description": "Минимальная сумма",
+                        "name": "amountMin",
+                        "in": "query"
+                    },
+                    {
+                        "type": "number",
+                        "description": "Максимальная сумма",
+                        "name": "amountMax",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 0,
+                        "description": "Номер страницы (начиная с 0)",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "description": "Размер страницы",
+                        "name": "size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Поле сортировки: id, deal_id, time_opening, time_expires, time_complete, type, status, amount",
+                        "name": "sort",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.GetOrdersResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/payments/order/{orderId}/status": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get order status",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "payments"
+                ],
+                "summary": "Get order status",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "order ID",
+                        "name": "orderId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/merchant.GetOrderStatusResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
                         }
                     }
                 }
@@ -3964,6 +4420,48 @@ const docTemplate = `{
             }
         },
         "/traffic/traders/{traderID}": {
+            "get": {
+                "description": "Get all traffic records for a trader",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "traffic"
+                ],
+                "summary": "Get trader traffic",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Trader ID",
+                        "name": "traderID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.GetTraderTrafficResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "Bad Gateway",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            },
             "patch": {
                 "description": "On/Off trader traffic lock status",
                 "consumes": [
@@ -4541,7 +5039,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/request.WithdrawRequest"
+                            "$ref": "#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_wallet_request.WithdrawRequest"
                         }
                     }
                 ],
@@ -4549,7 +5047,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.WithdrawResponse"
+                            "$ref": "#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_wallet_response.WithdrawResponse"
                         }
                     },
                     "400": {
@@ -5019,6 +5517,36 @@ const docTemplate = `{
                 }
             }
         },
+        "github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_auth_request.LoginRequest": {
+            "type": "object",
+            "properties": {
+                "login": {
+                    "type": "string",
+                    "example": "CoolUserLogin"
+                },
+                "password": {
+                    "type": "string",
+                    "example": "securepass123"
+                },
+                "two_fa_code": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_auth_response.LoginResponse": {
+            "type": "object",
+            "properties": {
+                "access_token": {
+                    "type": "string"
+                },
+                "dateTimeExpires": {
+                    "type": "string"
+                },
+                "refresh_token": {
+                    "type": "string"
+                }
+            }
+        },
         "github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_banking_response.BankDetail": {
             "type": "object",
             "properties": {
@@ -5257,6 +5785,20 @@ const docTemplate = `{
                 }
             }
         },
+        "github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_wallet_request.WithdrawRequest": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "toAddress": {
+                    "type": "string"
+                },
+                "traderId": {
+                    "type": "string"
+                }
+            }
+        },
         "github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_wallet_response.Pagination": {
             "type": "object",
             "properties": {
@@ -5277,6 +5819,14 @@ const docTemplate = `{
                 },
                 "totalPages": {
                     "type": "integer"
+                }
+            }
+        },
+        "github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_wallet_response.WithdrawResponse": {
+            "type": "object",
+            "properties": {
+                "txid": {
+                    "type": "string"
                 }
             }
         },
@@ -5519,6 +6069,28 @@ const docTemplate = `{
                 }
             }
         },
+        "handlers.GetTraderTrafficResponse": {
+            "type": "object",
+            "properties": {
+                "records": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/handlers.TrafficRecordResponse"
+                    }
+                }
+            }
+        },
+        "handlers.GetUnlockHistoryResponse": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/handlers.UnlockHistoryItem"
+                    }
+                }
+            }
+        },
         "handlers.LockStatusesResponse": {
             "type": "object",
             "properties": {
@@ -5536,6 +6108,38 @@ const docTemplate = `{
                 },
                 "traffic_id": {
                     "type": "string"
+                }
+            }
+        },
+        "handlers.ManualUnlockRequest": {
+            "type": "object",
+            "required": [
+                "admin_id",
+                "reason"
+            ],
+            "properties": {
+                "admin_id": {
+                    "type": "string"
+                },
+                "grace_period_hours": {
+                    "type": "integer"
+                },
+                "reason": {
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.ManualUnlockResponse": {
+            "type": "object",
+            "properties": {
+                "grace_period_until": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "success": {
+                    "type": "boolean"
                 }
             }
         },
@@ -5631,6 +6235,17 @@ const docTemplate = `{
                 }
             }
         },
+        "handlers.ResetGracePeriodResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
         "handlers.Sort": {
             "type": "object",
             "properties": {
@@ -5645,6 +6260,68 @@ const docTemplate = `{
                 }
             }
         },
+        "handlers.TrafficRecordResponse": {
+            "type": "object",
+            "properties": {
+                "activity_params": {
+                    "type": "object",
+                    "properties": {
+                        "antifraud_unlocked": {
+                            "type": "boolean"
+                        },
+                        "manually_unlocked": {
+                            "type": "boolean"
+                        },
+                        "merchant_unlocked": {
+                            "type": "boolean"
+                        },
+                        "trader_unlocked": {
+                            "type": "boolean"
+                        }
+                    }
+                },
+                "antifraud_params": {
+                    "type": "object",
+                    "properties": {
+                        "antifraud_required": {
+                            "type": "boolean"
+                        }
+                    }
+                },
+                "business_params": {
+                    "type": "object",
+                    "properties": {
+                        "merchant_deals_duration": {
+                            "type": "integer"
+                        }
+                    }
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "merchant_id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "platform_fee": {
+                    "type": "number"
+                },
+                "trader_id": {
+                    "type": "string"
+                },
+                "trader_priority": {
+                    "type": "number"
+                },
+                "trader_reward_percent": {
+                    "type": "number"
+                }
+            }
+        },
         "handlers.TrafficUnlockedResponse": {
             "type": "object",
             "properties": {
@@ -5653,6 +6330,32 @@ const docTemplate = `{
                 },
                 "unlocked": {
                     "type": "boolean"
+                }
+            }
+        },
+        "handlers.UnlockHistoryItem": {
+            "type": "object",
+            "properties": {
+                "admin_id": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "grace_period_hours": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "reason": {
+                    "type": "string"
+                },
+                "trader_id": {
+                    "type": "string"
+                },
+                "unlocked_at": {
+                    "type": "string"
                 }
             }
         },
@@ -6055,13 +6758,13 @@ const docTemplate = `{
         "request.CreateH2HPayInRequest": {
             "type": "object",
             "properties": {
-                "amount_fiat": {
+                "amountFiat": {
                     "type": "number"
                 },
-                "callback_url": {
+                "callbackUrl": {
                     "type": "string"
                 },
-                "client_id": {
+                "clientId": {
                     "type": "string"
                 },
                 "currency": {
@@ -6070,20 +6773,20 @@ const docTemplate = `{
                 "ftd": {
                     "type": "boolean"
                 },
-                "merchant_id": {
+                "issuer": {
                     "type": "string"
                 },
-                "merchant_order_id": {
+                "merchantId": {
                     "type": "string"
                 },
-                "payment_system": {
+                "merchantOrderId": {
+                    "type": "string"
+                },
+                "paymentSystem": {
                     "type": "string"
                 },
                 "shuffle": {
                     "type": "integer"
-                },
-                "ttl": {
-                    "type": "string"
                 }
             }
         },
@@ -6305,22 +7008,6 @@ const docTemplate = `{
                 }
             }
         },
-        "request.LoginRequest": {
-            "type": "object",
-            "properties": {
-                "login": {
-                    "type": "string",
-                    "example": "CoolUserLogin"
-                },
-                "password": {
-                    "type": "string",
-                    "example": "securepass123"
-                },
-                "two_fa_code": {
-                    "type": "string"
-                }
-            }
-        },
         "request.OffchainWithdrawRequest": {
             "type": "object",
             "properties": {
@@ -6484,20 +7171,6 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "code": {
-                    "type": "string"
-                }
-            }
-        },
-        "request.WithdrawRequest": {
-            "type": "object",
-            "properties": {
-                "amount": {
-                    "type": "number"
-                },
-                "toAddress": {
-                    "type": "string"
-                },
-                "traderId": {
                     "type": "string"
                 }
             }
@@ -7107,20 +7780,6 @@ const docTemplate = `{
                 }
             }
         },
-        "response.LoginResponse": {
-            "type": "object",
-            "properties": {
-                "access_token": {
-                    "type": "string"
-                },
-                "dateTimeExpires": {
-                    "type": "string"
-                },
-                "refresh_token": {
-                    "type": "string"
-                }
-            }
-        },
         "response.NoBankDetailsErrorResponse": {
             "type": "object",
             "properties": {
@@ -7442,14 +8101,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "error": {
-                    "type": "string"
-                }
-            }
-        },
-        "response.WithdrawResponse": {
-            "type": "object",
-            "properties": {
-                "txid": {
                     "type": "string"
                 }
             }

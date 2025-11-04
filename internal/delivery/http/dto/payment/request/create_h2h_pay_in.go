@@ -1,14 +1,14 @@
 package request
 
 type CreateH2HPayInRequest struct {
-	MerchantID      string  `json:"merchant_id"`
+	MerchantID      string  `json:"merchantId"`
 	Currency 		string 	`json:"currency"`
-	PaymentSystem 	string 	`json:"payment_system"`
-	AmountFiat   	float64 `json:"amount_fiat"`
-	MerchantOrderID string  `json:"merchant_order_id"`
+	PaymentSystem 	string 	`json:"paymentSystem"`
+	AmountFiat   	float64 `json:"amountFiat"`
+	MerchantOrderID string  `json:"merchantOrderId"`
 	FTD				bool    `json:"ftd"`
-	CallbackURL 	string  `json:"callback_url"`
-	ClientID		string  `json:"client_id"`
+	CallbackURL 	string  `json:"callbackUrl"`
+	ClientID		string  `json:"clientId"`
 	Shuffle			int32   `json:"shuffle"`
-	TTL 			string	`json:"ttl"`
+	Issuer			string  `json:"issuer"`
 }

@@ -127,6 +127,26 @@ definitions:
       total_pages:
         type: integer
     type: object
+  github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_auth_request.LoginRequest:
+    properties:
+      login:
+        example: CoolUserLogin
+        type: string
+      password:
+        example: securepass123
+        type: string
+      two_fa_code:
+        type: string
+    type: object
+  github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_auth_response.LoginResponse:
+    properties:
+      access_token:
+        type: string
+      dateTimeExpires:
+        type: string
+      refresh_token:
+        type: string
+    type: object
   github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_banking_response.BankDetail:
     properties:
       bank_code:
@@ -283,6 +303,15 @@ definitions:
       proof_url:
         type: string
     type: object
+  github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_wallet_request.WithdrawRequest:
+    properties:
+      amount:
+        type: number
+      toAddress:
+        type: string
+      traderId:
+        type: string
+    type: object
   github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_wallet_response.Pagination:
     properties:
       currentPage:
@@ -297,6 +326,11 @@ definitions:
         type: integer
       totalPages:
         type: integer
+    type: object
+  github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_wallet_response.WithdrawResponse:
+    properties:
+      txid:
+        type: string
     type: object
   handlers.Amount:
     properties:
@@ -455,6 +489,20 @@ definitions:
           $ref: '#/definitions/handlers.AuditLogResponse'
         type: array
     type: object
+  handlers.GetTraderTrafficResponse:
+    properties:
+      records:
+        items:
+          $ref: '#/definitions/handlers.TrafficRecordResponse'
+        type: array
+    type: object
+  handlers.GetUnlockHistoryResponse:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/handlers.UnlockHistoryItem'
+        type: array
+    type: object
   handlers.LockStatusesResponse:
     properties:
       antifraud_unlocked:
@@ -467,6 +515,27 @@ definitions:
         type: boolean
       traffic_id:
         type: string
+    type: object
+  handlers.ManualUnlockRequest:
+    properties:
+      admin_id:
+        type: string
+      grace_period_hours:
+        type: integer
+      reason:
+        type: string
+    required:
+    - admin_id
+    - reason
+    type: object
+  handlers.ManualUnlockResponse:
+    properties:
+      grace_period_until:
+        type: string
+      message:
+        type: string
+      success:
+        type: boolean
     type: object
   handlers.OrderResponse:
     properties:
@@ -528,6 +597,13 @@ definitions:
       phoneNumber:
         type: string
     type: object
+  handlers.ResetGracePeriodResponse:
+    properties:
+      message:
+        type: string
+      success:
+        type: boolean
+    type: object
   handlers.Sort:
     properties:
       empty:
@@ -537,12 +613,69 @@ definitions:
       unsorted:
         type: boolean
     type: object
+  handlers.TrafficRecordResponse:
+    properties:
+      activity_params:
+        properties:
+          antifraud_unlocked:
+            type: boolean
+          manually_unlocked:
+            type: boolean
+          merchant_unlocked:
+            type: boolean
+          trader_unlocked:
+            type: boolean
+        type: object
+      antifraud_params:
+        properties:
+          antifraud_required:
+            type: boolean
+        type: object
+      business_params:
+        properties:
+          merchant_deals_duration:
+            type: integer
+        type: object
+      enabled:
+        type: boolean
+      id:
+        type: string
+      merchant_id:
+        type: string
+      name:
+        type: string
+      platform_fee:
+        type: number
+      trader_id:
+        type: string
+      trader_priority:
+        type: number
+      trader_reward_percent:
+        type: number
+    type: object
   handlers.TrafficUnlockedResponse:
     properties:
       traffic_id:
         type: string
       unlocked:
         type: boolean
+    type: object
+  handlers.UnlockHistoryItem:
+    properties:
+      admin_id:
+        type: string
+      created_at:
+        type: string
+      grace_period_hours:
+        type: integer
+      id:
+        type: string
+      reason:
+        type: string
+      trader_id:
+        type: string
+      unlocked_at:
+        type: string
     type: object
   handlers.UpdateRuleRequest:
     properties:
@@ -806,26 +939,26 @@ definitions:
     type: object
   request.CreateH2HPayInRequest:
     properties:
-      amount_fiat:
+      amountFiat:
         type: number
-      callback_url:
+      callbackUrl:
         type: string
-      client_id:
+      clientId:
         type: string
       currency:
         type: string
       ftd:
         type: boolean
-      merchant_id:
+      issuer:
         type: string
-      merchant_order_id:
+      merchantId:
         type: string
-      payment_system:
+      merchantOrderId:
+        type: string
+      paymentSystem:
         type: string
       shuffle:
         type: integer
-      ttl:
-        type: string
     type: object
   request.CreateMerchantRequest:
     properties:
@@ -969,17 +1102,6 @@ definitions:
       traderId:
         type: string
     type: object
-  request.LoginRequest:
-    properties:
-      login:
-        example: CoolUserLogin
-        type: string
-      password:
-        example: securepass123
-        type: string
-      two_fa_code:
-        type: string
-    type: object
   request.OffchainWithdrawRequest:
     properties:
       amount:
@@ -1086,15 +1208,6 @@ definitions:
   request.Verify2FARequest:
     properties:
       code:
-        type: string
-    type: object
-  request.WithdrawRequest:
-    properties:
-      amount:
-        type: number
-      toAddress:
-        type: string
-      traderId:
         type: string
     type: object
   response.AcceptDisputeResponse:
@@ -1486,15 +1599,6 @@ definitions:
       rule:
         $ref: '#/definitions/response.Rule'
     type: object
-  response.LoginResponse:
-    properties:
-      access_token:
-        type: string
-      dateTimeExpires:
-        type: string
-      refresh_token:
-        type: string
-    type: object
   response.NoBankDetailsErrorResponse:
     properties:
       error:
@@ -1701,11 +1805,6 @@ definitions:
       details:
         type: string
       error:
-        type: string
-    type: object
-  response.WithdrawResponse:
-    properties:
-      txid:
         type: string
     type: object
 host: http://localhost:8080
@@ -2771,6 +2870,41 @@ paths:
       summary: Check trader
       tags:
       - antifraud
+  /antifraud/traders/{traderID}/manual-unlock:
+    post:
+      consumes:
+      - application/json
+      description: Manually unlock trader with grace period
+      parameters:
+      - description: Trader ID
+        in: path
+        name: traderID
+        required: true
+        type: string
+      - description: Unlock data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.ManualUnlockRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.ManualUnlockResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Manual unlock trader
+      tags:
+      - antifraud
   /antifraud/traders/{traderID}/process:
     post:
       consumes:
@@ -2798,6 +2932,69 @@ paths:
           schema:
             $ref: '#/definitions/handlers.ErrorResponse'
       summary: Process trader check
+      tags:
+      - antifraud
+  /antifraud/traders/{traderID}/reset-grace-period:
+    post:
+      consumes:
+      - application/json
+      description: Reset grace period for trader
+      parameters:
+      - description: Trader ID
+        in: path
+        name: traderID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.ResetGracePeriodResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Reset grace period
+      tags:
+      - antifraud
+  /antifraud/traders/{traderID}/unlock-history:
+    get:
+      consumes:
+      - application/json
+      description: Get history of manual unlocks for trader
+      parameters:
+      - description: Trader ID
+        in: path
+        name: traderID
+        required: true
+        type: string
+      - default: 20
+        description: Limit results
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.GetUnlockHistoryResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Get unlock history
       tags:
       - antifraud
   /banking/details:
@@ -3162,14 +3359,14 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/request.LoginRequest'
+          $ref: '#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_auth_request.LoginRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.LoginResponse'
+            $ref: '#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_auth_response.LoginResponse'
         "400":
           description: Bad Request
           schema:
@@ -3831,6 +4028,97 @@ paths:
       summary: Get orders by trader ID
       tags:
       - orders
+  /payments/accounts/auth/sign-in:
+    post:
+      consumes:
+      - application/json
+      description: sign-in endpoint
+      parameters:
+      - description: user credentials
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/merchant.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/merchant.LoginResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: sign-in handler
+      tags:
+      - payments
+  /payments/accounts/balance:
+    get:
+      consumes:
+      - application/json
+      description: Get account balance
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/merchant.GetAccountBalanceResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get balance
+      tags:
+      - payments
+  /payments/accounts/withdraw/create:
+    post:
+      consumes:
+      - application/json
+      description: Withdraw USDT
+      parameters:
+      - description: withdraw data
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/merchant.WithdrawRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/merchant.WithdrawResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Withdraw crypto from account wallet
+      tags:
+      - payments
   /payments/in/h2h:
     post:
       consumes:
@@ -3993,6 +4281,116 @@ paths:
           schema:
             $ref: '#/definitions/response.ErrorResponse'
       summary: Cancel Pay In order
+      tags:
+      - payments
+  /payments/order:
+    get:
+      consumes:
+      - application/json
+      description: Получение списка ордеров с фильтрацией, сортировкой и пагинацией
+      parameters:
+      - description: Фильтр по ID сделки
+        in: query
+        name: dealId
+        type: string
+      - description: 'Тип ордера: DEPOSIT, WITHDRAWAL, PAYOUT'
+        enum:
+        - DEPOSIT
+        - WITHDRAWAL
+        - PAYOUT
+        in: query
+        name: type
+        type: string
+      - description: Статус ордера
+        enum:
+        - COMPLETED
+        - CANCELED
+        - FAILED
+        - DISPUTE
+        - PENDING
+        in: query
+        name: status
+        type: string
+      - description: 'Начальная дата создания (формат: 2006-01-02T15:04:05Z)'
+        in: query
+        name: timeOpeningStart
+        type: string
+      - description: 'Конечная дата создания (формат: 2006-01-02T15:04:05Z)'
+        in: query
+        name: timeOpeningEnd
+        type: string
+      - description: Минимальная сумма
+        in: query
+        name: amountMin
+        type: number
+      - description: Максимальная сумма
+        in: query
+        name: amountMax
+        type: number
+      - default: 0
+        description: Номер страницы (начиная с 0)
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Размер страницы
+        in: query
+        name: size
+        type: integer
+      - description: 'Поле сортировки: id, deal_id, time_opening, time_expires, time_complete,
+          type, status, amount'
+        in: query
+        name: sort
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.GetOrdersResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Получить список ордеров
+      tags:
+      - payments
+  /payments/order/{orderId}/status:
+    get:
+      consumes:
+      - application/json
+      description: Get order status
+      parameters:
+      - description: order ID
+        in: path
+        name: orderId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/merchant.GetOrderStatusResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get order status
       tags:
       - payments
   /profiles/{uuid}:
@@ -4367,6 +4765,34 @@ paths:
       tags:
       - traffic
   /traffic/traders/{traderID}:
+    get:
+      consumes:
+      - application/json
+      description: Get all traffic records for a trader
+      parameters:
+      - description: Trader ID
+        in: path
+        name: traderID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.GetTraderTrafficResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Get trader traffic
+      tags:
+      - traffic
     patch:
       consumes:
       - application/json
@@ -4804,14 +5230,14 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/request.WithdrawRequest'
+          $ref: '#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_wallet_request.WithdrawRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.WithdrawResponse'
+            $ref: '#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_wallet_response.WithdrawResponse'
         "400":
           description: Bad Request
           schema:
