@@ -108,37 +108,45 @@ func (h *DeviceHandler) DeleteDevice(c *gin.Context) {
 }
 
 // @Summary Edit device
-// @Description Edit device params
+// @Description Edit device parameters (name, enabled status)
 // @Tags devices
 // @Accept json
 // @Produce json
-// @Param input body device.EditDeviceRequest true "device edit params"
-// @Param deviceId path string true "ID of device to edit"
+// @Param deviceId path string true "device ID"
+// @Param input body device.EditDeviceRequest true "device edit parameters"
 // @Success 200 {object} device.EditDeviceResponse
 // @Failure 400 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
 // @Router /devices/{deviceId}/edit [patch]
 func (h *DeviceHandler) EditDevice(c *gin.Context) {
-	deviceID := c.Param("deviceId")
-	var request device.EditDeviceRequest
-	if err := c.ShouldBindJSON(&request); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
+    deviceID := c.Param("deviceId")
+    
+    if deviceID == "" {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "deviceId is required"})
+        return
+    }
 
-	_, err := h.OrderClient.EditeDevice(
-		&orderpb.EditDeviceRequest{
-			DeviceId: deviceID,
-			Params: &orderpb.EditDeviceParams{
-				DeviceName: request.EditDeviceParams.DeviceName,
-				Enabled: request.EditDeviceParams.Enabled,
-			},
-		},
-	)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
+    var request device.EditDeviceRequest
+    if err := c.ShouldBindJSON(&request); err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+        return
+    }
 
-	c.JSON(http.StatusOK, device.EditDeviceResponse{})
+    _, err := h.OrderClient.EditeDevice(
+        &orderpb.EditDeviceRequest{
+            DeviceId: deviceID,
+            Params: &orderpb.EditDeviceParams{
+                DeviceName: request.EditDeviceParams.DeviceName,
+                Enabled:    request.EditDeviceParams.Enabled,
+            },
+        },
+    )
+    if err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+        return
+    }
+
+    c.JSON(http.StatusOK, device.EditDeviceResponse{
+        DeviceID: deviceID,
+    })
 }

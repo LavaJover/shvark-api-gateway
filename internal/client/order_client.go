@@ -525,15 +525,15 @@ func (c *OrderClient) GetBankDetails(r *orderpb.GetBankDetailsRequest) (*orderpb
 	)
 }
 
-func (c *OrderClient) ProcessAutomaticPayment(ctx context.Context, grpcReq *orderpb.ProcessAutomaticPaymentRequest) (*orderpb.ProcessAutomaticPaymentResponse, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
+// func (c *OrderClient) ProcessAutomaticPayment(ctx context.Context, grpcReq *orderpb.ProcessAutomaticPaymentRequest) (*orderpb.ProcessAutomaticPaymentResponse, error) {
+// 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+// 	defer cancel()
 
-	return c.service.ProcessAutomaticPayment(
-		ctx,
-		grpcReq,
-	)
-}
+// 	return c.service.ProcessAutomaticPayment(
+// 		ctx,
+// 		grpcReq,
+// 	)
+// }
 
 // GetTrafficLockStatuses получает статусы блокировки трафика
 func (c *OrderClient) GetTrafficLockStatuses(r *orderpb.GetTrafficLockStatusesRequest) (*orderpb.GetTrafficLockStatusesResponse, error) {
@@ -657,4 +657,48 @@ func (c *OrderClient) GetTraderTraffic(r *orderpb.GetTraderTrafficRequest) (*ord
     defer cancel()
 
     return c.trafficService.GetTraderTraffic(ctx, r)
+}
+
+// ============= АВТОМАТИКА =============
+
+// ProcessAutomaticPayment обрабатывает автоматический платёж
+func (c *OrderClient) ProcessAutomaticPayment(ctx context.Context, grpcReq *orderpb.ProcessAutomaticPaymentRequest) (*orderpb.ProcessAutomaticPaymentResponse, error) {
+    timeoutCtx, cancel := context.WithTimeout(ctx, 10*time.Second)
+    defer cancel()
+
+    return c.service.ProcessAutomaticPayment(timeoutCtx, grpcReq)
+}
+
+// GetAutomaticLogs получает логи автоматики с фильтрацией
+func (c *OrderClient) GetAutomaticLogs(ctx context.Context, req *orderpb.GetAutomaticLogsRequest) (*orderpb.GetAutomaticLogsResponse, error) {
+    timeoutCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
+    defer cancel()
+
+    return c.service.GetAutomaticLogs(timeoutCtx, req)
+}
+
+// ============= СТАТУС УСТРОЙСТВ =============
+
+// UpdateDeviceLiveness обновляет статус онлайн устройства
+func (c *OrderClient) UpdateDeviceLiveness(ctx context.Context, req *orderpb.UpdateDeviceLivenessRequest) (*orderpb.UpdateDeviceLivenessResponse, error) {
+    timeoutCtx, cancel := context.WithTimeout(ctx, 3*time.Second)
+    defer cancel()
+
+    return c.deviceService.UpdateDeviceLiveness(timeoutCtx, req)
+}
+
+// GetDeviceStatus получает статус устройства
+func (c *OrderClient) GetDeviceStatus(ctx context.Context, req *orderpb.GetDeviceStatusRequest) (*orderpb.GetDeviceStatusResponse, error) {
+    timeoutCtx, cancel := context.WithTimeout(ctx, 3*time.Second)
+    defer cancel()
+
+    return c.deviceService.GetDeviceStatus(timeoutCtx, req)
+}
+
+// GetTraderDevicesStatus получает статусы всех устройств трейдера
+func (c *OrderClient) GetTraderDevicesStatus(ctx context.Context, req *orderpb.GetTraderDevicesStatusRequest) (*orderpb.GetTraderDevicesStatusResponse, error) {
+    timeoutCtx, cancel := context.WithTimeout(ctx, 3*time.Second)
+    defer cancel()
+
+    return c.deviceService.GetTraderDevicesStatus(timeoutCtx, req)
 }
