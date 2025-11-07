@@ -244,12 +244,12 @@ func main() {
 	automaticHandler := handlers.NewAutomaticHandler(adminHandler.OrderClient)
 	automaticGroup := r.Group("/api/v1/automatic")
 	{
-        automaticGroup.POST("/process-sms", automaticHandler.Sms)
-        automaticGroup.POST("/liveness", automaticHandler.Live, middleware.AutomaticAuthMiddleware())
-        automaticGroup.POST("/auth", automaticHandler.Auth)
-        automaticGroup.GET("/logs", automaticHandler.GetAutomaticLogs)
-        automaticGroup.GET("/device-status", automaticHandler.GetDeviceStatus)
-        automaticGroup.GET("/trader-devices-status", automaticHandler.GetTraderDevicesStatus)
+        automaticGroup.POST("/process-sms", automaticHandler.Sms, middleware.AutomaticAuthMiddleware(adminHandler.SSOClient))
+        automaticGroup.POST("/liveness", automaticHandler.Live, middleware.AutomaticAuthMiddleware(adminHandler.SSOClient))
+        automaticGroup.POST("/auth", automaticHandler.Auth, middleware.AutomaticAuthMiddleware(adminHandler.SSOClient))
+        automaticGroup.GET("/logs", automaticHandler.GetAutomaticLogs, middleware.AuthMiddleware(adminHandler.SSOClient))
+        automaticGroup.GET("/device-status", automaticHandler.GetDeviceStatus, middleware.AuthMiddleware(adminHandler.SSOClient))
+        automaticGroup.GET("/trader-devices-status", automaticHandler.GetTraderDevicesStatus, middleware.AuthMiddleware(adminHandler.SSOClient))
 	}
 
 	trafficHandler := handlers.NewTrafficHandler(adminHandler.OrderClient)
