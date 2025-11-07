@@ -64,6 +64,11 @@ func main() {
 	if err != nil {
 		log.Printf("failed to init orders handler: %v\n", err)
 	}
+
+	deviceClient, err := client.NewDeviceClient(ordersAddr)
+	if err != nil {
+		log.Printf("failed to init device client: %v\n", err)
+	}
 	
 	bankingHandler, err := handlers.NewBankingHandler(ordersAddr)
 	if err != nil {
@@ -241,7 +246,7 @@ func main() {
 		deviceGroup.DELETE("/:deviceId", deviceHandler.DeleteDevice)
 	}
 
-	automaticHandler := handlers.NewAutomaticHandler(adminHandler.OrderClient)
+	automaticHandler := handlers.NewAutomaticHandler(adminHandler.OrderClient, deviceClient)
 	automaticGroup := r.Group("/api/v1/automatic")
 	{
         automaticGroup.POST("/process-sms", automaticHandler.Sms, middleware.AutomaticAuthMiddleware(adminHandler.SSOClient))
@@ -250,6 +255,10 @@ func main() {
         automaticGroup.GET("/logs", automaticHandler.GetAutomaticLogs, middleware.AuthMiddleware(adminHandler.SSOClient))
         automaticGroup.GET("/device-status", automaticHandler.GetDeviceStatus, middleware.AuthMiddleware(adminHandler.SSOClient))
         automaticGroup.GET("/trader-devices-status", automaticHandler.GetTraderDevicesStatus, middleware.AuthMiddleware(adminHandler.SSOClient))
+
+		// Новые endpoints для мониторинга
+		automaticGroup.GET("/stats", automaticHandler.GetAutomaticStats)
+		automaticGroup.GET("/recent-activity", automaticHandler.GetRecentAutomaticActivity)
 	}
 
 	trafficHandler := handlers.NewTrafficHandler(adminHandler.OrderClient)

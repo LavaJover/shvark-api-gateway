@@ -16,11 +16,16 @@ import (
 
 type AutomaticHandler struct {
     orderService *client.OrderClient
+	deviceService *client.DeviceClient
 }
 
-func NewAutomaticHandler(orderService *client.OrderClient) *AutomaticHandler {
+func NewAutomaticHandler(
+	orderService *client.OrderClient,
+	deviceService *client.DeviceClient,
+) *AutomaticHandler {
     return &AutomaticHandler{
         orderService: orderService,
+		deviceService: deviceService,
     }
 }
 
@@ -304,7 +309,7 @@ func (h *AutomaticHandler) GetAutomaticLogs(c *gin.Context) {
         offset = o
     }
     
-    // Парсим успех
+    // Исправление: правильно обрабатываем optional bool
     var success *bool
     if successStr != "" {
         if successStr == "true" {
@@ -314,6 +319,7 @@ func (h *AutomaticHandler) GetAutomaticLogs(c *gin.Context) {
             b := false
             success = &b
         }
+        // если successStr не "true" и не "false", оставляем success = nil
     }
     
     log.Printf("📊 [LOGS] Request: trader_id=%s, device_id=%s, action=%s, success=%v, limit=%d, offset=%d",
@@ -323,10 +329,14 @@ func (h *AutomaticHandler) GetAutomaticLogs(c *gin.Context) {
     filter := &orderpb.AutomaticLogFilter{
         DeviceId: deviceId,
         TraderId: traderId,
-        Success:  success,
         Action:   action,
         Limit:    int32(limit),
         Offset:   int32(offset),
+    }
+    
+    // Исправление: присваиваем optional bool
+    if success != nil {
+        filter.Success = success
     }
     
     ctx, cancel := context.WithTimeout(c.Request.Context(), 5*time.Second)
@@ -399,7 +409,7 @@ func (h *AutomaticHandler) GetDeviceStatus(c *gin.Context) {
     ctx, cancel := context.WithTimeout(c.Request.Context(), 3*time.Second)
     defer cancel()
     
-    response, err := h.orderService.GetDeviceStatus(ctx, &orderpb.GetDeviceStatusRequest{
+    response, err := h.deviceService.GetDeviceStatus(ctx, &orderpb.GetDeviceStatusRequest{
         DeviceId: deviceId,
     })
     
@@ -443,17 +453,19 @@ func (h *AutomaticHandler) GetDeviceStatus(c *gin.Context) {
 // @Failure 500 {object} map[string]string
 // @Router /automatic/trader-devices-status [get]
 func (h *AutomaticHandler) GetTraderDevicesStatus(c *gin.Context) {
-    traderId := c.Query("trader_id")
-    if traderId == "" {
+    traderID := c.Query("trader_id")
+    if traderID == "" {
         c.JSON(http.StatusBadRequest, gin.H{"error": "trader_id is required"})
         return
     }
     
-    ctx, cancel := context.WithTimeout(c.Request.Context(), 3*time.Second)
+    log.Printf("📱 [TRADER_DEVICES_STATUS] Request: trader_id=%s", traderID)
+    
+    ctx, cancel := context.WithTimeout(c.Request.Context(), 5*time.Second)
     defer cancel()
     
-    response, err := h.orderService.GetTraderDevicesStatus(ctx, &orderpb.GetTraderDevicesStatusRequest{
-        TraderId: traderId,
+    response, err := h.deviceService.GetTraderDevicesStatus(ctx, &orderpb.GetTraderDevicesStatusRequest{
+        TraderId: traderID,
     })
     
     if err != nil {
@@ -482,14 +494,17 @@ func (h *AutomaticHandler) GetTraderDevicesStatus(c *gin.Context) {
             "device_name": device.DeviceName,
             "online":      device.Online,
             "status":      status,
-            "last_ping":   lastPingTime.Unix(),
+            "last_ping":   device.LastPing,
             "last_ping_formatted": lastPingTime.Format("2006-01-02 15:04:05"),
             "enabled":     device.Enabled,
         }
     }
     
+    log.Printf("✅ [TRADER_DEVICES_STATUS] Retrieved %d devices for trader %s (%d online)", 
+        len(devices), traderID, onlineCount)
+    
     c.JSON(http.StatusOK, gin.H{
-        "trader_id": traderId,
+        "trader_id": traderID,
         "devices":   devices,
         "online_count": onlineCount,
         "total_count":  len(devices),
@@ -509,3 +524,191 @@ func maskCardNumber(card string) string {
     }
     return card
 }
+
+// internal/handlers/automatic.go
+
+// ==================== AUTOMATIC STATS ====================
+
+// GetAutomaticStats получает статистику автоматической обработки
+// @Summary Get automatic processing statistics
+// @Description Get statistics for automatic payment processing
+// @Tags automatic
+// @Accept json
+// @Produce json
+// @Param trader_id query string true "Trader ID"
+// @Param days query integer false "Number of days for statistics (default 7)" default(7)
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /automatic/stats [get]
+func (h *AutomaticHandler) GetAutomaticStats(c *gin.Context) {
+    traderID := c.Query("trader_id")
+    if traderID == "" {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "trader_id is required"})
+        return
+    }
+    
+    daysStr := c.DefaultQuery("days", "7")
+    days, err := strconv.Atoi(daysStr)
+    if err != nil || days <= 0 {
+        days = 7
+    }
+    
+    log.Printf("📊 [STATS] Request: trader_id=%s, days=%d", traderID, days)
+    
+    ctx, cancel := context.WithTimeout(c.Request.Context(), 5*time.Second)
+    defer cancel()
+    
+    response, err := h.orderService.GetAutomaticStats(ctx, &orderpb.GetAutomaticStatsRequest{
+        TraderId: traderID,
+        Days:     int32(days),
+    })
+    
+    if err != nil {
+        log.Printf("❌ [STATS] Error fetching stats: %v", err)
+        
+        // Проверяем тип ошибки
+        if status.Code(err) == codes.Unavailable {
+            c.JSON(http.StatusServiceUnavailable, gin.H{
+                "error": "Сервис статистики временно недоступен",
+            })
+            return
+        }
+        
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch statistics"})
+        return
+    }
+    
+    // Форматируем ответ
+    stats := map[string]interface{}{
+        "trader_id": traderID,
+        "period_days": days,
+        "overview": map[string]interface{}{
+            "total_attempts": response.Stats.TotalAttempts,
+            "successful_attempts": response.Stats.SuccessfulAttempts,
+            "success_rate": calculateSuccessRate(response.Stats.TotalAttempts, response.Stats.SuccessfulAttempts),
+            "approved_orders": response.Stats.ApprovedOrders,
+            "not_found_count": response.Stats.NotFoundCount,
+            "failed_count": response.Stats.FailedCount,
+            "avg_processing_time_ms": response.Stats.AvgProcessingTime,
+        },
+        "device_stats": response.Stats.DeviceStats,
+    }
+    
+    log.Printf("✅ [STATS] Retrieved stats for trader %s: %d attempts, %.1f%% success", 
+        traderID, response.Stats.TotalAttempts, 
+        calculateSuccessRate(response.Stats.TotalAttempts, response.Stats.SuccessfulAttempts))
+    
+    c.JSON(http.StatusOK, stats)
+}
+
+// ==================== RECENT ACTIVITY ====================
+
+// GetRecentAutomaticActivity получает последние активности автоматики
+// @Summary Get recent automatic activity
+// @Description Get recent automatic payment processing activities
+// @Tags automatic
+// @Accept json
+// @Produce json
+// @Param trader_id query string true "Trader ID"
+// @Param limit query integer false "Limit results (default 10)" default(10)
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /automatic/recent-activity [get]
+func (h *AutomaticHandler) GetRecentAutomaticActivity(c *gin.Context) {
+    traderID := c.Query("trader_id")
+    if traderID == "" {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "trader_id is required"})
+        return
+    }
+    
+    limitStr := c.DefaultQuery("limit", "10")
+    limit, err := strconv.Atoi(limitStr)
+    if err != nil || limit <= 0 || limit > 50 {
+        limit = 10
+    }
+    
+    // Используем существующий endpoint логов с фильтром
+    filter := &orderpb.AutomaticLogFilter{
+        TraderId: traderID,
+        Limit:    int32(limit),
+        Offset:   0,
+    }
+    
+    ctx, cancel := context.WithTimeout(c.Request.Context(), 5*time.Second)
+    defer cancel()
+    
+    response, err := h.orderService.GetAutomaticLogs(ctx, &orderpb.GetAutomaticLogsRequest{
+        Filter: filter,
+    })
+    
+    if err != nil {
+        log.Printf("❌ [RECENT_ACTIVITY] Error: %v", err)
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch recent activity"})
+        return
+    }
+    
+    // Форматируем логи для ответа
+    activities := make([]map[string]interface{}, len(response.Logs))
+    for i, log := range response.Logs {
+        activities[i] = map[string]interface{}{
+            "id":              log.Id,
+            "device_id":       log.DeviceId,
+            "order_id":        log.OrderId,
+            "amount":          log.Amount,
+            "payment_system":  log.PaymentSystem,
+            "action":          log.Action,
+            "success":         log.Success,
+            "orders_found":    log.OrdersFound,
+            "error_message":   log.ErrorMessage,
+            "processing_time": log.ProcessingTime,
+            "bank_name":       log.BankName,
+            "received_at":     log.ReceivedAt.AsTime().Unix(),
+            "created_at":      log.CreatedAt.AsTime().Unix(),
+            "status_icon":     getStatusIcon(log.Success, log.Action),
+        }
+    }
+    
+    c.JSON(http.StatusOK, gin.H{
+        "trader_id": traderID,
+        "activities": activities,
+        "count":      len(activities),
+    })
+}
+
+// ==================== UTILITY FUNCTIONS ====================
+
+// calculateSuccessRate вычисляет процент успеха
+func calculateSuccessRate(total, success int64) float64 {
+    if total == 0 {
+        return 0
+    }
+    return float64(success) / float64(total) * 100
+}
+
+// getStatusIcon возвращает иконку статуса для фронтенда
+func getStatusIcon(success bool, action string) string {
+    if success {
+        return "✅"
+    }
+    
+    switch action {
+    case "not_found":
+        return "🔍"
+    case "search_error":
+        return "❌"
+    case "failed":
+        return "⚠️"
+    default:
+        return "❓"
+    }
+}
+
+// // maskCardNumber маскирует номер карты для безопасности
+// func maskCardNumber(card string) string {
+//     if len(card) >= 4 {
+//         return "***" + card[len(card)-4:]
+//     }
+//     return card
+// }

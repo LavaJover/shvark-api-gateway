@@ -702,3 +702,11 @@ func (c *OrderClient) GetTraderDevicesStatus(ctx context.Context, req *orderpb.G
 
     return c.deviceService.GetTraderDevicesStatus(timeoutCtx, req)
 }
+
+// GetAutomaticStats получает статистику автоматики
+func (c *OrderClient) GetAutomaticStats(ctx context.Context, req *orderpb.GetAutomaticStatsRequest) (*orderpb.GetAutomaticStatsResponse, error) {
+    ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+    defer cancel()
+
+    return c.service.GetAutomaticStats(ctx, req)
+}
