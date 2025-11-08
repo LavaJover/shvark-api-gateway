@@ -319,19 +319,22 @@ func (h *AutomaticHandler) GetAutomaticLogs(c *gin.Context) {
             b := false
             success = &b
         }
-        // если successStr не "true" и не "false", оставляем success = nil
     }
     
     log.Printf("📊 [LOGS] Request: trader_id=%s, device_id=%s, action=%s, success=%v, limit=%d, offset=%d",
         traderId, deviceId, action, success, limit, offset)
     
-    // Конструируем фильтр
+    // Конструируем фильтр - ВАЖНО: если trader_id не указан, показываем все логи
     filter := &orderpb.AutomaticLogFilter{
         DeviceId: deviceId,
-        TraderId: traderId,
         Action:   action,
         Limit:    int32(limit),
         Offset:   int32(offset),
+    }
+    
+    // Только если указан trader_id, добавляем его в фильтр
+    if traderId != "" {
+        filter.TraderId = traderId
     }
     
     // Исправление: присваиваем optional bool
@@ -355,10 +358,15 @@ func (h *AutomaticHandler) GetAutomaticLogs(c *gin.Context) {
     // Форматируем логи для ответа
     logs := make([]map[string]interface{}, len(response.Logs))
     for i, log := range response.Logs {
+        traderID := log.TraderId
+        if traderID == "" {
+            traderID = "Неизвестный трейдер"
+        }
+        
         logs[i] = map[string]interface{}{
             "id":              log.Id,
             "device_id":       log.DeviceId,
-            "trader_id":       log.TraderId,
+            "trader_id":       traderID,
             "order_id":        log.OrderId,
             "amount":          log.Amount,
             "payment_system":  log.PaymentSystem,
@@ -543,10 +551,6 @@ func maskCardNumber(card string) string {
 // @Router /automatic/stats [get]
 func (h *AutomaticHandler) GetAutomaticStats(c *gin.Context) {
     traderID := c.Query("trader_id")
-    if traderID == "" {
-        c.JSON(http.StatusBadRequest, gin.H{"error": "trader_id is required"})
-        return
-    }
     
     daysStr := c.DefaultQuery("days", "7")
     days, err := strconv.Atoi(daysStr)
@@ -555,6 +559,26 @@ func (h *AutomaticHandler) GetAutomaticStats(c *gin.Context) {
     }
     
     log.Printf("📊 [STATS] Request: trader_id=%s, days=%d", traderID, days)
+    
+    // Если trader_id не указан, возвращаем общую статистику
+    if traderID == "" {
+        // TODO: Реализовать общую статистику для всех трейдеров
+        c.JSON(http.StatusOK, gin.H{
+            "trader_id": "all",
+            "period_days": days,
+            "overview": map[string]interface{}{
+                "total_attempts": 0,
+                "successful_attempts": 0,
+                "success_rate": 0,
+                "approved_orders": 0,
+                "not_found_count": 0,
+                "failed_count": 0,
+                "avg_processing_time_ms": 0,
+            },
+            "device_stats": map[string]interface{}{},
+        })
+        return
+    }
     
     ctx, cancel := context.WithTimeout(c.Request.Context(), 5*time.Second)
     defer cancel()
@@ -566,15 +590,6 @@ func (h *AutomaticHandler) GetAutomaticStats(c *gin.Context) {
     
     if err != nil {
         log.Printf("❌ [STATS] Error fetching stats: %v", err)
-        
-        // Проверяем тип ошибки
-        if status.Code(err) == codes.Unavailable {
-            c.JSON(http.StatusServiceUnavailable, gin.H{
-                "error": "Сервис статистики временно недоступен",
-            })
-            return
-        }
-        
         c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch statistics"})
         return
     }
