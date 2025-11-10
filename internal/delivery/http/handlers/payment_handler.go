@@ -1,12 +1,14 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 	"time"
 
 	"github.com/LavaJover/shvark-api-gateway/internal/client"
 	paymentRequest "github.com/LavaJover/shvark-api-gateway/internal/delivery/http/dto/payment/request"
+	"github.com/LavaJover/shvark-api-gateway/internal/service"
 	orderpb "github.com/LavaJover/shvark-order-service/proto/gen"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -22,6 +24,7 @@ type PaymentHandler struct {
 	WalletClient *client.HTTPWalletClient
 	UserClient *client.UserClient
 	SsoClient *client.SSOClient
+	DeeplinkService *service.DeeplinkService
 }
 
 func NewPaymentHandler(
@@ -29,12 +32,14 @@ func NewPaymentHandler(
 	walletClient *client.HTTPWalletClient,
 	userClient *client.UserClient,
 	ssoClient *client.SSOClient,
+	deeplinkService *service.DeeplinkService,
 ) (*PaymentHandler, error) {
 	return &PaymentHandler{
 		OrderClient: orderClient,
 		WalletClient: walletClient,
 		UserClient: userClient,
 		SsoClient: ssoClient,
+		DeeplinkService: deeplinkService,
 	}, nil
 }
 
@@ -74,6 +79,7 @@ func (h *PaymentHandler) Login(c *gin.Context) {
 // @Tags payments
 // @Accept json
 // @Produce json
+// @Security BearerAuth
 // @Param input body paymentRequest.CreateH2HPayInRequest true "pay-in info"
 // @Success 201 {object} paymentResponse.CreateH2HPayInResponse
 // @Failure 400 {object} paymentResponse.BadRequestErrorResponse
@@ -116,6 +122,12 @@ func (h *PaymentHandler) CreateH2HPayIn(c *gin.Context) {
 		}
 	}
 
+	// Генерируем deeplink URL
+	deeplinkHTMLUrl := fmt.Sprintf("/payments/deeplink/html?order_id=%s&bank=%s", 
+        response.Order.OrderId, response.Order.BankDetail.BankCode)
+    deeplinkRedirectUrl := fmt.Sprintf("/payments/deeplink/redirect?order_id=%s&bank=%s", 
+        response.Order.OrderId, response.Order.BankDetail.BankCode)
+
 	c.JSON(http.StatusCreated, paymentResponse.CreateH2HPayInResponse{
 		OrderID: response.Order.OrderId,
 		AmountFiat: response.Order.AmountFiat,
@@ -126,6 +138,8 @@ func (h *PaymentHandler) CreateH2HPayIn(c *gin.Context) {
 		MerchantOrderID: response.Order.MerchantOrderId,
 		CallbackURL: response.Order.CallbackUrl,
 		TPayLink: "tpay/link",
+		DeeplinkHTML: deeplinkHTMLUrl,
+		DeeplinkRedirect: deeplinkRedirectUrl,
 		Recalculated: response.Order.Recalculated,
 		CryptoRubRate: response.Order.CryptoRubRate,
 		PaymentDetails: paymentResponse.PaymentDetails{
@@ -520,4 +534,95 @@ func (h *PaymentHandler) Withdraw(c *gin.Context) {
 		ToAddress: withdrawRequest.ToAddress,
 	})
 
+}
+
+// @Summary Generate deeplink for order
+// @Description Generate HTML deeplink page for payment
+// @Tags payments
+// @Accept json
+// @Produce html
+// @Security BearerAuth
+// @Param input body paymentRequest.CreateDeeplinkRequest true "deeplink parameters"
+// @Success 200 {string} string "HTML content"
+// @Failure 400 {object} paymentResponse.ErrorResponse
+// @Failure 404 {object} paymentResponse.ErrorResponse
+// @Router /payments/deeplink/html [post]
+func (h *PaymentHandler) GenerateDeeplinkHTML(c *gin.Context) {
+    var request paymentRequest.CreateDeeplinkRequest
+    if err := c.ShouldBindJSON(&request); err != nil {
+        c.JSON(http.StatusBadRequest, paymentResponse.ErrorResponse{Error: err.Error()})
+        return
+    }
+
+    deeplinkData, err := h.DeeplinkService.GenerateDeeplink(
+        request.OrderID, 
+        request.BankCode, 
+        request.PhoneNumber,
+    )
+    if err != nil {
+        c.JSON(http.StatusNotFound, paymentResponse.ErrorResponse{Error: err.Error()})
+        return
+    }
+
+    c.Header("Content-Type", "text/html; charset=utf-8")
+    c.String(http.StatusOK, deeplinkData.HTMLContent)
+}
+
+// @Summary Redirect to deeplink
+// @Description Redirect to bank app deeplink
+// @Tags payments
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param input body paymentRequest.CreateDeeplinkRequest true "deeplink parameters"
+// @Success 302 
+// @Failure 400 {object} paymentResponse.ErrorResponse
+// @Router /payments/deeplink/redirect [post]
+func (h *PaymentHandler) RedirectToDeeplink(c *gin.Context) {
+    var request paymentRequest.CreateDeeplinkRequest
+    if err := c.ShouldBindJSON(&request); err != nil {
+        c.JSON(http.StatusBadRequest, paymentResponse.ErrorResponse{Error: err.Error()})
+        return
+    }
+
+    // Здесь можно реализовать логику прямого редиректа
+    // Пока возвращаем JSON с URL для фронтенда
+    redirectURL := fmt.Sprintf("/payments/deeplink/html?order_id=%s&bank=%s", 
+        request.OrderID, request.BankCode)
+    
+    c.JSON(http.StatusOK, paymentResponse.DeeplinkResponse{
+        RedirectURL: redirectURL,
+    })
+}
+
+// @Summary Get deeplink page by order ID
+// @Description Get HTML deeplink page by order ID (GET version)
+// @Tags payments
+// @Accept json
+// @Produce html
+// @Security BearerAuth
+// @Param order_id query string true "Order ID"
+// @Param bank query string true "Bank code"
+// @Param phone query string false "Phone number"
+// @Success 200 {string} string "HTML content"
+// @Failure 400 {object} paymentResponse.ErrorResponse
+// @Router /payments/deeplink/html [get]
+func (h *PaymentHandler) GetDeeplinkHTML(c *gin.Context) {
+    orderID := c.Query("order_id")
+    bankCode := c.Query("bank")
+    phone := c.Query("phone")
+    
+    var phonePtr *string
+    if phone != "" {
+        phonePtr = &phone
+    }
+
+    deeplinkData, err := h.DeeplinkService.GenerateDeeplink(orderID, bankCode, phonePtr)
+    if err != nil {
+        c.JSON(http.StatusBadRequest, paymentResponse.ErrorResponse{Error: err.Error()})
+        return
+    }
+
+    c.Header("Content-Type", "text/html; charset=utf-8")
+    c.String(http.StatusOK, deeplinkData.HTMLContent)
 }

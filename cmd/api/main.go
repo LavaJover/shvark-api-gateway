@@ -8,6 +8,7 @@ import (
 	"github.com/LavaJover/shvark-api-gateway/internal/config"
 	"github.com/LavaJover/shvark-api-gateway/internal/delivery/http/handlers"
 	"github.com/LavaJover/shvark-api-gateway/internal/delivery/http/middleware"
+	"github.com/LavaJover/shvark-api-gateway/internal/service"
 	"github.com/LavaJover/shvark-api-gateway/pkg/docs"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -81,12 +82,16 @@ func main() {
 		log.Printf("failed to init wallet client")
 	}
 
+	// init deeplink service
+	deeplinkService := service.NewDeeplinkService(bankingHandler.OrderClient)
+
 	// init payments handlet
 	paymentHandler, err := handlers.NewPaymentHandler(
 		bankingHandler.OrderClient,
 		walletHandler.WalletClient,
 		userHandler.UserClient,
 		authHandler.SSOClient,
+		deeplinkService,
 	)
 	if err != nil {
 		log.Printf("failed to init payment handler")
@@ -168,7 +173,7 @@ func main() {
 	}
 
 	// payments for merchant
-	paymentsGroup := r.Group("/api/v1/payments", middleware.AuthMiddleware(authHandler.SSOClient))
+	paymentsGroup := r.Group("/api/v1/payments")
 	{
 		paymentsGroup.POST("/in/h2h", paymentHandler.CreateH2HPayIn)
 		paymentsGroup.GET("/in/h2h/:id", paymentHandler.GetH2HPayInInfo)
@@ -181,6 +186,10 @@ func main() {
 		paymentsGroup.POST("/accounts/withdraw/create", paymentHandler.Withdraw)
 		paymentsGroup.POST("/accounts/auth/sign-in", paymentHandler.Login)
 	}
+
+	// ✅ ДОБАВЛЯЕМ НОВЫЕ РОУТЫ ДЛЯ DEEPLINK
+	paymentsGroup.POST("/deeplink/html", paymentHandler.GenerateDeeplinkHTML)
+	paymentsGroup.GET("/deeplink/html", paymentHandler.GetDeeplinkHTML)
 
 	walletAddr := fmt.Sprintf("%s:%s", cfg.WalletService.Host, cfg.WalletService.Port)
 	walletClient := client.NewHTTPWalletClient(walletAddr)

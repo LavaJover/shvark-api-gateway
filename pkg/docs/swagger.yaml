@@ -8,10 +8,27 @@ definitions:
         type: boolean
       traderId:
         type: string
+    required:
+    - deviceName
+    - traderId
     type: object
   device.CreateDeviceResponse:
+    properties:
+      deviceId:
+        type: string
+      deviceName:
+        type: string
+      enabled:
+        type: boolean
+      traderId:
+        type: string
     type: object
   device.DeleteDeviceResponse:
+    properties:
+      message:
+        type: string
+      success:
+        type: boolean
     type: object
   device.Device:
     properties:
@@ -35,8 +52,17 @@ definitions:
     properties:
       editDeviceParams:
         $ref: '#/definitions/device.EditDeviceParams'
+    required:
+    - editDeviceParams
     type: object
   device.EditDeviceResponse:
+    properties:
+      deviceId:
+        type: string
+      deviceName:
+        type: string
+      enabled:
+        type: boolean
     type: object
   device.GetTraderDevicesResponse:
     properties:
@@ -604,6 +630,39 @@ definitions:
       success:
         type: boolean
     type: object
+  handlers.SMSRequest:
+    properties:
+      amount:
+        type: number
+      balance:
+        type: number
+      blocked:
+        type: boolean
+      direction:
+        type: string
+      group:
+        type: string
+      methods:
+        items:
+          type: string
+        type: array
+      payment_system:
+        type: string
+      received_at:
+        type: integer
+      success:
+        type: boolean
+      text:
+        type: string
+      title:
+        type: string
+      too_old:
+        type: boolean
+      unknown:
+        type: boolean
+      version:
+        type: string
+    type: object
   handlers.Sort:
     properties:
       empty:
@@ -936,6 +995,18 @@ definitions:
         type: string
       trader_id:
         type: string
+    type: object
+  request.CreateDeeplinkRequest:
+    properties:
+      bank_code:
+        type: string
+      order_id:
+        type: string
+      phone_number:
+        type: string
+    required:
+    - bank_code
+    - order_id
     type: object
   request.CreateH2HPayInRequest:
     properties:
@@ -1297,6 +1368,10 @@ definitions:
       crypto_rub_rate:
         type: number
       currency:
+        type: string
+      deeplink_html:
+        type: string
+      deeplink_redirect:
         type: string
       expires_at:
         type: integer
@@ -2997,6 +3072,298 @@ paths:
       summary: Get unlock history
       tags:
       - antifraud
+  /automatic/auth:
+    post:
+      consumes:
+      - application/json
+      description: Authorize device via QR code scan from trader account
+      parameters:
+      - description: Device auth data
+        in: body
+        name: body
+        required: true
+        schema:
+          additionalProperties:
+            type: string
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Device authorization
+      tags:
+      - automatic
+  /automatic/device-status:
+    get:
+      consumes:
+      - application/json
+      description: Get current online status of a device
+      parameters:
+      - description: Device ID
+        in: query
+        name: device_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get device status
+      tags:
+      - automatic
+  /automatic/liveness:
+    post:
+      consumes:
+      - application/json
+      description: Receive liveness ping from trader's device (heartbeat)
+      parameters:
+      - description: Device group
+        in: body
+        name: body
+        required: true
+        schema:
+          additionalProperties:
+            type: string
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Device liveness ping
+      tags:
+      - automatic
+  /automatic/logs:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve logs of automatic payment processing with filters
+      parameters:
+      - description: Filter by trader ID
+        in: query
+        name: trader_id
+        type: string
+      - description: Filter by device ID
+        in: query
+        name: device_id
+        type: string
+      - description: Filter by action (approved, not_found, failed, search_error)
+        in: query
+        name: action
+        type: string
+      - description: Filter by success status
+        in: query
+        name: success
+        type: boolean
+      - default: 50
+        description: Limit results (default 50)
+        in: query
+        name: limit
+        type: integer
+      - default: 0
+        description: Offset for pagination (default 0)
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get automatic payment logs
+      tags:
+      - automatic
+  /automatic/process-sms:
+    post:
+      consumes:
+      - application/json
+      description: Process payment notification from trader's phone
+      parameters:
+      - description: SMS data
+        in: body
+        name: sms
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.SMSRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Process SMS notification
+      tags:
+      - automatic
+  /automatic/recent-activity:
+    get:
+      consumes:
+      - application/json
+      description: Get recent automatic payment processing activities
+      parameters:
+      - description: Trader ID
+        in: query
+        name: trader_id
+        required: true
+        type: string
+      - default: 10
+        description: Limit results (default 10)
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get recent automatic activity
+      tags:
+      - automatic
+  /automatic/stats:
+    get:
+      consumes:
+      - application/json
+      description: Get statistics for automatic payment processing
+      parameters:
+      - description: Trader ID
+        in: query
+        name: trader_id
+        required: true
+        type: string
+      - default: 7
+        description: Number of days for statistics (default 7)
+        in: query
+        name: days
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get automatic processing statistics
+      tags:
+      - automatic
+  /automatic/trader-devices-status:
+    get:
+      consumes:
+      - application/json
+      description: Get online status of all trader's devices
+      parameters:
+      - description: Trader ID
+        in: query
+        name: trader_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get trader devices status
+      tags:
+      - automatic
   /banking/details:
     patch:
       consumes:
@@ -3292,19 +3659,19 @@ paths:
     patch:
       consumes:
       - application/json
-      description: Edit device params
+      description: Edit device parameters (name, enabled status)
       parameters:
-      - description: device edit params
+      - description: device ID
+        in: path
+        name: deviceId
+        required: true
+        type: string
+      - description: device edit parameters
         in: body
         name: input
         required: true
         schema:
           $ref: '#/definitions/device.EditDeviceRequest'
-      - description: ID of device to edit
-        in: path
-        name: deviceId
-        required: true
-        type: string
       produces:
       - application/json
       responses:
@@ -4119,6 +4486,99 @@ paths:
       summary: Withdraw crypto from account wallet
       tags:
       - payments
+  /payments/deeplink/html:
+    get:
+      consumes:
+      - application/json
+      description: Get HTML deeplink page by order ID (GET version)
+      parameters:
+      - description: Order ID
+        in: query
+        name: order_id
+        required: true
+        type: string
+      - description: Bank code
+        in: query
+        name: bank
+        required: true
+        type: string
+      - description: Phone number
+        in: query
+        name: phone
+        type: string
+      produces:
+      - text/html
+      responses:
+        "200":
+          description: HTML content
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get deeplink page by order ID
+      tags:
+      - payments
+    post:
+      consumes:
+      - application/json
+      description: Generate HTML deeplink page for payment
+      parameters:
+      - description: deeplink parameters
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/request.CreateDeeplinkRequest'
+      produces:
+      - text/html
+      responses:
+        "200":
+          description: HTML content
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Generate deeplink for order
+      tags:
+      - payments
+  /payments/deeplink/redirect:
+    post:
+      consumes:
+      - application/json
+      description: Redirect to bank app deeplink
+      parameters:
+      - description: deeplink parameters
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/request.CreateDeeplinkRequest'
+      produces:
+      - application/json
+      responses:
+        "302":
+          description: Found
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Redirect to deeplink
+      tags:
+      - payments
   /payments/in/h2h:
     post:
       consumes:
@@ -4154,6 +4614,8 @@ paths:
           description: Bad Gateway
           schema:
             $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Create new H2H Pay-In
       tags:
       - payments

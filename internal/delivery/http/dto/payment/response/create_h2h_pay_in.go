@@ -14,6 +14,8 @@ type CreateH2HPayInResponse struct {
 	TPayLink 		string 		   `json:"tpay_link"`
 	Recalculated	bool		   `json:"recalculated"`
 	CryptoRubRate 	float64	   `json:"crypto_rub_rate"`
+	DeeplinkHTML    string			`json:"deeplink_html"`
+	DeeplinkRedirect string			`json:"deeplink_redirect"`
 }
 
 type NoBankDetailsErrorResponse struct {

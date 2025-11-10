@@ -1833,6 +1833,444 @@ const docTemplate = `{
                 }
             }
         },
+        "/automatic/auth": {
+            "post": {
+                "description": "Authorize device via QR code scan from trader account",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "automatic"
+                ],
+                "summary": "Device authorization",
+                "parameters": [
+                    {
+                        "description": "Device auth data",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/automatic/device-status": {
+            "get": {
+                "description": "Get current online status of a device",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "automatic"
+                ],
+                "summary": "Get device status",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Device ID",
+                        "name": "device_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/automatic/liveness": {
+            "post": {
+                "description": "Receive liveness ping from trader's device (heartbeat)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "automatic"
+                ],
+                "summary": "Device liveness ping",
+                "parameters": [
+                    {
+                        "description": "Device group",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/automatic/logs": {
+            "get": {
+                "description": "Retrieve logs of automatic payment processing with filters",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "automatic"
+                ],
+                "summary": "Get automatic payment logs",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Filter by trader ID",
+                        "name": "trader_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter by device ID",
+                        "name": "device_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter by action (approved, not_found, failed, search_error)",
+                        "name": "action",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Filter by success status",
+                        "name": "success",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 50,
+                        "description": "Limit results (default 50)",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 0,
+                        "description": "Offset for pagination (default 0)",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/automatic/process-sms": {
+            "post": {
+                "description": "Process payment notification from trader's phone",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "automatic"
+                ],
+                "summary": "Process SMS notification",
+                "parameters": [
+                    {
+                        "description": "SMS data",
+                        "name": "sms",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handlers.SMSRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/automatic/recent-activity": {
+            "get": {
+                "description": "Get recent automatic payment processing activities",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "automatic"
+                ],
+                "summary": "Get recent automatic activity",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Trader ID",
+                        "name": "trader_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "description": "Limit results (default 10)",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/automatic/stats": {
+            "get": {
+                "description": "Get statistics for automatic payment processing",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "automatic"
+                ],
+                "summary": "Get automatic processing statistics",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Trader ID",
+                        "name": "trader_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "default": 7,
+                        "description": "Number of days for statistics (default 7)",
+                        "name": "days",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/automatic/trader-devices-status": {
+            "get": {
+                "description": "Get online status of all trader's devices",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "automatic"
+                ],
+                "summary": "Get trader devices status",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Trader ID",
+                        "name": "trader_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/banking/details": {
             "post": {
                 "security": [
@@ -2293,7 +2731,7 @@ const docTemplate = `{
         },
         "/devices/{deviceId}/edit": {
             "patch": {
-                "description": "Edit device params",
+                "description": "Edit device parameters (name, enabled status)",
                 "consumes": [
                     "application/json"
                 ],
@@ -2306,20 +2744,20 @@ const docTemplate = `{
                 "summary": "Edit device",
                 "parameters": [
                     {
-                        "description": "device edit params",
+                        "type": "string",
+                        "description": "device ID",
+                        "name": "deviceId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "device edit parameters",
                         "name": "input",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "$ref": "#/definitions/device.EditDeviceRequest"
                         }
-                    },
-                    {
-                        "type": "string",
-                        "description": "ID of device to edit",
-                        "name": "deviceId",
-                        "in": "path",
-                        "required": true
                     }
                 ],
                 "responses": {
@@ -3568,8 +4006,160 @@ const docTemplate = `{
                 }
             }
         },
+        "/payments/deeplink/html": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get HTML deeplink page by order ID (GET version)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "text/html"
+                ],
+                "tags": [
+                    "payments"
+                ],
+                "summary": "Get deeplink page by order ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Order ID",
+                        "name": "order_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Bank code",
+                        "name": "bank",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Phone number",
+                        "name": "phone",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "HTML content",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Generate HTML deeplink page for payment",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "text/html"
+                ],
+                "tags": [
+                    "payments"
+                ],
+                "summary": "Generate deeplink for order",
+                "parameters": [
+                    {
+                        "description": "deeplink parameters",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.CreateDeeplinkRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "HTML content",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/payments/deeplink/redirect": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Redirect to bank app deeplink",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "payments"
+                ],
+                "summary": "Redirect to deeplink",
+                "parameters": [
+                    {
+                        "description": "deeplink parameters",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.CreateDeeplinkRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "302": {
+                        "description": "Found"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/payments/in/h2h": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Create new Pay-In using host-to-host method",
                 "consumes": [
                     "application/json"
@@ -5323,6 +5913,10 @@ const docTemplate = `{
     "definitions": {
         "device.CreateDeviceRequest": {
             "type": "object",
+            "required": [
+                "deviceName",
+                "traderId"
+            ],
             "properties": {
                 "deviceName": {
                     "type": "string"
@@ -5336,10 +5930,32 @@ const docTemplate = `{
             }
         },
         "device.CreateDeviceResponse": {
-            "type": "object"
+            "type": "object",
+            "properties": {
+                "deviceId": {
+                    "type": "string"
+                },
+                "deviceName": {
+                    "type": "string"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "traderId": {
+                    "type": "string"
+                }
+            }
         },
         "device.DeleteDeviceResponse": {
-            "type": "object"
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
         },
         "device.Device": {
             "type": "object",
@@ -5371,6 +5987,9 @@ const docTemplate = `{
         },
         "device.EditDeviceRequest": {
             "type": "object",
+            "required": [
+                "editDeviceParams"
+            ],
             "properties": {
                 "editDeviceParams": {
                     "$ref": "#/definitions/device.EditDeviceParams"
@@ -5378,7 +5997,18 @@ const docTemplate = `{
             }
         },
         "device.EditDeviceResponse": {
-            "type": "object"
+            "type": "object",
+            "properties": {
+                "deviceId": {
+                    "type": "string"
+                },
+                "deviceName": {
+                    "type": "string"
+                },
+                "enabled": {
+                    "type": "boolean"
+                }
+            }
         },
         "device.GetTraderDevicesResponse": {
             "type": "object",
@@ -6246,6 +6876,56 @@ const docTemplate = `{
                 }
             }
         },
+        "handlers.SMSRequest": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "balance": {
+                    "type": "number"
+                },
+                "blocked": {
+                    "type": "boolean"
+                },
+                "direction": {
+                    "type": "string"
+                },
+                "group": {
+                    "type": "string"
+                },
+                "methods": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "payment_system": {
+                    "type": "string"
+                },
+                "received_at": {
+                    "type": "integer"
+                },
+                "success": {
+                    "type": "boolean"
+                },
+                "text": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "too_old": {
+                    "type": "boolean"
+                },
+                "unknown": {
+                    "type": "boolean"
+                },
+                "version": {
+                    "type": "string"
+                }
+            }
+        },
         "handlers.Sort": {
             "type": "object",
             "properties": {
@@ -6751,6 +7431,24 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "trader_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.CreateDeeplinkRequest": {
+            "type": "object",
+            "required": [
+                "bank_code",
+                "order_id"
+            ],
+            "properties": {
+                "bank_code": {
+                    "type": "string"
+                },
+                "order_id": {
+                    "type": "string"
+                },
+                "phone_number": {
                     "type": "string"
                 }
             }
@@ -7310,6 +8008,12 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "currency": {
+                    "type": "string"
+                },
+                "deeplink_html": {
+                    "type": "string"
+                },
+                "deeplink_redirect": {
                     "type": "string"
                 },
                 "expires_at": {
