@@ -42,35 +42,51 @@ func (ds *DeeplinkService) initTemplates() {
 }
 
 func (ds *DeeplinkService) GenerateDeeplink(orderID, bankCode string, phoneNumber *string) (*domain.DeeplinkData, error) {
-	order, err := ds.orderClient.GetOrderByID(orderID)
-	if err != nil {
-		return nil, fmt.Errorf("failed to get order: %w", err)
-	}
+    order, err := ds.orderClient.GetOrderByID(orderID)
+    if err != nil {
+        return nil, fmt.Errorf("failed to get order: %w", err)
+    }
 
-	deeplinkType := ds.determineDeeplinkType(bankCode, phoneNumber)
-	templateData := ds.prepareTemplateData(order, phoneNumber, deeplinkType)
+    // Получаем payment_system из заказа
+    paymentSystem := ""
+    if order.Order.BankDetail != nil {
+        paymentSystem = order.Order.BankDetail.PaymentSystem
+    }
 
-	htmlContent, err := ds.renderTemplate(deeplinkType, templateData)
-	if err != nil {
-		return nil, fmt.Errorf("failed to render template: %w", err)
-	}
+    deeplinkType := ds.determineDeeplinkType(bankCode, paymentSystem, phoneNumber)
+    templateData := ds.prepareTemplateData(order, phoneNumber, deeplinkType)
 
-	return &domain.DeeplinkData{
-		HTMLContent:  htmlContent,
-		DeeplinkType: deeplinkType,
-		BankCode:     bankCode,
-		OrderID:      orderID,
-	}, nil
+    htmlContent, err := ds.renderTemplate(deeplinkType, templateData)
+    if err != nil {
+        return nil, fmt.Errorf("failed to render template: %w", err)
+    }
+
+    return &domain.DeeplinkData{
+        HTMLContent:  htmlContent,
+        DeeplinkType: deeplinkType,
+        BankCode:     bankCode,
+        OrderID:      orderID,
+    }, nil
 }
 
-func (ds *DeeplinkService) determineDeeplinkType(bankCode string, phoneNumber *string) string {
-	if bankCode == "tinkoff" {
-		if phoneNumber != nil && *phoneNumber != "" {
-			return "tinkoff_phone"
-		}
-		return "tinkoff_card"
-	}
-	return bankCode
+func (ds *DeeplinkService) determineDeeplinkType(bankCode string, paymentSystem string, phoneNumber *string) string {
+    // Для Tinkoff определяем тип на основе payment_system
+    if bankCode == "tinkoff" {
+        if paymentSystem == "C2C" {
+            if phoneNumber != nil && *phoneNumber != "" {
+                return "tinkoff_phone"
+            }
+            return "tinkoff_card"
+        }
+        // Для других payment_system Tinkoff используем стандартные диплинки
+        if phoneNumber != nil && *phoneNumber != "" {
+            return "tinkoff_phone"
+        }
+        return "tinkoff_card"
+    }
+    
+    // Для других банков возвращаем банк как есть
+    return bankCode
 }
 
 func (ds *DeeplinkService) prepareTemplateData(order *orderpb.GetOrderByIDResponse, phoneNumber *string, deeplinkType string) map[string]interface{} {
