@@ -4486,11 +4486,62 @@ paths:
       summary: Withdraw crypto from account wallet
       tags:
       - payments
-  /payments/deeplink/html:
+  /payments/deeplink/redirect:
+    post:
+      consumes:
+      - application/json
+      description: Redirect to bank app deeplink
+      parameters:
+      - description: deeplink parameters
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/request.CreateDeeplinkRequest'
+      produces:
+      - application/json
+      responses:
+        "302":
+          description: Found
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Redirect to deeplink
+      tags:
+      - payments
+  /payments/deeplink/select:
     get:
       consumes:
       - application/json
-      description: Get HTML deeplink page by order ID (GET version)
+      description: Get HTML page with bank selection for deeplinks
+      parameters:
+      - description: Order ID
+        in: query
+        name: order_id
+        required: true
+        type: string
+      produces:
+      - text/html
+      responses:
+        "200":
+          description: HTML content
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      summary: Get bank selection page
+      tags:
+      - payments
+  /payments/deeplink/specific:
+    get:
+      consumes:
+      - application/json
+      description: Get HTML deeplink page for specific bank
       parameters:
       - description: Order ID
         in: query
@@ -4517,66 +4568,7 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/response.ErrorResponse'
-      security:
-      - BearerAuth: []
-      summary: Get deeplink page by order ID
-      tags:
-      - payments
-    post:
-      consumes:
-      - application/json
-      description: Generate HTML deeplink page for payment
-      parameters:
-      - description: deeplink parameters
-        in: body
-        name: input
-        required: true
-        schema:
-          $ref: '#/definitions/request.CreateDeeplinkRequest'
-      produces:
-      - text/html
-      responses:
-        "200":
-          description: HTML content
-          schema:
-            type: string
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/response.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/response.ErrorResponse'
-      security:
-      - BearerAuth: []
-      summary: Generate deeplink for order
-      tags:
-      - payments
-  /payments/deeplink/redirect:
-    post:
-      consumes:
-      - application/json
-      description: Redirect to bank app deeplink
-      parameters:
-      - description: deeplink parameters
-        in: body
-        name: input
-        required: true
-        schema:
-          $ref: '#/definitions/request.CreateDeeplinkRequest'
-      produces:
-      - application/json
-      responses:
-        "302":
-          description: Found
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/response.ErrorResponse'
-      security:
-      - BearerAuth: []
-      summary: Redirect to deeplink
+      summary: Get specific bank deeplink
       tags:
       - payments
   /payments/in/h2h:

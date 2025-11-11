@@ -14,6 +14,7 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
+	_ "github.com/LavaJover/shvark-api-gateway/internal/service/deeplink_templates"
 )
 
 // @title 						Shvark API Gateway
@@ -187,9 +188,9 @@ func main() {
 		paymentsGroup.POST("/accounts/auth/sign-in", paymentHandler.Login)
 	}
 
-	// ✅ ДОБАВЛЯЕМ НОВЫЕ РОУТЫ ДЛЯ DEEPLINK
-	paymentsGroup.POST("/deeplink/html", paymentHandler.GenerateDeeplinkHTML)
-	paymentsGroup.GET("/deeplink/html", paymentHandler.GetDeeplinkHTML)
+	// Публичные роуты для диплинков
+	r.GET("/api/v1/payments/deeplink/select", paymentHandler.GetBankSelectionPage)
+	r.GET("/api/v1/payments/deeplink/specific", paymentHandler.GetSpecificDeeplink)
 
 	walletAddr := fmt.Sprintf("%s:%s", cfg.WalletService.Host, cfg.WalletService.Port)
 	walletClient := client.NewHTTPWalletClient(walletAddr)
