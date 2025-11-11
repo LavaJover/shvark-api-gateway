@@ -97,14 +97,11 @@ func init() {
     <div class="container">
         <h1>📱 Tinkoff Bank Phone Transfer</h1>
         
-        <div class="payment-info">
-            <h3>Данные перевода:</h3>
-            <p><strong>Телефон:</strong> {{.PhoneNumber}}</p>
-            <p><strong>Сумма:</strong> {{.Amount}} ₽</p>
-            <p><strong>Bank Member ID:</strong> 10037</p>
-            <p><strong>Тип операции:</strong> RTLNTransfer</p>
-            <p><strong>Order ID:</strong> {{.OrderID}}</p>
-        </div>
+		<div class="payment-info">
+		    <h3>Данные перевода:</h3>
+		    <p><strong>Телефон:</strong> {{.PhoneNumber}}</p> <!-- Убрали маскировку если была -->
+		    <p><strong>Сумма:</strong> {{.Amount}} ₽</p>
+		</div>
 
         <div id="status"></div>
 

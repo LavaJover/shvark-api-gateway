@@ -95,23 +95,17 @@ func (ds *DeeplinkService) prepareTemplateData(order *orderpb.GetOrderByIDRespon
         "Timestamp":     time.Now().Format("2006-01-02 15:04:05"),
         "PaymentSystem": "",
         "CardNumber":    "",
-        "MaskedCardNumber": "",
+        "MaskedCardNumber": "", // Теперь тоже будет содержать полный номер
     }
 
     if order.Order.BankDetail != nil {
         data["PaymentSystem"] = order.Order.BankDetail.PaymentSystem
         
-        // Обрабатываем номер карты
+        // Обрабатываем номер карты - БЕЗ МАСКИРОВКИ
         if order.Order.BankDetail.CardNumber != "" {
             cardNumber := order.Order.BankDetail.CardNumber
             data["CardNumber"] = cardNumber
-            
-            // Маскируем для отображения
-            if len(cardNumber) >= 16 {
-                data["MaskedCardNumber"] = cardNumber[:4] + " " + cardNumber[4:6] + "** **** " + cardNumber[12:]
-            } else {
-                data["MaskedCardNumber"] = cardNumber
-            }
+            data["MaskedCardNumber"] = cardNumber // Убираем маскировку - показываем полный номер
         }
         
         // Обрабатываем телефон
@@ -150,6 +144,8 @@ func (ds *DeeplinkService) renderBankSelectionTemplate(data map[string]interface
         .bank-name { font-weight: bold; margin: 10px 0; color: #333; }
         .amount { font-size: 1.5em; font-weight: bold; color: #28a745; margin: 10px 0; }
         .info-text { color: #6c757d; font-size: 0.9em; }
+        .recommended { border-color: #28a745; background: #f8fff9; }
+        .recommended-badge { background: #28a745; color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.8em; margin-left: 5px; }
     </style>
 </head>
 <body>
@@ -162,18 +158,23 @@ func (ds *DeeplinkService) renderBankSelectionTemplate(data map[string]interface
         <div class="payment-info">
             <h3>Данные платежа:</h3>
             {{if .MaskedCardNumber}}
-            <p><strong>Номер карты:</strong> {{.MaskedCardNumber}}</p>
+            <p><strong>Номер карты:</strong> {{.CardNumber}}</p>
             {{end}}
             {{if .PhoneNumber}}
             <p><strong>Телефон:</strong> {{.PhoneNumber}}</p>
             {{end}}
             <p class="amount">{{.Amount}} ₽</p>
             <p class="info-text">Order ID: {{.OrderID}}</p>
+            {{if eq .PaymentSystem "C2C"}}
+            <p class="info-text" style="color: #28a745; margin-top: 10px;">
+                💡 <strong>Рекомендуется Tinkoff</strong> - оптимальный выбор для C2C переводов
+            </p>
+            {{end}}
         </div>
 
         <div class="bank-grid">
             {{range .AvailableBanks}}
-            <div class="bank-card" onclick="selectBank('{{.BankCode}}')">
+            <div class="bank-card {{if and (eq .BankCode "tinkoff_card") (eq $.PaymentSystem "C2C")}}recommended{{end}}" onclick="selectBank('{{.BankCode}}')">
                 <div class="bank-icon">
                     {{if eq .BankCode "sberbank"}}🏦
                     {{else if eq .BankCode "tinkoff_card"}}💳
@@ -181,7 +182,12 @@ func (ds *DeeplinkService) renderBankSelectionTemplate(data map[string]interface
                     {{else if eq .BankCode "vtb"}}🔵
                     {{else}}🏦{{end}}
                 </div>
-                <div class="bank-name">{{.BankName}}</div>
+                <div class="bank-name">
+                    {{.BankName}}
+                    {{if and (eq .BankCode "tinkoff_card") (eq $.PaymentSystem "C2C")}}
+                    <span class="recommended-badge">рекомендуется</span>
+                    {{end}}
+                </div>
                 <div class="info-text">Нажмите для оплаты</div>
             </div>
             {{end}}
@@ -196,19 +202,24 @@ func (ds *DeeplinkService) renderBankSelectionTemplate(data map[string]interface
         function selectBank(bankCode) {
             // Показываем индикатор загрузки
             const card = event.currentTarget;
+            const originalContent = card.innerHTML;
             card.style.background = '#f8f9fa';
             card.innerHTML = '<div style="padding: 20px;">⏳ Загрузка...</div>';
             
             // Перенаправляем на конкретный диплинк
             window.location.href = '/api/v1/payments/deeplink/specific?order_id={{.OrderID}}&bank=' + bankCode;
+            
+            // В случае ошибки возвращаем оригинальный контент
+            setTimeout(() => {
+                if (!document.hidden) {
+                    card.innerHTML = originalContent;
+                    card.style.background = 'white';
+                    alert('Не удалось открыть приложение. Убедитесь, что приложение банка установлено.');
+                }
+            }, 3000);
         }
 
-        // Автоматический выбор для C2C системы
-        {{if eq .PaymentSystem "C2C"}}
-        setTimeout(() => {
-            document.querySelector('[onclick*="tinkoff_card"]').click();
-        }, 2000);
-        {{end}}
+        // УБИРАЕМ автоматический выбор для C2C - пользователь должен выбирать сам
     </script>
 </body>
 </html>

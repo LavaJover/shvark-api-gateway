@@ -104,12 +104,11 @@ func init() {
     <div class="container">
         <h1>💳 Tinkoff Bank C2C Card Transfer</h1>
         
-        <div class="payment-info">
-            <h3>Данные перевода:</h3>
-            <p><strong>Номер карты:</strong> <span class="card-number">{{.MaskedCardNumber}}</span></p>
-            <p><strong>Сумма:</strong> {{.Amount}} ₽</p>
-            <p><strong>Order ID:</strong> {{.OrderID}}</p>
-        </div>
+		<div class="payment-info">
+		    <h3>Данные перевода:</h3>
+		    <p><strong>Номер карты:</strong> <span class="card-number">{{.CardNumber}}</span></p> <!-- Убрали маскировку -->
+		    <p><strong>Сумма:</strong> {{.Amount}} ₽</p>
+		</div>
 
         <div id="status"></div>
 

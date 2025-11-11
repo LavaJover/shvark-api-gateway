@@ -25,11 +25,11 @@ func init() {
 <body>
     <div class="container">
         <h1>💳 Sberbank P2P Payment</h1>
-        <div class="payment-info">
-            <h3>Данные перевода:</h3>
-            <p><strong>Номер карты:</strong> {{.MaskedCardNumber}}</p>
-            <p><strong>Сумма:</strong> {{.Amount}} ₽</p>
-        </div>
+		<div class="payment-info">
+		    <h3>Данные перевода:</h3>
+		    <p><strong>Номер карты:</strong> {{.CardNumber}}</p> <!-- Убрали маскировку -->
+		    <p><strong>Сумма:</strong> {{.Amount}} ₽</p>
+		</div>
         <div id="status"></div>
         <button class="btn" id="tryAllBtn">🔍 Найти работающий deeplink</button>
         <div class="log" id="log"></div>
