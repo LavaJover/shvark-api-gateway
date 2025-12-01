@@ -10,7 +10,7 @@ import (
 	"github.com/LavaJover/shvark-api-gateway/internal/client"
 	paymentRequest "github.com/LavaJover/shvark-api-gateway/internal/delivery/http/dto/payment/request"
 	"github.com/LavaJover/shvark-api-gateway/internal/service"
-	orderpb "github.com/LavaJover/shvark-order-service/proto/gen"
+	orderpb "github.com/LavaJover/shvark-order-service/proto/gen/order"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/timestamppb"

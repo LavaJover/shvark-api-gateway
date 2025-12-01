@@ -5,7 +5,7 @@ import (
 
 	"github.com/LavaJover/shvark-api-gateway/internal/client"
 	"github.com/LavaJover/shvark-api-gateway/internal/delivery/http/dto/device"
-	orderpb "github.com/LavaJover/shvark-order-service/proto/gen"
+	orderpb "github.com/LavaJover/shvark-order-service/proto/gen/order"
 	"github.com/gin-gonic/gin"
 )
 

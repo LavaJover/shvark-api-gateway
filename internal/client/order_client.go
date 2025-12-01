@@ -9,7 +9,7 @@ import (
 	"google.golang.org/protobuf/types/known/durationpb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
-	orderpb "github.com/LavaJover/shvark-order-service/proto/gen"
+	orderpb "github.com/LavaJover/shvark-order-service/proto/gen/order"
 )
 
 type OrderClient struct {

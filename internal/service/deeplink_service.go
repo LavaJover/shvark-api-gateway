@@ -10,7 +10,7 @@ import (
     "github.com/LavaJover/shvark-api-gateway/internal/client"
     "github.com/LavaJover/shvark-api-gateway/internal/domain"
     "github.com/LavaJover/shvark-api-gateway/internal/service/deeplink_templates"
-    orderpb "github.com/LavaJover/shvark-order-service/proto/gen"
+    orderpb "github.com/LavaJover/shvark-order-service/proto/gen/order"
 )
 
 type DeeplinkService struct {

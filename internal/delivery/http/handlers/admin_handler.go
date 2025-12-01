@@ -8,7 +8,7 @@ import (
 	adminRequest "github.com/LavaJover/shvark-api-gateway/internal/delivery/http/dto/admin/request"
 	adminResponse "github.com/LavaJover/shvark-api-gateway/internal/delivery/http/dto/admin/response"
 	orderResponse "github.com/LavaJover/shvark-api-gateway/internal/delivery/http/dto/order/response"
-	orderpb "github.com/LavaJover/shvark-order-service/proto/gen"
+	orderpb "github.com/LavaJover/shvark-order-service/proto/gen/order"
 	userpb "github.com/LavaJover/shvark-user-service/proto/gen"
 	"github.com/gin-gonic/gin"
 	"google.golang.org/protobuf/types/known/durationpb"

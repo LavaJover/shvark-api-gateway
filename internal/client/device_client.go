@@ -4,7 +4,7 @@ import (
     "context"
     "time"
 
-    orderpb "github.com/LavaJover/shvark-order-service/proto/gen"
+    orderpb "github.com/LavaJover/shvark-order-service/proto/gen/order"
     "google.golang.org/grpc"
     "google.golang.org/grpc/credentials/insecure"
 )

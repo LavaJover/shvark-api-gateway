@@ -8,7 +8,7 @@ import (
     "time"
 
     "github.com/LavaJover/shvark-api-gateway/internal/client"
-    orderpb "github.com/LavaJover/shvark-order-service/proto/gen"
+    orderpb "github.com/LavaJover/shvark-order-service/proto/gen/order"
     "github.com/gin-gonic/gin"
     "google.golang.org/grpc/codes"
     "google.golang.org/grpc/status"

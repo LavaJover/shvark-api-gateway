@@ -6,7 +6,7 @@ import (
     "time"
 
     "github.com/LavaJover/shvark-api-gateway/internal/client"
-    antifraudpb "github.com/LavaJover/shvark-order-service/proto/gen"
+    antifraudpb "github.com/LavaJover/shvark-order-service/proto/gen/order"
     "github.com/gin-gonic/gin"
     "google.golang.org/protobuf/types/known/structpb"
     "google.golang.org/protobuf/types/known/timestamppb"

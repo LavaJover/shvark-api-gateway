@@ -10,7 +10,7 @@ import (
 	"github.com/LavaJover/shvark-api-gateway/internal/common"
 	orderRequest "github.com/LavaJover/shvark-api-gateway/internal/delivery/http/dto/order/request"
 	orderResponse "github.com/LavaJover/shvark-api-gateway/internal/delivery/http/dto/order/response"
-	orderpb "github.com/LavaJover/shvark-order-service/proto/gen"
+	orderpb "github.com/LavaJover/shvark-order-service/proto/gen/order"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"google.golang.org/grpc/status"
