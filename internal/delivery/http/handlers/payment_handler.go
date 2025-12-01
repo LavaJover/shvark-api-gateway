@@ -94,7 +94,7 @@ func (h *PaymentHandler) CreateH2HPayIn(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	response, err := h.OrderClient.CreateOrder(&orderpb.CreateOrderRequest{
+	response, err := h.OrderClient.CreatePayInOrder(&orderpb.CreatePayInOrderRequest{
 		MerchantId: payInRequest.MerchantID,
 		AmountFiat: payInRequest.AmountFiat,
 		Currency: payInRequest.Currency,

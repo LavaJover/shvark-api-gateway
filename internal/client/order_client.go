@@ -48,11 +48,11 @@ func NewOrderClient(addr string) (*OrderClient, error) {
 	}, nil
 }
 
-func (c *OrderClient) CreateOrder(orderRequest *orderpb.CreateOrderRequest) (*orderpb.CreateOrderResponse, error) {
+func (c *OrderClient) CreatePayInOrder(orderRequest *orderpb.CreatePayInOrderRequest) (*orderpb.CreatePayInOrderResponse, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	return c.service.CreateOrder(
+	return c.service.CreatePayInOrder(
 		ctx,
 		orderRequest,
 	)

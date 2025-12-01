@@ -59,7 +59,7 @@ func (h *MerchantHandler) CreatePayIn(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	orderServiceRequest := orderpb.CreateOrderRequest{
+	orderServiceRequest := orderpb.CreatePayInOrderRequest{
 		MerchantId: merchantID,
 		AmountFiat: request.Amount,
 		Currency: request.Currency,
@@ -78,7 +78,7 @@ func (h *MerchantHandler) CreatePayIn(c *gin.Context) {
 	}else {
 		orderServiceRequest.PaymentSystem = "C2C"
 	}
-	orderServiceResponse, err := h.OrderClient.CreateOrder(&orderServiceRequest)
+	orderServiceResponse, err := h.OrderClient.CreatePayInOrder(&orderServiceRequest)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		return

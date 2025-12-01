@@ -58,7 +58,7 @@ func (h *OrderHandler) CreateOrder(c *gin.Context) {
 		return
 	}
 
-	orderRequest := orderpb.CreateOrderRequest{
+	orderRequest := orderpb.CreatePayInOrderRequest{
 		Shuffle:         request.Shuffle,
 		MerchantId:      request.MerchantID,
 		ClientId:        request.ClientID,
@@ -70,7 +70,7 @@ func (h *OrderHandler) CreateOrder(c *gin.Context) {
 		ExpiresAt:       timestamppb.New(time.Now().Add(ttl)),
 	}
 
-	response, err := h.OrderClient.CreateOrder(&orderRequest)
+	response, err := h.OrderClient.CreatePayInOrder(&orderRequest)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
