@@ -174,7 +174,7 @@ func main() {
 	}
 
 	// payments for merchant
-	paymentsGroup := r.Group("/api/v1/payments")
+	paymentsGroup := r.Group("/api/v1/payments", middleware.AuthMiddleware(authHandler.SSOClient))
 	{
 		paymentsGroup.POST("/in/h2h", paymentHandler.CreateH2HPayIn)
 		paymentsGroup.GET("/in/h2h/:id", paymentHandler.GetH2HPayInInfo)
