@@ -186,6 +186,7 @@ func main() {
 		paymentsGroup.GET("/order", paymentHandler.GetOrders)
 		paymentsGroup.POST("/accounts/withdraw/create", paymentHandler.Withdraw)
 		paymentsGroup.POST("/accounts/auth/sign-in", paymentHandler.Login)
+		paymentsGroup.POST("/out/h2h/", paymentHandler.CreateH2HPayOut)
 	}
 
 	// Публичные роуты для диплинков

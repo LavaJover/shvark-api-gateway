@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/LavaJover/shvark-api-gateway/internal/client"
+	"github.com/LavaJover/shvark-api-gateway/internal/delivery/http/dto/payment/request"
 	paymentRequest "github.com/LavaJover/shvark-api-gateway/internal/delivery/http/dto/payment/request"
 	"github.com/LavaJover/shvark-api-gateway/internal/service"
 	orderpb "github.com/LavaJover/shvark-order-service/proto/gen/order"
@@ -146,6 +147,68 @@ func (h *PaymentHandler) CreateH2HPayIn(c *gin.Context) {
 			Bank: response.Order.BankDetail.BankCode,
 			BankName: response.Order.BankDetail.BankName,
 		},
+		ExpiresAt: response.Order.ExpiresAt.Seconds,
+	})
+}
+
+// @Summary Create new H2H Pay-Out
+// @Description Create new Pay-Out using host-to-host method
+// @Tags payments
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param input body paymentRequest.CreateH2HPayOutRequest true "pay-out info"
+// @Success 201 {object} paymentResponse.CreateH2HPayOutResponse
+// @Failure 400 {object} paymentResponse.BadRequestErrorResponse
+// @Failure 404 {object} paymentResponse.NoBankDetailsErrorResponse
+// @Failure 409 {object} paymentResponse.ErrorResponse
+// @Failure 502 {object} paymentResponse.ErrorResponse
+// @Router /payments/out/h2h [post]
+func (h *PaymentHandler) CreateH2HPayOut(c *gin.Context) {
+	var payOutRequest request.CreateH2HPayOutRequest
+	if err := c.ShouldBindJSON(&payOutRequest); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	response, err := h.OrderClient.CreatePayOutOrder(&orderpb.CreatePayOutOrderRequest{
+		MerchantId: payOutRequest.MerchantID,
+		ClientId: "",
+		ExpiresAt: timestamppb.New(time.Now().Add(20*time.Minute)),
+		MerchantOrderId: payOutRequest.MerchantOrderID,
+		Shuffle: 0,
+		CallbackUrl: payOutRequest.CallbackURL,
+		Type: "PAYOUT",
+		PaymentDetails: &orderpb.PaymentDetails{
+			CardNumber: payOutRequest.PaymentDetails.CardNumber,
+			Phone: payOutRequest.PaymentDetails.Phone,
+			Owner: "",
+			Currency: payOutRequest.Currency,
+			AmountFiat: payOutRequest.Amount,
+			PaymentSystem: payOutRequest.PaymentSystem,
+			BankInfo: &orderpb.BankInfo{
+				BankCode: payOutRequest.PaymentDetails.Bank,
+				BankName: payOutRequest.BankName,
+				NspkCode: "",
+			},
+		},
+	})
+
+	if err != nil {
+		c.JSON(http.StatusConflict, gin.H{"message": "failed to create PayOut order"})
+		return
+	}
+
+	c.JSON(http.StatusCreated, paymentResponse.CreateH2HPayOutResponse{
+		ID: response.Order.OrderId,
+		Currency: response.Order.BankDetail.Currency,
+		Amount: response.Order.AmountFiat,
+		UsdAmount: response.Order.AmountCrypto,
+		UsdRate: response.Order.CryptoRubRate,
+		PaymentSystem: response.Order.BankDetail.PaymentSystem,
+		Status: response.Order.Status,
+		MerchantOrderID: response.Order.MerchantOrderId,
+		CallbackURL: response.Order.CallbackUrl,
 		ExpiresAt: response.Order.ExpiresAt.Seconds,
 	})
 }

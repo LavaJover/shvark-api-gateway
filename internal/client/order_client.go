@@ -58,6 +58,16 @@ func (c *OrderClient) CreatePayInOrder(orderRequest *orderpb.CreatePayInOrderReq
 	)
 }
 
+func (c *OrderClient) CreatePayOutOrder(orderRequest *orderpb.CreatePayOutOrderRequest) (*orderpb.CreatePayOutOrderResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	return c.service.CreatePayOutOrder(
+		ctx,
+		orderRequest,
+	)
+}
+
 func (c *OrderClient) GetOrderByID(orderID string) (*orderpb.GetOrderByIDResponse, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()

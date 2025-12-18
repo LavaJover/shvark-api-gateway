@@ -4556,6 +4556,69 @@ const docTemplate = `{
                 }
             }
         },
+        "/payments/out/h2h": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Create new Pay-Out using host-to-host method",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "payments"
+                ],
+                "summary": "Create new H2H Pay-Out",
+                "parameters": [
+                    {
+                        "description": "pay-out info",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.CreateH2HPayOutRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/response.CreateH2HPayOutResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.BadRequestErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/response.NoBankDetailsErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "Bad Gateway",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/profiles/{uuid}": {
             "get": {
                 "description": "Get profile by uuid",
@@ -7472,6 +7535,38 @@ const docTemplate = `{
                 }
             }
         },
+        "request.CreateH2HPayOutRequest": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "bank_name": {
+                    "type": "string"
+                },
+                "callback_url": {
+                    "type": "string"
+                },
+                "currency": {
+                    "type": "string"
+                },
+                "ftd": {
+                    "type": "boolean"
+                },
+                "merchant_id": {
+                    "type": "string"
+                },
+                "merchant_order_id": {
+                    "type": "string"
+                },
+                "payment_details": {
+                    "$ref": "#/definitions/request.PaymentDetails"
+                },
+                "payment_system": {
+                    "type": "string"
+                }
+            }
+        },
         "request.CreateMerchantRequest": {
             "type": "object",
             "properties": {
@@ -7700,6 +7795,20 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "txHash": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.PaymentDetails": {
+            "type": "object",
+            "properties": {
+                "bank": {
+                    "type": "string"
+                },
+                "card_number": {
+                    "type": "string"
+                },
+                "phone": {
                     "type": "string"
                 }
             }
@@ -8023,6 +8132,41 @@ const docTemplate = `{
                 },
                 "tpay_link": {
                     "type": "string"
+                }
+            }
+        },
+        "response.CreateH2HPayOutResponse": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "callback_url": {
+                    "type": "string"
+                },
+                "currency": {
+                    "type": "string"
+                },
+                "expires_at": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "merchant_order_id": {
+                    "type": "string"
+                },
+                "payment_system": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "usd_amount": {
+                    "type": "number"
+                },
+                "usd_rate": {
+                    "type": "number"
                 }
             }
         },
