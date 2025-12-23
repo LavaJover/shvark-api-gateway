@@ -174,19 +174,19 @@ func main() {
 	}
 
 	// payments for merchant
-	paymentsGroup := r.Group("/api/v1/payments", middleware.AuthMiddleware(authHandler.SSOClient))
+	paymentsGroup := r.Group("/api/v1/payments")
 	{
-		paymentsGroup.POST("/in/h2h", paymentHandler.CreateH2HPayIn)
-		paymentsGroup.GET("/in/h2h/:id", paymentHandler.GetH2HPayInInfo)
-		paymentsGroup.POST("/in/h2h/:id/cancel", paymentHandler.CancelPayIn)
-		paymentsGroup.POST("/in/h2h/:id/arbitrage/link", paymentHandler.OpenPayInArbitrageLink)
-		paymentsGroup.GET("/in/h2h/:id/arbitrage/info", paymentHandler.GetPayInArbitrageInfo)
-		paymentsGroup.GET("/accounts/balance", paymentHandler.GetAccountBalance)
-		paymentsGroup.GET("/order/:orderId/status", paymentHandler.GetOrderStatus)
-		paymentsGroup.GET("/order", paymentHandler.GetOrders)
-		paymentsGroup.POST("/accounts/withdraw/create", paymentHandler.Withdraw)
+		paymentsGroup.POST("/in/h2h", middleware.AuthMiddleware(authHandler.SSOClient), paymentHandler.CreateH2HPayIn)
+		paymentsGroup.GET("/in/h2h/:id", middleware.AuthMiddleware(authHandler.SSOClient), paymentHandler.GetH2HPayInInfo)
+		paymentsGroup.POST("/in/h2h/:id/cancel", middleware.AuthMiddleware(authHandler.SSOClient), paymentHandler.CancelPayIn)
+		paymentsGroup.POST("/in/h2h/:id/arbitrage/link", middleware.AuthMiddleware(authHandler.SSOClient), paymentHandler.OpenPayInArbitrageLink)
+		paymentsGroup.GET("/in/h2h/:id/arbitrage/info", middleware.AuthMiddleware(authHandler.SSOClient), paymentHandler.GetPayInArbitrageInfo)
+		paymentsGroup.GET("/accounts/balance", middleware.AuthMiddleware(authHandler.SSOClient), paymentHandler.GetAccountBalance)
+		paymentsGroup.GET("/order/:orderId/status", middleware.AuthMiddleware(authHandler.SSOClient), paymentHandler.GetOrderStatus)
+		paymentsGroup.GET("/order", middleware.AuthMiddleware(authHandler.SSOClient), paymentHandler.GetOrders)
+		paymentsGroup.POST("/accounts/withdraw/create", middleware.AuthMiddleware(authHandler.SSOClient), paymentHandler.Withdraw)
 		paymentsGroup.POST("/accounts/auth/sign-in", paymentHandler.Login)
-		paymentsGroup.POST("/out/h2h/", paymentHandler.CreateH2HPayOut)
+		paymentsGroup.POST("/out/h2h/", middleware.AuthMiddleware(authHandler.SSOClient), paymentHandler.CreateH2HPayOut)
 	}
 
 	// Публичные роуты для диплинков
