@@ -113,13 +113,13 @@ func (h *PaymentHandler) CreateH2HPayIn(c *gin.Context) {
 	if err != nil  {
 		if status, ok := status.FromError(err); ok {
 			if status.Code() == codes.NotFound {
-				c.JSON(http.StatusNotFound, paymentResponse.NoBankDetailsErrorResponse{Error: err.Error()})
+				c.JSON(http.StatusConflict, paymentResponse.NoBankDetailsErrorResponse{Error: err.Error()})
 				return
 			}else if status.Code() == codes.FailedPrecondition {
 				c.JSON(http.StatusConflict, paymentResponse.ErrorResponse{Error: err.Error()})
 				return
 			}else {
-				c.JSON(http.StatusBadGateway, paymentResponse.ErrorResponse{Error: err.Error()})
+				c.JSON(http.StatusConflict, paymentResponse.ErrorResponse{Error: err.Error()})
 			}
 		}
 	}
