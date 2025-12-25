@@ -81,7 +81,19 @@ func (h *AutomaticHandler) Sms(c *gin.Context) {
         return
     }
 
-    userID := c.GetString("userID")
+    // Проверяем, установлен ли userID
+    userID, exists := c.Get("userID")
+    if !exists {
+        c.JSON(http.StatusUnauthorized, gin.H{"error": "User not authenticated"})
+        return
+    }
+    
+    // Приводим к string
+    traderID, ok := userID.(string)
+    if !ok {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid user ID type"})
+        return
+    }
 
     // Подготовка данных для gRPC вызова
     grpcReq := &orderpb.ProcessAutomaticPaymentRequest{
@@ -92,7 +104,7 @@ func (h *AutomaticHandler) Sms(c *gin.Context) {
         Direction:     req.Direction,
         ReceivedAt:    req.ReceivedAt,
         Text:          req.Text,
-        TraderId: userID,
+        TraderId: traderID,
         Metadata: map[string]string{
             "title":   req.Title,
             "balance": strconv.FormatFloat(req.Balance, 'f', 2, 64),
