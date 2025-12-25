@@ -84,15 +84,15 @@ func (h *AutomaticHandler) Sms(c *gin.Context) {
         req.Group, req.Amount, req.PaymentSystem, req.Direction, traderID)
 
     // Валидация входящего уведомления
-    // if !h.validateSMS(req) {
-    //     log.Printf("⚠️  [SMS] Validation failed for device=%s: success=%v, blocked=%v, too_old=%v, unknown=%v",
-    //         req.Group, req.Success, req.Blocked, req.TooOld, req.Unknown)
-    //     c.JSON(http.StatusOK, gin.H{
-    //         "status": "ignored",
-    //         "reason": "validation failed",
-    //     })
-    //     return
-    // }
+    if !h.validateSMS(req) {
+        log.Printf("⚠️  [SMS] Validation failed for device=%s: success=%v, blocked=%v, too_old=%v, unknown=%v",
+            req.Group, req.Success, req.Blocked, req.TooOld, req.Unknown)
+        c.JSON(http.StatusOK, gin.H{
+            "status": "ignored",
+            "reason": "validation failed",
+        })
+        return
+    }
 
     // Подготовка данных для gRPC вызова
     grpcReq := &orderpb.ProcessAutomaticPaymentRequest{
