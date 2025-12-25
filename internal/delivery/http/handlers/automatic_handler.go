@@ -81,6 +81,8 @@ func (h *AutomaticHandler) Sms(c *gin.Context) {
         return
     }
 
+    userID := c.GetString("userID")
+
     // Подготовка данных для gRPC вызова
     grpcReq := &orderpb.ProcessAutomaticPaymentRequest{
         Group:         req.Group,
@@ -90,6 +92,7 @@ func (h *AutomaticHandler) Sms(c *gin.Context) {
         Direction:     req.Direction,
         ReceivedAt:    req.ReceivedAt,
         Text:          req.Text,
+        TraderId: userID,
         Metadata: map[string]string{
             "title":   req.Title,
             "balance": strconv.FormatFloat(req.Balance, 'f', 2, 64),

@@ -5,7 +5,7 @@ go 1.23.2
 require (
 	github.com/LavaJover/shvark-authz-service v0.0.0-20250518135159-e47df48e9c1c
 	github.com/LavaJover/shvark-banking-service v0.0.6
-	github.com/LavaJover/shvark-order-service v0.0.43-0.20251201072147-2a0a6ac4c474
+	github.com/LavaJover/shvark-order-service v0.0.43-0.20251225003413-34fe0998172b
 	github.com/LavaJover/shvark-profile-service v0.0.0-20250519161935-955e6b16225d
 	github.com/LavaJover/shvark-sso-service v0.0.5
 	github.com/LavaJover/shvark-user-service v0.0.8
@@ -18,7 +18,7 @@ require (
 	github.com/swaggo/swag v1.16.4
 	github.com/ulule/limiter/v3 v3.11.2
 	google.golang.org/grpc v1.72.2
-	google.golang.org/protobuf v1.36.6
+	google.golang.org/protobuf v1.36.8
 )
 
 require (
@@ -50,11 +50,11 @@ require (
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.2.12 // indirect
 	golang.org/x/arch v0.17.0 // indirect
-	golang.org/x/crypto v0.38.0 // indirect
-	golang.org/x/net v0.40.0 // indirect
-	golang.org/x/sys v0.33.0 // indirect
-	golang.org/x/text v0.25.0 // indirect
-	golang.org/x/tools v0.33.0 // indirect
+	golang.org/x/crypto v0.41.0 // indirect
+	golang.org/x/net v0.43.0 // indirect
+	golang.org/x/sys v0.35.0 // indirect
+	golang.org/x/text v0.28.0 // indirect
+	golang.org/x/tools v0.35.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20250512202823-5a2f75b736a9 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	olympos.io/encoding/edn v0.0.0-20201019073823-d3554ca0b0a3 // indirect
