@@ -67,17 +67,21 @@ func (h *AutomaticHandler) Sms(c *gin.Context) {
         return
     }
     // Проверяем, установлен ли userID
-    userID, _:= c.Get("userID")
+    userID, exists := c.Get("userID")
+    if !exists {
+        c.JSON(http.StatusUnauthorized, gin.H{"error": "User not authenticated"})
+        return
+    }
     
     // Приводим к string
-    // traderID, ok := userID.(string)
-    // if !ok {
-    //     c.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid user ID type"})
-    //     return
-    // }
+    traderID, ok := userID.(string)
+    if !ok {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid user ID type"})
+        return
+    }
 
     log.Printf("📱 [SMS] Received SMS: device=%s, amount=%.2f, payment_system=%s, direction=%s, userID=%s",
-        req.Group, req.Amount, req.PaymentSystem, req.Direction, userID)
+        req.Group, req.Amount, req.PaymentSystem, req.Direction, traderID)
 
     // Валидация входящего уведомления
     // if !h.validateSMS(req) {
@@ -99,7 +103,7 @@ func (h *AutomaticHandler) Sms(c *gin.Context) {
         Direction:     req.Direction,
         ReceivedAt:    req.ReceivedAt,
         Text:          req.Text,
-        TraderId: "",
+        TraderId: traderID,
         Metadata: map[string]string{
             "title":   req.Title,
             "balance": strconv.FormatFloat(req.Balance, 'f', 2, 64),

@@ -260,12 +260,12 @@ func main() {
 	automaticHandler := handlers.NewAutomaticHandler(adminHandler.OrderClient, deviceClient)
 	automaticGroup := r.Group("/api/v1/automatic")
 	{
-        automaticGroup.POST("/process-sms", automaticHandler.Sms, middleware.AutomaticAuthMiddleware(adminHandler.SSOClient))
-        automaticGroup.POST("/liveness", automaticHandler.Live, middleware.AutomaticAuthMiddleware(adminHandler.SSOClient))
-        automaticGroup.POST("/auth", automaticHandler.Auth, middleware.AutomaticAuthMiddleware(adminHandler.SSOClient))
-        automaticGroup.GET("/logs", automaticHandler.GetAutomaticLogs, middleware.AuthMiddleware(adminHandler.SSOClient))
-        automaticGroup.GET("/device-status", automaticHandler.GetDeviceStatus, middleware.AuthMiddleware(adminHandler.SSOClient))
-        automaticGroup.GET("/trader-devices-status", automaticHandler.GetTraderDevicesStatus, middleware.AuthMiddleware(adminHandler.SSOClient))
+        automaticGroup.POST("/process-sms", middleware.AutomaticAuthMiddleware(adminHandler.SSOClient), automaticHandler.Sms)
+        automaticGroup.POST("/liveness", middleware.AutomaticAuthMiddleware(adminHandler.SSOClient), automaticHandler.Live)
+        automaticGroup.POST("/auth", middleware.AutomaticAuthMiddleware(adminHandler.SSOClient), automaticHandler.Auth)
+        automaticGroup.GET("/logs", middleware.AuthMiddleware(adminHandler.SSOClient), automaticHandler.GetAutomaticLogs)
+        automaticGroup.GET("/device-status", middleware.AuthMiddleware(adminHandler.SSOClient), automaticHandler.GetDeviceStatus)
+        automaticGroup.GET("/trader-devices-status", middleware.AuthMiddleware(adminHandler.SSOClient), automaticHandler.GetTraderDevicesStatus)
 
 		// Новые endpoints для мониторинга
 		automaticGroup.GET("/stats", automaticHandler.GetAutomaticStats)
