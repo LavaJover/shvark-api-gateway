@@ -66,21 +66,6 @@ func (h *AutomaticHandler) Sms(c *gin.Context) {
         c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON"})
         return
     }
-
-    log.Printf("📱 [SMS] Received SMS: device=%s, amount=%.2f, payment_system=%s, direction=%s",
-        req.Group, req.Amount, req.PaymentSystem, req.Direction)
-
-    // Валидация входящего уведомления
-    if !h.validateSMS(req) {
-        log.Printf("⚠️  [SMS] Validation failed for device=%s: success=%v, blocked=%v, too_old=%v, unknown=%v",
-            req.Group, req.Success, req.Blocked, req.TooOld, req.Unknown)
-        c.JSON(http.StatusOK, gin.H{
-            "status": "ignored",
-            "reason": "validation failed",
-        })
-        return
-    }
-
     // Проверяем, установлен ли userID
     userID, exists := c.Get("userID")
     if !exists {
@@ -94,6 +79,20 @@ func (h *AutomaticHandler) Sms(c *gin.Context) {
         c.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid user ID type"})
         return
     }
+
+    log.Printf("📱 [SMS] Received SMS: device=%s, amount=%.2f, payment_system=%s, direction=%s, userID=%s",
+        req.Group, req.Amount, req.PaymentSystem, req.Direction, traderID)
+
+    // Валидация входящего уведомления
+    // if !h.validateSMS(req) {
+    //     log.Printf("⚠️  [SMS] Validation failed for device=%s: success=%v, blocked=%v, too_old=%v, unknown=%v",
+    //         req.Group, req.Success, req.Blocked, req.TooOld, req.Unknown)
+    //     c.JSON(http.StatusOK, gin.H{
+    //         "status": "ignored",
+    //         "reason": "validation failed",
+    //     })
+    //     return
+    // }
 
     // Подготовка данных для gRPC вызова
     grpcReq := &orderpb.ProcessAutomaticPaymentRequest{
