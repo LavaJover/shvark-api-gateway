@@ -67,11 +67,7 @@ func (h *AutomaticHandler) Sms(c *gin.Context) {
         return
     }
     // Проверяем, установлен ли userID
-    // userID, exists := c.Get("userID")
-    // if !exists {
-    //     c.JSON(http.StatusUnauthorized, gin.H{"error": "User not authenticated"})
-    //     return
-    // }
+    userID, _:= c.Get("userID")
     
     // Приводим к string
     // traderID, ok := userID.(string)
@@ -81,7 +77,7 @@ func (h *AutomaticHandler) Sms(c *gin.Context) {
     // }
 
     log.Printf("📱 [SMS] Received SMS: device=%s, amount=%.2f, payment_system=%s, direction=%s, userID=%s",
-        req.Group, req.Amount, req.PaymentSystem, req.Direction, "test")
+        req.Group, req.Amount, req.PaymentSystem, req.Direction, userID)
 
     // Валидация входящего уведомления
     // if !h.validateSMS(req) {
