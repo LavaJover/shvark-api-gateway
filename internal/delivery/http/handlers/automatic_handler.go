@@ -81,7 +81,7 @@ func (h *AutomaticHandler) Sms(c *gin.Context) {
     // }
 
     log.Printf("📱 [SMS] Received SMS: device=%s, amount=%.2f, payment_system=%s, direction=%s, userID=%s",
-        req.Group, req.Amount, req.PaymentSystem, req.Direction, traderID)
+        req.Group, req.Amount, req.PaymentSystem, req.Direction, "test")
 
     // Валидация входящего уведомления
     // if !h.validateSMS(req) {
@@ -103,7 +103,7 @@ func (h *AutomaticHandler) Sms(c *gin.Context) {
         Direction:     req.Direction,
         ReceivedAt:    req.ReceivedAt,
         Text:          req.Text,
-        TraderId: traderID,
+        TraderId: "",
         Metadata: map[string]string{
             "title":   req.Title,
             "balance": strconv.FormatFloat(req.Balance, 'f', 2, 64),
