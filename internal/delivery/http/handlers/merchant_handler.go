@@ -502,16 +502,16 @@ func (h *MerchantHandler) Login(c *gin.Context) {
 // @Router /merchant/banks [get]
 func (h *MerchantHandler) GetBanks(c *gin.Context) {
 	banks := []merchant.Bank{
-		{
-			Code: "MTS-SIM",
-			Name: "МТС SIM",
-			NspkCode: "",
-		},
-		{
-			Code: "BEELINE-SIM",
-			Name: "Билайн SIM",
-			NspkCode: "",
-		},
+		// {
+		// 	Code: "MTS-SIM",
+		// 	Name: "МТС SIM",
+		// 	NspkCode: "",
+		// },
+		// {
+		// 	Code: "BEELINE-SIM",
+		// 	Name: "Билайн SIM",
+		// 	NspkCode: "",
+		// },
 		{
 			Code: "sberbank",
 			Name: "Сбербанк",
