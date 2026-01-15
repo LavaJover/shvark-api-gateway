@@ -1,13 +1,16 @@
 package handlers
 
-// import "github.com/LavaJover/shvark-api-gateway/internal/client"
+// import (
+// 	"github.com/LavaJover/shvark-api-gateway/internal/client"
+// 	orderservice "github.com/LavaJover/shvark-api-gateway/internal/client/order-service"
+// )
 
 // type StoreHandler struct {
-// 	orderClient *client.OrderClient
+// 	orderClient *orderservice.OrderClient
 // }
 
 // func NewStorehandler(
-// 	orderClient *client.OrderClient,
+// 	orderClient *orderservice.OrderClient,
 // ) *StoreHandler {
 // 	return &StoreHandler{
 // 		orderClient: orderClient,

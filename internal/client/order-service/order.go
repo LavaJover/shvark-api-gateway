@@ -12,7 +12,7 @@ func (c *OrderClient) CreatePayInOrder(orderRequest *orderpb.CreatePayInOrderReq
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	return c.service.CreatePayInOrder(
+	return c.orderService.CreatePayInOrder(
 		ctx,
 		orderRequest,
 	)
@@ -22,7 +22,7 @@ func (c *OrderClient) CreatePayOutOrder(orderRequest *orderpb.CreatePayOutOrderR
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	return c.service.CreatePayOutOrder(
+	return c.orderService.CreatePayOutOrder(
 		ctx,
 		orderRequest,
 	)
@@ -32,7 +32,7 @@ func (c *OrderClient) GetOrderByID(orderID string) (*orderpb.GetOrderByIDRespons
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	return c.service.GetOrderByID(
+	return c.orderService.GetOrderByID(
 		ctx,
 		&orderpb.GetOrderByIDRequest{
 			OrderId: orderID,
@@ -44,7 +44,7 @@ func (c *OrderClient) GetOrderByMerchantOrderID(merchantOrderID string) (*orderp
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	return c.service.GetOrderByMerchantOrderID(
+	return c.orderService.GetOrderByMerchantOrderID(
 		ctx,
 		&orderpb.GetOrderByMerchantOrderIDRequest{
 			MerchantOrderId: merchantOrderID,
@@ -56,7 +56,7 @@ func (c *OrderClient) GetOrdersByTraderID(request *orderpb.GetOrdersByTraderIDRe
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	return c.service.GetOrdersByTraderID(
+	return c.orderService.GetOrdersByTraderID(
 		ctx,
 		request,
 	)
@@ -66,7 +66,7 @@ func (c *OrderClient) ApproveOrder(orderID string) (*orderpb.ApproveOrderRespons
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	return c.service.ApproveOrder(
+	return c.orderService.ApproveOrder(
 		ctx,
 		&orderpb.ApproveOrderRequest{
 			OrderId: orderID,
@@ -78,7 +78,7 @@ func (c *OrderClient) CancelOrder(orderID string) (*orderpb.CancelOrderResponse,
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	return c.service.CancelOrder(
+	return c.orderService.CancelOrder(
 		ctx,
 		&orderpb.CancelOrderRequest{
 			OrderId: orderID,
@@ -104,7 +104,7 @@ func (c *OrderClient) GetOrderStats(
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	return c.service.GetOrderStatistics(
+	return c.orderService.GetOrderStatistics(
 		ctx,
 		&orderpb.GetOrderStatisticsRequest{
 			TraderId: traderID,
@@ -118,7 +118,7 @@ func (c *OrderClient) GetOrders(r *orderpb.GetOrdersRequest) (*orderpb.GetOrders
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	return c.service.GetOrders(
+	return c.orderService.GetOrders(
 		ctx,
 		r,
 	)
@@ -128,7 +128,7 @@ func (c *OrderClient) GetAllOrders(r *orderpb.GetAllOrdersRequest) (*orderpb.Get
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	return c.service.GetAllOrders(
+	return c.orderService.GetAllOrders(
 		ctx,
 		r,
 	)

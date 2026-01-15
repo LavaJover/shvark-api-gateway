@@ -11,7 +11,7 @@ import (
 
 type OrderClient struct {
 	conn *grpc.ClientConn
-	service orderpb.OrderServiceClient
+	orderService orderpb.OrderServiceClient
 	trafficService orderpb.TrafficServiceClient
 	bankDetailService orderpb.BankDetailServiceClient
 	teamRelationsService orderpb.TeamRelationsServiceClient
@@ -36,7 +36,7 @@ func NewOrderClient(addr string) (*OrderClient, error) {
 
 	return &OrderClient{
 		conn: conn,
-		service: orderpb.NewOrderServiceClient(conn),
+		orderService: orderpb.NewOrderServiceClient(conn),
 		trafficService: orderpb.NewTrafficServiceClient(conn),
 		bankDetailService: orderpb.NewBankDetailServiceClient(conn),
 		teamRelationsService: orderpb.NewTeamRelationsServiceClient(conn),

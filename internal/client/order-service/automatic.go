@@ -14,7 +14,7 @@ func (c *OrderClient) ProcessAutomaticPayment(ctx context.Context, grpcReq *orde
     timeoutCtx, cancel := context.WithTimeout(ctx, 10*time.Second)
     defer cancel()
 
-    return c.service.ProcessAutomaticPayment(timeoutCtx, grpcReq)
+    return c.orderService.ProcessAutomaticPayment(timeoutCtx, grpcReq)
 }
 
 // GetAutomaticLogs получает логи автоматики с фильтрацией
@@ -22,7 +22,7 @@ func (c *OrderClient) GetAutomaticLogs(ctx context.Context, req *orderpb.GetAuto
     timeoutCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
     defer cancel()
 
-    return c.service.GetAutomaticLogs(timeoutCtx, req)
+    return c.orderService.GetAutomaticLogs(timeoutCtx, req)
 }
 
 // GetAutomaticStats получает статистику автоматики
@@ -30,5 +30,5 @@ func (c *OrderClient) GetAutomaticStats(ctx context.Context, req *orderpb.GetAut
     ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
     defer cancel()
 
-    return c.service.GetAutomaticStats(ctx, req)
+    return c.orderService.GetAutomaticStats(ctx, req)
 }

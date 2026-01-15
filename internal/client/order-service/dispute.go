@@ -16,7 +16,7 @@ func (c *OrderClient) CreateDispute(
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	disputeResponse, err := c.service.CreateOrderDispute(
+	disputeResponse, err := c.orderService.CreateOrderDispute(
 		ctx,
 		&orderpb.CreateOrderDisputeRequest{
 			OrderId: orderID,
@@ -40,7 +40,7 @@ func (c *OrderClient) AcceptDispute(
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	_, err := c.service.AcceptOrderDispute(
+	_, err := c.orderService.AcceptOrderDispute(
 		ctx,
 		&orderpb.AcceptOrderDisputeRequest{
 			DisputeId: disputeID,
@@ -56,7 +56,7 @@ func (c *OrderClient) RejectDispute(
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	_, err := c.service.RejectOrderDispute(
+	_, err := c.orderService.RejectOrderDispute(
 		ctx,
 		&orderpb.RejectOrderDisputeRequest{
 			DisputeId: disputeID,
@@ -79,7 +79,7 @@ func (c *OrderClient) GetDisputeInfo(
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	disputeResponse, err := c.service.GetOrderDisputeInfo(
+	disputeResponse, err := c.orderService.GetOrderDisputeInfo(
 		ctx,
 		&orderpb.GetOrderDisputeInfoRequest{
 			DisputeId: disputeID,
@@ -103,7 +103,7 @@ func (c *OrderClient) FreeezeDispute(disputeID string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	_, err := c.service.FreezeOrderDispute(
+	_, err := c.orderService.FreezeOrderDispute(
 		ctx,
 		&orderpb.FreezeOrderDisputeRequest{
 			DisputeId: disputeID,
@@ -117,7 +117,7 @@ func (c *OrderClient) GetOrderDisputes(r *orderpb.GetOrderDisputesRequest) (*ord
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	return c.service.GetOrderDisputes(
+	return c.orderService.GetOrderDisputes(
 		ctx,
 		r,
 	)
