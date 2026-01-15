@@ -1,27 +1,28 @@
 package handlers
 
 import (
-    "context"
-    "log"
-    "net/http"
-    "strconv"
-    "time"
+	"context"
+	"log"
+	"net/http"
+	"strconv"
+	"time"
 
-    "github.com/LavaJover/shvark-api-gateway/internal/client"
-    orderpb "github.com/LavaJover/shvark-order-service/proto/gen/order"
-    "github.com/gin-gonic/gin"
-    "google.golang.org/grpc/codes"
-    "google.golang.org/grpc/status"
+	deviceservice "github.com/LavaJover/shvark-api-gateway/internal/client/device-service"
+	"github.com/LavaJover/shvark-api-gateway/internal/client/order-service"
+	orderpb "github.com/LavaJover/shvark-order-service/proto/gen/order"
+	"github.com/gin-gonic/gin"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type AutomaticHandler struct {
-    orderService *client.OrderClient
-	deviceService *client.DeviceClient
+    orderService *orderservice.OrderClient
+	deviceService *deviceservice.DeviceClient
 }
 
 func NewAutomaticHandler(
-	orderService *client.OrderClient,
-	deviceService *client.DeviceClient,
+	orderService *orderservice.OrderClient,
+	deviceService *deviceservice.DeviceClient,
 ) *AutomaticHandler {
     return &AutomaticHandler{
         orderService: orderService,

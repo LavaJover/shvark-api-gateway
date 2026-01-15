@@ -1,30 +1,22 @@
 package request
 
 type CreateTrafficRequest struct {
-	MerchantID 				string 		`json:"merchant_id"`
+	StoreID 				string 		`json:"store_id"`
 	TraderID 				string 		`json:"trader_id"`
 	TraderReward 			float64 	`json:"trader_reward"`
 	TraderPriority 			float64 	`json:"trader_priority"`
-	PlatformFee 			float64 	`json:"platform_fee"`
-	Enabled 				bool    	`json:"enabled"`
 	TrafficActivityParams 	TrafficActivityParams 	`json:"traffic_activity_params"`
 	TrafficAntifraudParams 	TrafficAntifraudParams 	`json:"traffic_antifraud_params"`
-	TrafficBusinessParams 	TrafficBusinessParams 	`json:"traffic_business_params"`
-	Name					string 	`json:"name"`
 }
 
 type Traffic struct {
 	ID 						string 					`json:"id"`
-	MerchantID 				string 					`json:"merchant_id"`
+	StoreID 				string 					`json:"store_id"`
 	TraderID 				string 					`json:"trader_id"`
 	TraderReward 			float64 				`json:"trader_reward"`
 	TraderPriority 			float64 				`json:"trader_priority"`
-	PlatformFee 			float64					`json:"platform_fee"`
-	Enabled 				bool 					`json:"enabled"`
 	TrafficActivityParams 	TrafficActivityParams 	`json:"traffic_activity_params"`
 	TrafficAntifraudParams 	TrafficAntifraudParams 	`json:"traffic_antifraud_params"`
-	TrafficBusinessParams 	TrafficBusinessParams 	`json:"traffic_business_params"`
-	Name					string 					`json:"name"`
 }
 
 type TrafficActivityParams struct {
@@ -36,8 +28,4 @@ type TrafficActivityParams struct {
 
 type TrafficAntifraudParams struct {
 	AntifraudRequired bool `json:"antifraud_required"`
-}
-
-type TrafficBusinessParams struct {
-	MerchantDealsDuration string `json:"merchant_deals_duration"`
 }

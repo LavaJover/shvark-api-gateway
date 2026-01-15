@@ -3,17 +3,17 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/LavaJover/shvark-api-gateway/internal/client"
+	"github.com/LavaJover/shvark-api-gateway/internal/client/order-service"
 	"github.com/LavaJover/shvark-api-gateway/internal/delivery/http/dto/device"
 	orderpb "github.com/LavaJover/shvark-order-service/proto/gen/order"
 	"github.com/gin-gonic/gin"
 )
 
 type DeviceHandler struct {
-	OrderClient *client.OrderClient
+	OrderClient *orderservice.OrderClient
 }
 
-func NewDeviceHandler(orderClient *client.OrderClient) (*DeviceHandler, error) {
+func NewDeviceHandler(orderClient *orderservice.OrderClient) (*DeviceHandler, error) {
 	return &DeviceHandler{
 		OrderClient: orderClient,
 	}, nil

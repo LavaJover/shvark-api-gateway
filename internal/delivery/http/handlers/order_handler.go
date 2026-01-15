@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/LavaJover/shvark-api-gateway/internal/client"
+	"github.com/LavaJover/shvark-api-gateway/internal/client/order-service"
 	"github.com/LavaJover/shvark-api-gateway/internal/common"
 	orderRequest "github.com/LavaJover/shvark-api-gateway/internal/delivery/http/dto/order/request"
 	orderResponse "github.com/LavaJover/shvark-api-gateway/internal/delivery/http/dto/order/response"
@@ -20,11 +20,11 @@ import (
 var _ = orderRequest.CreateOrderRequest{}
 
 type OrderHandler struct {
-	OrderClient *client.OrderClient
+	OrderClient *orderservice.OrderClient
 }
 
 func NewOrderHandler(addr string) (*OrderHandler, error) {
-	orderClient, err := client.NewOrderClient(addr)
+	orderClient, err := orderservice.NewOrderClient(addr)
 	if err != nil {
 		return nil, err
 	}

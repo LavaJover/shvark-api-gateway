@@ -4,17 +4,17 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/LavaJover/shvark-api-gateway/internal/client"
+	orderservice "github.com/LavaJover/shvark-api-gateway/internal/client/order-service"
 	orderpb "github.com/LavaJover/shvark-order-service/proto/gen/order"
 	"github.com/gin-gonic/gin"
 )
 
 type TrafficHandler struct {
-	orderClient *client.OrderClient
+	orderClient *orderservice.OrderClient
 }
 
 func NewTrafficHandler(
-	orderClient *client.OrderClient,
+	orderClient *orderservice.OrderClient,
 ) *TrafficHandler {
 	return &TrafficHandler{
 		orderClient: orderClient,
@@ -250,13 +250,10 @@ type TrafficUnlockedResponse struct {
 
 type TrafficRecordResponse struct {
     ID                  string  `json:"id"`
-    MerchantID          string  `json:"merchant_id"`
+    StoreID          string  `json:"store_id"`
     TraderID            string  `json:"trader_id"`
     TraderRewardPercent float64 `json:"trader_reward_percent"`
-    PlatformFee         float64 `json:"platform_fee"`
     TraderPriority      float64 `json:"trader_priority"`
-    Enabled             bool    `json:"enabled"`
-    Name                string  `json:"name"`
     ActivityParams      struct {
         MerchantUnlocked  bool `json:"merchant_unlocked"`
         TraderUnlocked    bool `json:"trader_unlocked"`
@@ -266,9 +263,6 @@ type TrafficRecordResponse struct {
     AntifraudParams struct {
         AntifraudRequired bool `json:"antifraud_required"`
     } `json:"antifraud_params"`
-    BusinessParams struct {
-        MerchantDealsDuration int64 `json:"merchant_deals_duration"`
-    } `json:"business_params"`
 }
 
 type GetTraderTrafficResponse struct {
@@ -305,13 +299,10 @@ func (h *TrafficHandler) GetTraderTraffic(c *gin.Context) {
     for _, rec := range response.Records {
         record := TrafficRecordResponse{
             ID:                  rec.Id,
-            MerchantID:          rec.MerchantId,
+            StoreID:          rec.StoreId,
             TraderID:            rec.TraderId,
             TraderRewardPercent: rec.TraderRewardPercent,
-            PlatformFee:         rec.PlatformFee,
             TraderPriority:      rec.TraderPriority,
-            Enabled:             rec.Enabled,
-            Name:                rec.Name,
         }
         
         if rec.ActivityParams != nil {
@@ -323,10 +314,6 @@ func (h *TrafficHandler) GetTraderTraffic(c *gin.Context) {
         
         if rec.AntifraudParams != nil {
             record.AntifraudParams.AntifraudRequired = rec.AntifraudParams.AntifraudRequired
-        }
-        
-        if rec.BusinessParams != nil {
-            record.BusinessParams.MerchantDealsDuration = rec.BusinessParams.MerchantDealsDuration.Seconds
         }
         
         records = append(records, record)

@@ -14,7 +14,8 @@ To-Do:
 import (
 	"net/http"
 
-	"github.com/LavaJover/shvark-api-gateway/internal/client"
+	ssoservice "github.com/LavaJover/shvark-api-gateway/internal/client/sso-service"
+	userservice "github.com/LavaJover/shvark-api-gateway/internal/client/user-service"
 	authRequest "github.com/LavaJover/shvark-api-gateway/internal/delivery/http/dto/auth/request"
 	authResponse "github.com/LavaJover/shvark-api-gateway/internal/delivery/http/dto/auth/response"
 	"github.com/gin-gonic/gin"
@@ -23,17 +24,17 @@ import (
 )
 
 type AuthHandler struct {
-	SSOClient *client.SSOClient
-	userClient *client.UserClient
+	SSOClient *ssoservice.SSOClient
+	userClient *userservice.UserClient
 }
 
 func NewAuthHandler(addr string, userAddr string) (*AuthHandler, error) {
-	ssoClient, err := client.NewSSOClient(addr)
+	ssoClient, err := ssoservice.NewSSOClient(addr)
 	if err != nil {
 		return nil, err
 	}
 
-	userClient, err := client.NewUserClient(userAddr)
+	userClient, err := userservice.NewUserClient(userAddr)
 	if err != nil {
 		return nil, err
 	}

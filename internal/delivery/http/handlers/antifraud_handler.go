@@ -5,7 +5,7 @@ import (
     "strconv"
     "time"
 
-    "github.com/LavaJover/shvark-api-gateway/internal/client"
+    "github.com/LavaJover/shvark-api-gateway/internal/client/order-service"
     antifraudpb "github.com/LavaJover/shvark-order-service/proto/gen/order"
     "github.com/gin-gonic/gin"
     "google.golang.org/protobuf/types/known/structpb"
@@ -13,10 +13,10 @@ import (
 )
 
 type AntiFraudHandler struct {
-    orderClient *client.OrderClient
+    orderClient *orderservice.OrderClient
 }
 
-func NewAntiFraudHandler(orderClient *client.OrderClient) *AntiFraudHandler {
+func NewAntiFraudHandler(orderClient *orderservice.OrderClient) *AntiFraudHandler {
     return &AntiFraudHandler{
         orderClient: orderClient,
     }

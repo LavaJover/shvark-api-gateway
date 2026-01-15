@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/LavaJover/shvark-api-gateway/internal/client"
+	"github.com/LavaJover/shvark-api-gateway/internal/client/order-service"
 	orderpb "github.com/LavaJover/shvark-order-service/proto/gen/order"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -15,11 +15,11 @@ import (
 )
 
 type BankingHandler struct {
-	OrderClient *client.OrderClient
+	OrderClient *orderservice.OrderClient
 }
 
 func NewBankingHandler(addr string) (*BankingHandler, error) {
-	orderClient, err := client.NewOrderClient(addr)
+	orderClient, err := orderservice.NewOrderClient(addr)
 	if err != nil {
 		return nil, err
 	}

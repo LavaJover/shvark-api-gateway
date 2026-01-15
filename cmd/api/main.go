@@ -4,17 +4,18 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/LavaJover/shvark-api-gateway/internal/client"
+	deviceservice "github.com/LavaJover/shvark-api-gateway/internal/client/device-service"
+	walletservice "github.com/LavaJover/shvark-api-gateway/internal/client/wallet-service"
 	"github.com/LavaJover/shvark-api-gateway/internal/config"
 	"github.com/LavaJover/shvark-api-gateway/internal/delivery/http/handlers"
 	"github.com/LavaJover/shvark-api-gateway/internal/delivery/http/middleware"
 	"github.com/LavaJover/shvark-api-gateway/internal/service"
+	_ "github.com/LavaJover/shvark-api-gateway/internal/service/deeplink_templates"
 	"github.com/LavaJover/shvark-api-gateway/pkg/docs"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-	_ "github.com/LavaJover/shvark-api-gateway/internal/service/deeplink_templates"
 )
 
 // @title 						Shvark API Gateway
@@ -67,7 +68,7 @@ func main() {
 		log.Printf("failed to init orders handler: %v\n", err)
 	}
 
-	deviceClient, err := client.NewDeviceClient(ordersAddr)
+	deviceClient, err := deviceservice.NewDeviceClient(ordersAddr)
 	if err != nil {
 		log.Printf("failed to init device client: %v\n", err)
 	}
@@ -78,7 +79,7 @@ func main() {
 	}
 
 	// init wallet client
-	walletHandler, err := handlers.NewWalletHandler(client.NewHTTPWalletClient(fmt.Sprintf("%s:%s", cfg.WalletService.Host, cfg.WalletService.Port)))
+	walletHandler, err := handlers.NewWalletHandler(walletservice.NewHTTPWalletClient(fmt.Sprintf("%s:%s", cfg.WalletService.Host, cfg.WalletService.Port)))
 	if err != nil {
 		log.Printf("failed to init wallet client")
 	}
@@ -194,7 +195,7 @@ func main() {
 	r.GET("/api/v1/payments/deeplink/specific", paymentHandler.GetSpecificDeeplink)
 
 	walletAddr := fmt.Sprintf("%s:%s", cfg.WalletService.Host, cfg.WalletService.Port)
-	walletClient := client.NewHTTPWalletClient(walletAddr)
+	walletClient := walletservice.NewHTTPWalletClient(walletAddr)
 
 	adminHandler := handlers.NewAdminHandler(
 		authHandler.SSOClient,

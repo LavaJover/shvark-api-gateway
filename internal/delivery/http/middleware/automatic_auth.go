@@ -5,11 +5,11 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/LavaJover/shvark-api-gateway/internal/client"
+	ssoservice "github.com/LavaJover/shvark-api-gateway/internal/client/sso-service"
 	"github.com/gin-gonic/gin"
 )
 
-func AutomaticAuthMiddleware(ssoClient *client.SSOClient) gin.HandlerFunc {
+func AutomaticAuthMiddleware(ssoClient *ssoservice.SSOClient) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		tokenHeader := c.GetHeader("Authorization")
 		slog.Info(tokenHeader)

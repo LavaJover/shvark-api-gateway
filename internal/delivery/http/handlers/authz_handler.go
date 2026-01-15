@@ -3,18 +3,18 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/LavaJover/shvark-api-gateway/internal/client"
-	"github.com/gin-gonic/gin"
+	authzservice "github.com/LavaJover/shvark-api-gateway/internal/client/authz-service"
 	authzRequest "github.com/LavaJover/shvark-api-gateway/internal/delivery/http/dto/authz/request"
 	authzResponse "github.com/LavaJover/shvark-api-gateway/internal/delivery/http/dto/authz/response"
+	"github.com/gin-gonic/gin"
 )
 
 type AuthzHandler struct {
-	AuthzClient *client.AuthzClient
+	AuthzClient *authzservice.AuthzClient
 }
 
 func NewAuthzhandler(addr string) (*AuthzHandler, error) {
-	authzClient, err := client.NewAuthzClient(addr)
+	authzClient, err := authzservice.NewAuthzClient(addr)
 	if err != nil {
 		return nil, err
 	}

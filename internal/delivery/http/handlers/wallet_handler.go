@@ -8,17 +8,17 @@ import (
 	"log/slog"
 	"net/http"
 
-	"github.com/LavaJover/shvark-api-gateway/internal/client"
+	walletservice "github.com/LavaJover/shvark-api-gateway/internal/client/wallet-service"
 	walletRequest "github.com/LavaJover/shvark-api-gateway/internal/delivery/http/dto/wallet/request"
 	walletResponse "github.com/LavaJover/shvark-api-gateway/internal/delivery/http/dto/wallet/response"
 	"github.com/gin-gonic/gin"
 )
 
 type WalletHandler struct {
-	WalletClient *client.HTTPWalletClient
+	WalletClient *walletservice.HTTPWalletClient
 }
 
-func NewWalletHandler(walletClient *client.HTTPWalletClient) (*WalletHandler, error) {
+func NewWalletHandler(walletClient *walletservice.HTTPWalletClient) (*WalletHandler, error) {
 	return &WalletHandler{
 		WalletClient: walletClient,
 	}, nil

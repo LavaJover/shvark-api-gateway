@@ -5,7 +5,10 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/LavaJover/shvark-api-gateway/internal/client"
+	"github.com/LavaJover/shvark-api-gateway/internal/client/order-service"
+	ssoservice "github.com/LavaJover/shvark-api-gateway/internal/client/sso-service"
+	userservice "github.com/LavaJover/shvark-api-gateway/internal/client/user-service"
+	walletservice "github.com/LavaJover/shvark-api-gateway/internal/client/wallet-service"
 	"github.com/LavaJover/shvark-api-gateway/internal/delivery/http/dto/merchant"
 	orderpb "github.com/LavaJover/shvark-order-service/proto/gen/order"
 	"github.com/gin-gonic/gin"
@@ -15,17 +18,17 @@ import (
 )
 
 type MerchantHandler struct {
-	OrderClient *client.OrderClient
-	WalletClient *client.HTTPWalletClient
-	UserClient *client.UserClient
-	SsoClient *client.SSOClient
+	OrderClient *orderservice.OrderClient
+	WalletClient *walletservice.HTTPWalletClient
+	UserClient *userservice.UserClient
+	SsoClient *ssoservice.SSOClient
 }
 
 func NewMerchanHandler(
-	orderClient *client.OrderClient,
-	walletClient *client.HTTPWalletClient,
-	userClient *client.UserClient,
-	ssoClient *client.SSOClient,
+	orderClient *orderservice.OrderClient,
+	walletClient *walletservice.HTTPWalletClient,
+	userClient *userservice.UserClient,
+	ssoClient *ssoservice.SSOClient,
 ) *MerchantHandler {
 	return &MerchantHandler{
 		OrderClient: orderClient,

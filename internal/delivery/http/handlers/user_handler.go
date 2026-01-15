@@ -3,18 +3,18 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/LavaJover/shvark-api-gateway/internal/client"
+	userservice "github.com/LavaJover/shvark-api-gateway/internal/client/user-service"
+	userResponse "github.com/LavaJover/shvark-api-gateway/internal/delivery/http/dto/user/response"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	userResponse "github.com/LavaJover/shvark-api-gateway/internal/delivery/http/dto/user/response"
 )
 
 type UserHandler struct {
-	UserClient *client.UserClient
+	UserClient *userservice.UserClient
 }
 
 func NewUserHandler(addr string) (*UserHandler, error) {
-	userClient, err := client.NewUserClient(addr)
+	userClient, err := userservice.NewUserClient(addr)
 	if err != nil {
 		return nil, err
 	}

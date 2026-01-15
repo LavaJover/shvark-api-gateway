@@ -1,23 +1,23 @@
 package service
 
 import (
-    "bytes"
-    "fmt"
-    "html/template"
-    "log"
-    "time"
+	"bytes"
+	"fmt"
+	"html/template"
+	"log"
+	"time"
 
-    "github.com/LavaJover/shvark-api-gateway/internal/client"
-    "github.com/LavaJover/shvark-api-gateway/internal/domain"
-    "github.com/LavaJover/shvark-api-gateway/internal/service/deeplink_templates"
-    orderpb "github.com/LavaJover/shvark-order-service/proto/gen/order"
+	orderservice "github.com/LavaJover/shvark-api-gateway/internal/client/order-service"
+	"github.com/LavaJover/shvark-api-gateway/internal/domain"
+	"github.com/LavaJover/shvark-api-gateway/internal/service/deeplink_templates"
+	orderpb "github.com/LavaJover/shvark-order-service/proto/gen/order"
 )
 
 type DeeplinkService struct {
-    orderClient *client.OrderClient
+    orderClient *orderservice.OrderClient
 }
 
-func NewDeeplinkService(orderClient *client.OrderClient) *DeeplinkService {
+func NewDeeplinkService(orderClient *orderservice.OrderClient) *DeeplinkService {
     return &DeeplinkService{
         orderClient: orderClient,
     }

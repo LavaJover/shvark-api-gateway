@@ -4,30 +4,33 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/LavaJover/shvark-api-gateway/internal/client"
+	authzservice "github.com/LavaJover/shvark-api-gateway/internal/client/authz-service"
+	"github.com/LavaJover/shvark-api-gateway/internal/client/order-service"
+	ssoservice "github.com/LavaJover/shvark-api-gateway/internal/client/sso-service"
+	userservice "github.com/LavaJover/shvark-api-gateway/internal/client/user-service"
+	walletservice "github.com/LavaJover/shvark-api-gateway/internal/client/wallet-service"
 	adminRequest "github.com/LavaJover/shvark-api-gateway/internal/delivery/http/dto/admin/request"
 	adminResponse "github.com/LavaJover/shvark-api-gateway/internal/delivery/http/dto/admin/response"
 	orderResponse "github.com/LavaJover/shvark-api-gateway/internal/delivery/http/dto/order/response"
 	orderpb "github.com/LavaJover/shvark-order-service/proto/gen/order"
 	userpb "github.com/LavaJover/shvark-user-service/proto/gen"
 	"github.com/gin-gonic/gin"
-	"google.golang.org/protobuf/types/known/durationpb"
 )
 
 type AdminHandler struct {
-	SSOClient *client.SSOClient
-	AuthzClient *client.AuthzClient
-	OrderClient *client.OrderClient
-	WalletClient *client.HTTPWalletClient
-	UserClient *client.UserClient
+	SSOClient *ssoservice.SSOClient
+	AuthzClient *authzservice.AuthzClient
+	OrderClient *orderservice.OrderClient
+	WalletClient *walletservice.HTTPWalletClient
+	UserClient *userservice.UserClient
 }
 
 func NewAdminHandler(
-	ssoClient *client.SSOClient,
-	authzClient *client.AuthzClient,
-	orderClient *client.OrderClient,
-	walletClient *client.HTTPWalletClient,
-	userClient *client.UserClient,
+	ssoClient *ssoservice.SSOClient,
+	authzClient *authzservice.AuthzClient,
+	orderClient *orderservice.OrderClient,
+	walletClient *walletservice.HTTPWalletClient,
+	userClient *userservice.UserClient,
 ) *AdminHandler {
 	return &AdminHandler{
 		SSOClient: ssoClient,
@@ -150,20 +153,12 @@ func (h *AdminHandler) CreateTraffic(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, ErrorResponse{Error: err.Error()})
 		return
 	}
-	duration, err := time.ParseDuration(request.TrafficBusinessParams.MerchantDealsDuration)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "failed to parse deals time parameter"})
-		return
-	}
 
-	err = h.OrderClient.AddTraffic(&orderpb.AddTrafficRequest{
-		MerchantId: request.MerchantID,
+	err := h.OrderClient.AddTraffic(&orderpb.AddTrafficRequest{
+		StoreId: request.StoreID,
 		TraderId: request.TraderID,
 		TraderRewardPercent: request.TraderReward,
 		TraderPriority: request.TraderPriority,
-		Enabled: request.Enabled,
-		PlatformFee: request.PlatformFee,
-		Name: request.Name,
 		ActivityParams: &orderpb.TrafficActivityParameters{
 			MerchantUnlocked: request.TrafficActivityParams.MerchantUnlocked,
 			TraderUnlocked: request.TrafficActivityParams.TraderUnlocked,
@@ -172,9 +167,6 @@ func (h *AdminHandler) CreateTraffic(c *gin.Context) {
 		},
 		AntifraudParams: &orderpb.TrafficAntifraudParameters{
 			AntifraudRequired: request.TrafficAntifraudParams.AntifraudRequired,
-		},
-		BusinessParams: &orderpb.TrafficBusinessParameters{
-			MerchantDealsDuration: durationpb.New(duration),
 		},
 	})
 	if err != nil {
@@ -207,13 +199,10 @@ func (h *AdminHandler) EditTraffic(c *gin.Context) {
 	// Преобразуем HTTP запрос в gRPC запрос
 	editRequest := &orderpb.EditTrafficRequest{
 		Id:            request.ID,
-		MerchantId:    request.MerchantID,
+		StoreId:    request.StoreID,
 		TraderId:      request.TraderID,
 		TraderReward:  request.TraderReward,
-		TraderProirity: request.TraderPriority,
-		PlatformFee:   request.PlatformFee,
-		Enabled:       request.Enabled,
-		Name: 	request.Name,
+		TraderPriority: request.TraderPriority,
 	}
 
 	// Преобразуем вложенные структуры, если они переданы
@@ -229,17 +218,6 @@ func (h *AdminHandler) EditTraffic(c *gin.Context) {
 	if request.AntifraudParams != nil {
 		editRequest.AntifraudParams = &orderpb.TrafficAntifraudParameters{
 			AntifraudRequired: request.AntifraudParams.AntifraudRequired,
-		}
-	}
-
-	if request.BusinessParams != nil {
-		duration, err := time.ParseDuration(request.BusinessParams.MerchantDealsDuration)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "failed to parse deals time parameter"})
-			return
-		}
-		editRequest.BusinessParams = &orderpb.TrafficBusinessParameters{
-			MerchantDealsDuration: durationpb.New(duration),
 		}
 	}
 
@@ -308,13 +286,10 @@ func (h *AdminHandler) GetTrafficRecords(c *gin.Context) {
 	for i, trafficResp := range trafficResponse {
 		trafficRecords[i] = adminResponse.Traffic{
 			ID: trafficResp.Id,
-			MerchantID: trafficResp.MerchantId,
+			StoreID: trafficResp.StoreId,
 			TraderID: trafficResp.TraderId,
 			TraderRewardPercent: trafficResp.TraderRewardPercent,
-			PlatformFee: trafficResp.PlatformFee,
 			TraderPriority: trafficResp.TraderPriority,
-			Enabled: trafficResp.Enabled,
-			Name: trafficResp.Name,
 			ActivityParams: adminResponse.TrafficActivityParams{
 				MerchantUnlocked: trafficResp.ActivityParams.MerchantUnlocked,
 				TraderUnlocked: trafficResp.ActivityParams.TraderUnlocked,
@@ -323,9 +298,6 @@ func (h *AdminHandler) GetTrafficRecords(c *gin.Context) {
 			},
 			AntifraudParams: adminResponse.TrafficAntifraudParams{
 				AntifraudRequired: trafficResp.AntifraudParams.AntifraudRequired,
-			},
-			BusinessParams: adminResponse.TrafficBusinessParams{
-				MerchantDealsDuration: trafficResp.BusinessParams.MerchantDealsDuration.AsDuration().String(),
 			},
 		}
 	}
@@ -638,7 +610,7 @@ func (h *AdminHandler) SetWithdrawalRules(c *gin.Context) {
 		return
 	}
 
-	walletRequest := client.SetWithdrawalRulesRequest{
+	walletRequest := walletservice.SetWithdrawalRulesRequest{
 		TraderID: request.UserID,
 		FixedFee: request.FixedFee,
 		MinAmount: request.MinAmount,

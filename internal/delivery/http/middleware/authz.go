@@ -3,11 +3,11 @@ package middleware
 import (
 	"net/http"
 
-	"github.com/LavaJover/shvark-api-gateway/internal/client"
+	authzservice "github.com/LavaJover/shvark-api-gateway/internal/client/authz-service"
 	"github.com/gin-gonic/gin"
 )
 
-func RequirePermission(authzClient *client.AuthzClient, object string, action string) gin.HandlerFunc {
+func RequirePermission(authzClient *authzservice.AuthzClient, object string, action string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		userIDAny, exists := c.Get("userID")
 		if !exists {
