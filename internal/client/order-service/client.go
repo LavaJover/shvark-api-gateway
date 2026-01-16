@@ -17,6 +17,7 @@ type OrderClient struct {
 	teamRelationsService orderpb.TeamRelationsServiceClient
 	deviceService orderpb.DeviceServiceClient
 	antifraudService orderpb.AntiFraudServiceClient
+	storeService orderpb.StoreServiceClient
 }
 
 func NewOrderClient(addr string) (*OrderClient, error) {
@@ -42,5 +43,6 @@ func NewOrderClient(addr string) (*OrderClient, error) {
 		teamRelationsService: orderpb.NewTeamRelationsServiceClient(conn),
 		deviceService: orderpb.NewDeviceServiceClient(conn),
 		antifraudService: orderpb.NewAntiFraudServiceClient(conn),
+		storeService: orderpb.NewStoreServiceClient(conn),
 	}, nil
 }

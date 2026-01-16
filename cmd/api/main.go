@@ -36,7 +36,7 @@ func main() {
 	cfg := config.MustLoad()
 
 	// setup swagger based on development environment
-	docs.SwaggerInfo.Host = fmt.Sprintf("%s:%s",  cfg.SwaggerConfig.Host, cfg.SwaggerConfig.Port)
+	docs.SwaggerInfo.Host = fmt.Sprintf("%s:%s", cfg.SwaggerConfig.Host, cfg.SwaggerConfig.Port)
 	docs.SwaggerInfo.Schemes = []string{cfg.SwaggerConfig.Schemes, "https"}
 	docs.SwaggerInfo.BasePath = cfg.SwaggerConfig.BasePath
 
@@ -99,6 +99,15 @@ func main() {
 		log.Printf("failed to init payment handler")
 	}
 
+	// init store handler
+	// Создаем клиент для StoreService (используем тот же адрес, что и для OrderService)
+	// В реальности вам нужно создать клиент для StoreService, аналогичный OrderClient
+	// storeClient, err := orderservice.NewStoreClient(ordersAddr) // Предполагаем, что такая функция существует
+	// if err != nil {
+	// 	log.Printf("failed to init store client: %v\n", err)
+	// }
+	storeHandler := handlers.NewStoreHandler(ordersHandler.OrderClient)
+
 	r := gin.Default()
 
 	// use middleware
@@ -157,6 +166,42 @@ func main() {
 		orderGroup.GET("/merchant/:id", ordersHandler.GetOrderByMerchantOrderID)
 		orderGroup.GET("/statistics", ordersHandler.GetOrderStats)
 		orderGroup.GET("/all", ordersHandler.GetAllOrders)
+	}
+
+	// store-service
+	storeGroup := r.Group("/api/v1/stores", middleware.AuthMiddleware(authHandler.SSOClient))
+	{
+		storeGroup.POST("", storeHandler.CreateStore)
+		storeGroup.GET("/:store_id", storeHandler.GetStore)
+		storeGroup.PUT("/:store_id", storeHandler.UpdateStore)
+		storeGroup.DELETE("/:store_id", storeHandler.DeleteStore)
+		storeGroup.POST("/list", storeHandler.ListStores)
+		storeGroup.GET("/:store_id/traffics", storeHandler.GetStoreWithTraffics)
+		storeGroup.GET("/check-name", storeHandler.CheckStoreNameUnique)
+		storeGroup.GET("/:store_id/validate-traffic", storeHandler.ValidateStoreForTraffic)
+		storeGroup.POST("/:store_id/toggle-status", storeHandler.ToggleStoreStatus)
+		storeGroup.POST("/:store_id/enable", storeHandler.EnableStore)
+		storeGroup.POST("/:store_id/disable", storeHandler.DisableStore)
+		storeGroup.POST("/bulk-update-status", storeHandler.BulkUpdateStoresStatus)
+		storeGroup.POST("/search", storeHandler.SearchStores)
+		storeGroup.GET("/active", storeHandler.GetActiveStores)
+		storeGroup.GET("/:store_id/metrics", storeHandler.GetStoreMetrics)
+		storeGroup.POST("/:store_id/calculate-metrics", storeHandler.CalculateStoreMetrics)
+		storeGroup.POST("/batch", storeHandler.BatchGetStores)
+		storeGroup.GET("/health", storeHandler.HealthCheck)
+	}
+
+	// Дополнительные маршруты для связи с другими сущностями
+	// Для связи трафика со сторами
+	trafficStoreGroup := r.Group("/api/v1/traffics", middleware.AuthMiddleware(authHandler.SSOClient))
+	{
+		trafficStoreGroup.GET("/:traffic_id/store", storeHandler.GetStoreByTrafficId)
+	}
+
+	// Для получения сторов по мерчанту
+	merchantStoreGroup := r.Group("/api/v1/merchants", middleware.AuthMiddleware(authHandler.SSOClient))
+	{
+		merchantStoreGroup.GET("/:merchant_id/stores", storeHandler.GetStoresByMerchant)
 	}
 
 	// wallet-service
@@ -310,5 +355,6 @@ func main() {
 		antifraud.POST("/traders/:traderID/reset-grace-period", antiFraudHandler.ResetGracePeriod)
 		antifraud.GET("/traders/:traderID/unlock-history", antiFraudHandler.GetUnlockHistory) // НОВОЕ
     }
+
 	r.Run(":8080")
 }

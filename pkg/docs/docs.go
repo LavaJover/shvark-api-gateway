@@ -3252,6 +3252,79 @@ const docTemplate = `{
                 }
             }
         },
+        "/merchants/{merchant_id}/stores": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Возвращает список магазинов, принадлежащих указанному мерчанту",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "store"
+                ],
+                "summary": "Получение магазинов мерчанта",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID мерчанта",
+                        "name": "merchant_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "Номер страницы",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 20,
+                        "description": "Лимит записей",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "Только активные магазины",
+                        "name": "only_active",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.GetStoresByMerchantResponseHTTP"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponseHTTP"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponseHTTP"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponseHTTP"
+                        }
+                    }
+                }
+            }
+        },
         "/orders": {
             "post": {
                 "security": [
@@ -4619,50 +4692,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/profiles/{uuid}": {
-            "get": {
-                "description": "Get profile by uuid",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "profiles"
-                ],
-                "summary": "Get profile by uuid",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Profile uuid",
-                        "name": "uuid",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/response.GetProfileByIDResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/handlers.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/handlers.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
         "/rbac/permissions": {
             "post": {
                 "security": [
@@ -4955,6 +4984,984 @@ const docTemplate = `{
                         "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/stores": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Создает новый магазин с указанными параметрами",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "store"
+                ],
+                "summary": "Создание нового магазина",
+                "parameters": [
+                    {
+                        "description": "Параметры создания магазина",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handlers.CreateStoreRequestHTTP"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.CreateStoreResponseHTTP"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponseHTTP"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponseHTTP"
+                        }
+                    }
+                }
+            }
+        },
+        "/stores/active": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Возвращает список активных магазинов мерчанта",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "store"
+                ],
+                "summary": "Получение активных магазинов",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID мерчанта",
+                        "name": "merchant_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.GetActiveStoresResponseHTTP"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponseHTTP"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponseHTTP"
+                        }
+                    }
+                }
+            }
+        },
+        "/stores/batch": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Возвращает информацию о нескольких магазинах по их ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "store"
+                ],
+                "summary": "Пакетное получение магазинов",
+                "parameters": [
+                    {
+                        "description": "Список ID магазинов",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handlers.BatchGetStoresRequestHTTP"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.BatchGetStoresResponseHTTP"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponseHTTP"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponseHTTP"
+                        }
+                    }
+                }
+            }
+        },
+        "/stores/bulk-update-status": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Включает или выключает несколько магазинов одновременно",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "store"
+                ],
+                "summary": "Массовое обновление статуса магазинов",
+                "parameters": [
+                    {
+                        "description": "Параметры массового обновления",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handlers.BulkUpdateStoresStatusRequestHTTP"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.BulkUpdateStoresStatusResponseHTTP"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponseHTTP"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponseHTTP"
+                        }
+                    }
+                }
+            }
+        },
+        "/stores/check-name": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Проверяет, уникально ли имя магазина для указанного мерчанта",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "store"
+                ],
+                "summary": "Проверка уникальности имени магазина",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID мерчанта",
+                        "name": "merchant_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Имя магазина",
+                        "name": "store_name",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.CheckStoreNameUniqueResponseHTTP"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponseHTTP"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponseHTTP"
+                        }
+                    }
+                }
+            }
+        },
+        "/stores/health": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Возвращает статус здоровья сервиса магазинов",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "store"
+                ],
+                "summary": "Проверка здоровья сервиса",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.HealthCheckResponseHTTP"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponseHTTP"
+                        }
+                    }
+                }
+            }
+        },
+        "/stores/list": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Возвращает список магазинов с пагинацией и фильтрацией",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "store"
+                ],
+                "summary": "Список магазинов",
+                "parameters": [
+                    {
+                        "description": "Параметры пагинации и фильтрации",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ListStoresRequestHTTP"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ListStoresResponseHTTP"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponseHTTP"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponseHTTP"
+                        }
+                    }
+                }
+            }
+        },
+        "/stores/search": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Поиск магазинов с расширенными фильтрами, сортировкой и пагинацией",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "store"
+                ],
+                "summary": "Поиск магазинов",
+                "parameters": [
+                    {
+                        "description": "Параметры поиска",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handlers.SearchStoresRequestHTTP"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.SearchStoresResponseHTTP"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponseHTTP"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponseHTTP"
+                        }
+                    }
+                }
+            }
+        },
+        "/stores/{store_id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Возвращает полную информацию о магазине по ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "store"
+                ],
+                "summary": "Получение информации о магазине",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID магазина",
+                        "name": "store_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.GetStoreResponseHTTP"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponseHTTP"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponseHTTP"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponseHTTP"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Обновляет параметры существующего магазина",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "store"
+                ],
+                "summary": "Обновление информации о магазине",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID магазина",
+                        "name": "store_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Параметры обновления",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handlers.UpdateStoreRequestHTTP"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.UpdateStoreResponseHTTP"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponseHTTP"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponseHTTP"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponseHTTP"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Удаляет магазин по ID с возможностью принудительного удаления",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "store"
+                ],
+                "summary": "Удаление магазина",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID магазина",
+                        "name": "store_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "Принудительное удаление",
+                        "name": "force",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.DeleteStoreResponseHTTP"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponseHTTP"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponseHTTP"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponseHTTP"
+                        }
+                    }
+                }
+            }
+        },
+        "/stores/{store_id}/calculate-metrics": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Запускает расчет метрик магазина в реальном времени",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "store"
+                ],
+                "summary": "Расчет метрик магазина",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID магазина",
+                        "name": "store_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.CalculateStoreMetricsResponseHTTP"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponseHTTP"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponseHTTP"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponseHTTP"
+                        }
+                    }
+                }
+            }
+        },
+        "/stores/{store_id}/disable": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Отключает магазин (устанавливает enabled=false)",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "store"
+                ],
+                "summary": "Отключение магазина",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID магазина",
+                        "name": "store_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "Принудительное отключение",
+                        "name": "force",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.DisableStoreResponseHTTP"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponseHTTP"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponseHTTP"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponseHTTP"
+                        }
+                    }
+                }
+            }
+        },
+        "/stores/{store_id}/enable": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Включает магазин (устанавливает enabled=true)",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "store"
+                ],
+                "summary": "Включение магазина",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID магазина",
+                        "name": "store_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.EnableStoreResponseHTTP"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponseHTTP"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponseHTTP"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponseHTTP"
+                        }
+                    }
+                }
+            }
+        },
+        "/stores/{store_id}/metrics": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Возвращает метрики магазина за указанный период",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "store"
+                ],
+                "summary": "Получение метрик магазина",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID магазина",
+                        "name": "store_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Начало периода (RFC3339)",
+                        "name": "period_from",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Конец периода (RFC3339)",
+                        "name": "period_to",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.GetStoreMetricsResponseHTTP"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponseHTTP"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponseHTTP"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponseHTTP"
+                        }
+                    }
+                }
+            }
+        },
+        "/stores/{store_id}/toggle-status": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Включает или выключает магазин",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "store"
+                ],
+                "summary": "Переключение статуса магазина",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID магазина",
+                        "name": "store_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Параметры переключения статуса",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ToggleStoreStatusRequestHTTP"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ToggleStoreStatusResponseHTTP"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponseHTTP"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponseHTTP"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponseHTTP"
+                        }
+                    }
+                }
+            }
+        },
+        "/stores/{store_id}/traffics": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Возвращает информацию о магазине вместе с его трафиками",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "store"
+                ],
+                "summary": "Получение магазина с трафиками",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID магазина",
+                        "name": "store_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "Номер страницы",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 20,
+                        "description": "Лимит записей",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Фильтр по трейдеру",
+                        "name": "trader_filter",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "Включить детали трафика",
+                        "name": "include_traffic_details",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.GetStoreWithTrafficsResponseHTTP"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponseHTTP"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponseHTTP"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponseHTTP"
+                        }
+                    }
+                }
+            }
+        },
+        "/stores/{store_id}/validate-traffic": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Проверяет, готов ли магазин к приему трафика",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "store"
+                ],
+                "summary": "Валидация магазина для трафика",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID магазина",
+                        "name": "store_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ValidateStoreForTrafficResponseHTTP"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponseHTTP"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponseHTTP"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponseHTTP"
                         }
                     }
                 }
@@ -5277,6 +6284,58 @@ const docTemplate = `{
                         "description": "Bad Gateway",
                         "schema": {
                             "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/traffics/{traffic_id}/store": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Возвращает информацию о магазине, к которому относится указанный трафик",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "store"
+                ],
+                "summary": "Получение магазина по ID трафика",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID трафика",
+                        "name": "traffic_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.GetStoreByTrafficIdResponseHTTP"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponseHTTP"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponseHTTP"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponseHTTP"
                         }
                     }
                 }
@@ -6574,6 +7633,91 @@ const docTemplate = `{
                 }
             }
         },
+        "handlers.BatchGetStoresRequestHTTP": {
+            "type": "object",
+            "required": [
+                "store_ids"
+            ],
+            "properties": {
+                "store_ids": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "handlers.BatchGetStoresResponseHTTP": {
+            "type": "object",
+            "properties": {
+                "not_found_ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "stores": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/handlers.StoreHTTP"
+                    }
+                }
+            }
+        },
+        "handlers.BulkUpdateStoresStatusRequestHTTP": {
+            "type": "object",
+            "required": [
+                "enabled",
+                "store_ids"
+            ],
+            "properties": {
+                "enabled": {
+                    "type": "boolean"
+                },
+                "store_ids": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "handlers.BulkUpdateStoresStatusResponseHTTP": {
+            "type": "object",
+            "properties": {
+                "errors": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "failed_count": {
+                    "type": "integer"
+                },
+                "failed_store_ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "updated_count": {
+                    "type": "integer"
+                }
+            }
+        },
+        "handlers.CalculateStoreMetricsResponseHTTP": {
+            "type": "object",
+            "properties": {
+                "calculated_at": {
+                    "type": "string"
+                },
+                "metrics": {
+                    "$ref": "#/definitions/handlers.StoreMetricsHTTP"
+                }
+            }
+        },
         "handlers.CheckResultResponse": {
             "type": "object",
             "properties": {
@@ -6588,6 +7732,23 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "rule_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.CheckStoreNameUniqueResponseHTTP": {
+            "type": "object",
+            "properties": {
+                "is_unique": {
+                    "type": "boolean"
+                },
+                "merchant_id": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "store_name": {
                     "type": "string"
                 }
             }
@@ -6649,6 +7810,54 @@ const docTemplate = `{
                 }
             }
         },
+        "handlers.CreateStoreRequestHTTP": {
+            "type": "object",
+            "required": [
+                "merchant_id",
+                "merchant_username",
+                "name",
+                "traffic_type"
+            ],
+            "properties": {
+                "deal_created_duration": {
+                    "type": "string"
+                },
+                "deal_pending_duration": {
+                    "description": "e.g., \"10s\", \"1h\"",
+                    "type": "string"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "merchant_id": {
+                    "type": "string"
+                },
+                "merchant_username": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 100,
+                    "minLength": 3
+                },
+                "platform_fee": {
+                    "type": "number",
+                    "maximum": 100,
+                    "minimum": 0
+                },
+                "traffic_type": {
+                    "$ref": "#/definitions/handlers.StoreTrafficType"
+                }
+            }
+        },
+        "handlers.CreateStoreResponseHTTP": {
+            "type": "object",
+            "properties": {
+                "store": {
+                    "$ref": "#/definitions/handlers.StoreHTTP"
+                }
+            }
+        },
         "handlers.DeleteRuleResponse": {
             "type": "object",
             "properties": {
@@ -6660,12 +7869,73 @@ const docTemplate = `{
                 }
             }
         },
+        "handlers.DeleteStoreResponseHTTP": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "handlers.DisableStoreResponseHTTP": {
+            "type": "object",
+            "properties": {
+                "store": {
+                    "$ref": "#/definitions/handlers.StoreHTTP"
+                }
+            }
+        },
+        "handlers.EnableStoreResponseHTTP": {
+            "type": "object",
+            "properties": {
+                "store": {
+                    "$ref": "#/definitions/handlers.StoreHTTP"
+                }
+            }
+        },
         "handlers.ErrorResponse": {
             "type": "object",
             "properties": {
                 "error": {
                     "type": "string",
                     "example": "invalid data"
+                }
+            }
+        },
+        "handlers.ErrorResponseHTTP": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "details": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "timestamp": {
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.GetActiveStoresResponseHTTP": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                },
+                "merchant_id": {
+                    "type": "string"
+                },
+                "stores": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/handlers.StoreHTTP"
+                    }
                 }
             }
         },
@@ -6735,6 +8005,76 @@ const docTemplate = `{
                 }
             }
         },
+        "handlers.GetStoreByTrafficIdResponseHTTP": {
+            "type": "object",
+            "properties": {
+                "store": {
+                    "$ref": "#/definitions/handlers.StoreHTTP"
+                }
+            }
+        },
+        "handlers.GetStoreMetricsResponseHTTP": {
+            "type": "object",
+            "properties": {
+                "metrics": {
+                    "$ref": "#/definitions/handlers.StoreMetricsHTTP"
+                }
+            }
+        },
+        "handlers.GetStoreResponseHTTP": {
+            "type": "object",
+            "properties": {
+                "store": {
+                    "$ref": "#/definitions/handlers.StoreHTTP"
+                }
+            }
+        },
+        "handlers.GetStoreWithTrafficsResponseHTTP": {
+            "type": "object",
+            "properties": {
+                "pagination_info": {
+                    "$ref": "#/definitions/handlers.PaginationInfoHTTP"
+                },
+                "store": {
+                    "$ref": "#/definitions/handlers.StoreHTTP"
+                },
+                "total_traffics": {
+                    "type": "integer"
+                },
+                "trader_filter": {
+                    "type": "string"
+                },
+                "traffic_records": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/handlers.TrafficRecordHTTP"
+                    }
+                }
+            }
+        },
+        "handlers.GetStoresByMerchantResponseHTTP": {
+            "type": "object",
+            "properties": {
+                "active_stores": {
+                    "type": "integer"
+                },
+                "merchant_id": {
+                    "type": "string"
+                },
+                "pagination_info": {
+                    "$ref": "#/definitions/handlers.PaginationInfoHTTP"
+                },
+                "stores": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/handlers.StoreHTTP"
+                    }
+                },
+                "total_stores": {
+                    "type": "integer"
+                }
+            }
+        },
         "handlers.GetTraderAuditHistoryResponse": {
             "type": "object",
             "properties": {
@@ -6764,6 +8104,51 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/handlers.UnlockHistoryItem"
+                    }
+                }
+            }
+        },
+        "handlers.HealthCheckResponseHTTP": {
+            "type": "object",
+            "properties": {
+                "services": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "status": {
+                    "type": "string"
+                },
+                "timestamp": {
+                    "type": "string"
+                },
+                "version": {
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.ListStoresRequestHTTP": {
+            "type": "object",
+            "properties": {
+                "filters": {
+                    "$ref": "#/definitions/handlers.StoreFiltersHTTP"
+                },
+                "pagination": {
+                    "$ref": "#/definitions/handlers.PaginationParamsHTTP"
+                }
+            }
+        },
+        "handlers.ListStoresResponseHTTP": {
+            "type": "object",
+            "properties": {
+                "pagination_info": {
+                    "$ref": "#/definitions/handlers.PaginationInfoHTTP"
+                },
+                "stores": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/handlers.StoreHTTP"
                     }
                 }
             }
@@ -6817,6 +8202,17 @@ const docTemplate = `{
                 },
                 "success": {
                     "type": "boolean"
+                }
+            }
+        },
+        "handlers.MerchantUserInfoHTTP": {
+            "type": "object",
+            "properties": {
+                "merchant_id": {
+                    "type": "string"
+                },
+                "merchant_username": {
+                    "type": "string"
                 }
             }
         },
@@ -6881,6 +8277,43 @@ const docTemplate = `{
                 },
                 "unpaged": {
                     "type": "boolean"
+                }
+            }
+        },
+        "handlers.PaginationInfoHTTP": {
+            "type": "object",
+            "properties": {
+                "current_page": {
+                    "type": "integer"
+                },
+                "has_next": {
+                    "type": "boolean"
+                },
+                "has_prev": {
+                    "type": "boolean"
+                },
+                "limit": {
+                    "type": "integer"
+                },
+                "total_items": {
+                    "type": "integer"
+                },
+                "total_pages": {
+                    "type": "integer"
+                }
+            }
+        },
+        "handlers.PaginationParamsHTTP": {
+            "type": "object",
+            "properties": {
+                "limit": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 1
+                },
+                "page": {
+                    "type": "integer",
+                    "minimum": 1
                 }
             }
         },
@@ -6973,6 +8406,49 @@ const docTemplate = `{
                 }
             }
         },
+        "handlers.SearchStoresRequestHTTP": {
+            "type": "object",
+            "properties": {
+                "filters": {
+                    "$ref": "#/definitions/handlers.StoreFiltersHTTP"
+                },
+                "pagination": {
+                    "$ref": "#/definitions/handlers.PaginationParamsHTTP"
+                },
+                "search_query": {
+                    "type": "string"
+                },
+                "sort_by": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "sort_desc": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "handlers.SearchStoresResponseHTTP": {
+            "type": "object",
+            "properties": {
+                "applied_filters": {
+                    "$ref": "#/definitions/handlers.StoreFiltersHTTP"
+                },
+                "pagination_info": {
+                    "$ref": "#/definitions/handlers.PaginationInfoHTTP"
+                },
+                "search_query": {
+                    "type": "string"
+                },
+                "stores": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/handlers.StoreHTTP"
+                    }
+                }
+            }
+        },
         "handlers.Sort": {
             "type": "object",
             "properties": {
@@ -6984,6 +8460,239 @@ const docTemplate = `{
                 },
                 "unsorted": {
                     "type": "boolean"
+                }
+            }
+        },
+        "handlers.StoreBusinessParamsHTTP": {
+            "type": "object",
+            "properties": {
+                "deal_created_duration": {
+                    "type": "string"
+                },
+                "deal_pending_duration": {
+                    "description": "e.g., \"10s\", \"1h\"",
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "platform_fee": {
+                    "type": "number"
+                },
+                "traffic_type": {
+                    "$ref": "#/definitions/handlers.StoreTrafficType"
+                }
+            }
+        },
+        "handlers.StoreFiltersHTTP": {
+            "type": "object",
+            "properties": {
+                "created_from": {
+                    "type": "string"
+                },
+                "created_to": {
+                    "type": "string"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "merchant_id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "store_ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "traffic_type": {
+                    "$ref": "#/definitions/handlers.StoreTrafficType"
+                }
+            }
+        },
+        "handlers.StoreHTTP": {
+            "type": "object",
+            "properties": {
+                "business_params": {
+                    "$ref": "#/definitions/handlers.StoreBusinessParamsHTTP"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "deleted_at": {
+                    "type": "string"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "merchant_id": {
+                    "type": "string"
+                },
+                "merchant_info": {
+                    "$ref": "#/definitions/handlers.MerchantUserInfoHTTP"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.StoreMetricsHTTP": {
+            "type": "object",
+            "properties": {
+                "active_traffics": {
+                    "type": "integer"
+                },
+                "average_deal_amount": {
+                    "type": "number"
+                },
+                "average_trader_reward": {
+                    "type": "number"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "failed_deals": {
+                    "type": "integer"
+                },
+                "last_activity_at": {
+                    "type": "string"
+                },
+                "locked_traffics_count": {
+                    "type": "integer"
+                },
+                "store_id": {
+                    "type": "string"
+                },
+                "successful_deals": {
+                    "type": "integer"
+                },
+                "total_deals": {
+                    "type": "integer"
+                },
+                "total_revenue": {
+                    "type": "number"
+                },
+                "total_traffics": {
+                    "type": "integer"
+                },
+                "unlocked_traffics_count": {
+                    "type": "integer"
+                }
+            }
+        },
+        "handlers.StoreTrafficType": {
+            "type": "string",
+            "enum": [
+                "STORE_TRAFFIC_TYPE_UNSPECIFIED",
+                "STORE_TRAFFIC_TYPE_PAYIN",
+                "STORE_TRAFFIC_TYPE_PAYOUT"
+            ],
+            "x-enum-varnames": [
+                "StoreTrafficTypeUnspecified",
+                "StoreTrafficTypePayIn",
+                "StoreTrafficTypePayOut"
+            ]
+        },
+        "handlers.ToggleStoreStatusRequestHTTP": {
+            "type": "object",
+            "required": [
+                "enabled",
+                "store_id"
+            ],
+            "properties": {
+                "enabled": {
+                    "type": "boolean"
+                },
+                "store_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.ToggleStoreStatusResponseHTTP": {
+            "type": "object",
+            "properties": {
+                "new_status": {
+                    "type": "string"
+                },
+                "previous_status": {
+                    "type": "string"
+                },
+                "store": {
+                    "$ref": "#/definitions/handlers.StoreHTTP"
+                }
+            }
+        },
+        "handlers.TrafficActivityParamsHTTP": {
+            "type": "object",
+            "properties": {
+                "antifraud_unlocked": {
+                    "type": "boolean"
+                },
+                "manually_unlocked": {
+                    "type": "boolean"
+                },
+                "merchant_unlocked": {
+                    "type": "boolean"
+                },
+                "trader_unlocked": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "handlers.TrafficAntifraudParamsHTTP": {
+            "type": "object",
+            "properties": {
+                "antifraud_required": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "handlers.TrafficBusinessParamsHTTP": {
+            "type": "object",
+            "properties": {
+                "merchant_deals_duration": {
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.TrafficRecordHTTP": {
+            "type": "object",
+            "properties": {
+                "activity_params": {
+                    "$ref": "#/definitions/handlers.TrafficActivityParamsHTTP"
+                },
+                "antifraud_params": {
+                    "$ref": "#/definitions/handlers.TrafficAntifraudParamsHTTP"
+                },
+                "business_params": {
+                    "$ref": "#/definitions/handlers.TrafficBusinessParamsHTTP"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "store_id": {
+                    "type": "string"
+                },
+                "trader_id": {
+                    "type": "string"
+                },
+                "trader_priority": {
+                    "type": "number"
+                },
+                "trader_reward_percent": {
+                    "type": "number"
+                },
+                "updated_at": {
+                    "type": "string"
                 }
             }
         },
@@ -7015,28 +8724,11 @@ const docTemplate = `{
                         }
                     }
                 },
-                "business_params": {
-                    "type": "object",
-                    "properties": {
-                        "merchant_deals_duration": {
-                            "type": "integer"
-                        }
-                    }
-                },
-                "enabled": {
-                    "type": "boolean"
-                },
                 "id": {
                     "type": "string"
                 },
-                "merchant_id": {
+                "store_id": {
                     "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "platform_fee": {
-                    "type": "number"
                 },
                 "trader_id": {
                     "type": "string"
@@ -7108,6 +8800,65 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "handlers.UpdateStoreRequestHTTP": {
+            "type": "object",
+            "required": [
+                "store_id"
+            ],
+            "properties": {
+                "deal_created_duration": {
+                    "type": "string"
+                },
+                "deal_pending_duration": {
+                    "type": "string"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "merchant_username": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "platform_fee": {
+                    "type": "number",
+                    "maximum": 100,
+                    "minimum": 0
+                },
+                "store_id": {
+                    "type": "string"
+                },
+                "traffic_type": {
+                    "$ref": "#/definitions/handlers.StoreTrafficType"
+                }
+            }
+        },
+        "handlers.UpdateStoreResponseHTTP": {
+            "type": "object",
+            "properties": {
+                "store": {
+                    "$ref": "#/definitions/handlers.StoreHTTP"
+                }
+            }
+        },
+        "handlers.ValidateStoreForTrafficResponseHTTP": {
+            "type": "object",
+            "properties": {
+                "errors": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "message": {
+                    "type": "string"
+                },
+                "valid": {
                     "type": "boolean"
                 }
             }
@@ -7644,17 +9395,8 @@ const docTemplate = `{
         "request.CreateTrafficRequest": {
             "type": "object",
             "properties": {
-                "enabled": {
-                    "type": "boolean"
-                },
-                "merchant_id": {
+                "store_id": {
                     "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "platform_fee": {
-                    "type": "number"
                 },
                 "trader_id": {
                     "type": "string"
@@ -7670,9 +9412,6 @@ const docTemplate = `{
                 },
                 "traffic_antifraud_params": {
                     "$ref": "#/definitions/request.TrafficAntifraudParams"
-                },
-                "traffic_business_params": {
-                    "$ref": "#/definitions/request.TrafficBusinessParams"
                 }
             }
         },
@@ -7734,23 +9473,11 @@ const docTemplate = `{
                 "antifraud_params": {
                     "$ref": "#/definitions/request.TrafficAntifraudParams"
                 },
-                "business_params": {
-                    "$ref": "#/definitions/request.TrafficBusinessParams"
-                },
-                "enabled": {
-                    "type": "boolean"
-                },
                 "id": {
                     "type": "string"
                 },
-                "merchant_id": {
+                "store_id": {
                     "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "platform_fee": {
-                    "type": "number"
                 },
                 "trader_id": {
                     "type": "string"
@@ -7920,14 +9647,6 @@ const docTemplate = `{
             "properties": {
                 "antifraud_required": {
                     "type": "boolean"
-                }
-            }
-        },
-        "request.TrafficBusinessParams": {
-            "type": "object",
-            "properties": {
-                "merchant_deals_duration": {
-                    "type": "string"
                 }
             }
         },
@@ -8482,23 +10201,6 @@ const docTemplate = `{
                 }
             }
         },
-        "response.GetProfileByIDResponse": {
-            "type": "object",
-            "properties": {
-                "avatar_url": {
-                    "type": "string"
-                },
-                "profile_id": {
-                    "type": "string"
-                },
-                "tg_link": {
-                    "type": "string"
-                },
-                "user_id": {
-                    "type": "string"
-                }
-            }
-        },
         "response.GetTraderBalanceErrorResponse": {
             "type": "object",
             "properties": {
@@ -8790,29 +10492,11 @@ const docTemplate = `{
                         }
                     ]
                 },
-                "business_params": {
-                    "description": "Бизнес-параметры",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/response.TrafficBusinessParams"
-                        }
-                    ]
-                },
-                "enabled": {
-                    "description": "для админов ` + "`" + `json:\"enabled\"` + "`" + `",
-                    "type": "boolean"
-                },
                 "id": {
                     "type": "string"
                 },
-                "merchant_id": {
+                "store_id": {
                     "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "platform_fee": {
-                    "type": "number"
                 },
                 "trader_id": {
                     "type": "string"
@@ -8847,14 +10531,6 @@ const docTemplate = `{
             "properties": {
                 "antifraud_required": {
                     "type": "boolean"
-                }
-            }
-        },
-        "response.TrafficBusinessParams": {
-            "type": "object",
-            "properties": {
-                "merchant_deals_duration": {
-                    "type": "string"
                 }
             }
         },

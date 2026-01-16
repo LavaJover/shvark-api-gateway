@@ -402,6 +402,62 @@ definitions:
       trader_id:
         type: string
     type: object
+  handlers.BatchGetStoresRequestHTTP:
+    properties:
+      store_ids:
+        items:
+          type: string
+        minItems: 1
+        type: array
+    required:
+    - store_ids
+    type: object
+  handlers.BatchGetStoresResponseHTTP:
+    properties:
+      not_found_ids:
+        items:
+          type: string
+        type: array
+      stores:
+        items:
+          $ref: '#/definitions/handlers.StoreHTTP'
+        type: array
+    type: object
+  handlers.BulkUpdateStoresStatusRequestHTTP:
+    properties:
+      enabled:
+        type: boolean
+      store_ids:
+        items:
+          type: string
+        minItems: 1
+        type: array
+    required:
+    - enabled
+    - store_ids
+    type: object
+  handlers.BulkUpdateStoresStatusResponseHTTP:
+    properties:
+      errors:
+        items:
+          type: string
+        type: array
+      failed_count:
+        type: integer
+      failed_store_ids:
+        items:
+          type: string
+        type: array
+      updated_count:
+        type: integer
+    type: object
+  handlers.CalculateStoreMetricsResponseHTTP:
+    properties:
+      calculated_at:
+        type: string
+      metrics:
+        $ref: '#/definitions/handlers.StoreMetricsHTTP'
+    type: object
   handlers.CheckResultResponse:
     properties:
       details:
@@ -412,6 +468,17 @@ definitions:
       passed:
         type: boolean
       rule_name:
+        type: string
+    type: object
+  handlers.CheckStoreNameUniqueResponseHTTP:
+    properties:
+      is_unique:
+        type: boolean
+      merchant_id:
+        type: string
+      message:
+        type: string
+      store_name:
         type: string
     type: object
   handlers.CheckTraderResponse:
@@ -452,6 +519,40 @@ definitions:
       rule:
         $ref: '#/definitions/handlers.AntiFraudRuleResponse'
     type: object
+  handlers.CreateStoreRequestHTTP:
+    properties:
+      deal_created_duration:
+        type: string
+      deal_pending_duration:
+        description: e.g., "10s", "1h"
+        type: string
+      enabled:
+        type: boolean
+      merchant_id:
+        type: string
+      merchant_username:
+        type: string
+      name:
+        maxLength: 100
+        minLength: 3
+        type: string
+      platform_fee:
+        maximum: 100
+        minimum: 0
+        type: number
+      traffic_type:
+        $ref: '#/definitions/handlers.StoreTrafficType'
+    required:
+    - merchant_id
+    - merchant_username
+    - name
+    - traffic_type
+    type: object
+  handlers.CreateStoreResponseHTTP:
+    properties:
+      store:
+        $ref: '#/definitions/handlers.StoreHTTP'
+    type: object
   handlers.DeleteRuleResponse:
     properties:
       message:
@@ -459,11 +560,50 @@ definitions:
       success:
         type: boolean
     type: object
+  handlers.DeleteStoreResponseHTTP:
+    properties:
+      message:
+        type: string
+      success:
+        type: boolean
+    type: object
+  handlers.DisableStoreResponseHTTP:
+    properties:
+      store:
+        $ref: '#/definitions/handlers.StoreHTTP'
+    type: object
+  handlers.EnableStoreResponseHTTP:
+    properties:
+      store:
+        $ref: '#/definitions/handlers.StoreHTTP'
+    type: object
   handlers.ErrorResponse:
     properties:
       error:
         example: invalid data
         type: string
+    type: object
+  handlers.ErrorResponseHTTP:
+    properties:
+      code:
+        type: integer
+      details:
+        type: string
+      message:
+        type: string
+      timestamp:
+        type: string
+    type: object
+  handlers.GetActiveStoresResponseHTTP:
+    properties:
+      count:
+        type: integer
+      merchant_id:
+        type: string
+      stores:
+        items:
+          $ref: '#/definitions/handlers.StoreHTTP'
+        type: array
     type: object
   handlers.GetAuditLogsResponse:
     properties:
@@ -508,6 +648,51 @@ definitions:
           $ref: '#/definitions/handlers.AntiFraudRuleResponse'
         type: array
     type: object
+  handlers.GetStoreByTrafficIdResponseHTTP:
+    properties:
+      store:
+        $ref: '#/definitions/handlers.StoreHTTP'
+    type: object
+  handlers.GetStoreMetricsResponseHTTP:
+    properties:
+      metrics:
+        $ref: '#/definitions/handlers.StoreMetricsHTTP'
+    type: object
+  handlers.GetStoreResponseHTTP:
+    properties:
+      store:
+        $ref: '#/definitions/handlers.StoreHTTP'
+    type: object
+  handlers.GetStoreWithTrafficsResponseHTTP:
+    properties:
+      pagination_info:
+        $ref: '#/definitions/handlers.PaginationInfoHTTP'
+      store:
+        $ref: '#/definitions/handlers.StoreHTTP'
+      total_traffics:
+        type: integer
+      trader_filter:
+        type: string
+      traffic_records:
+        items:
+          $ref: '#/definitions/handlers.TrafficRecordHTTP'
+        type: array
+    type: object
+  handlers.GetStoresByMerchantResponseHTTP:
+    properties:
+      active_stores:
+        type: integer
+      merchant_id:
+        type: string
+      pagination_info:
+        $ref: '#/definitions/handlers.PaginationInfoHTTP'
+      stores:
+        items:
+          $ref: '#/definitions/handlers.StoreHTTP'
+        type: array
+      total_stores:
+        type: integer
+    type: object
   handlers.GetTraderAuditHistoryResponse:
     properties:
       logs:
@@ -527,6 +712,35 @@ definitions:
       items:
         items:
           $ref: '#/definitions/handlers.UnlockHistoryItem'
+        type: array
+    type: object
+  handlers.HealthCheckResponseHTTP:
+    properties:
+      services:
+        additionalProperties:
+          type: string
+        type: object
+      status:
+        type: string
+      timestamp:
+        type: string
+      version:
+        type: string
+    type: object
+  handlers.ListStoresRequestHTTP:
+    properties:
+      filters:
+        $ref: '#/definitions/handlers.StoreFiltersHTTP'
+      pagination:
+        $ref: '#/definitions/handlers.PaginationParamsHTTP'
+    type: object
+  handlers.ListStoresResponseHTTP:
+    properties:
+      pagination_info:
+        $ref: '#/definitions/handlers.PaginationInfoHTTP'
+      stores:
+        items:
+          $ref: '#/definitions/handlers.StoreHTTP'
         type: array
     type: object
   handlers.LockStatusesResponse:
@@ -562,6 +776,13 @@ definitions:
         type: string
       success:
         type: boolean
+    type: object
+  handlers.MerchantUserInfoHTTP:
+    properties:
+      merchant_id:
+        type: string
+      merchant_username:
+        type: string
     type: object
   handlers.OrderResponse:
     properties:
@@ -604,6 +825,31 @@ definitions:
         $ref: '#/definitions/handlers.Sort'
       unpaged:
         type: boolean
+    type: object
+  handlers.PaginationInfoHTTP:
+    properties:
+      current_page:
+        type: integer
+      has_next:
+        type: boolean
+      has_prev:
+        type: boolean
+      limit:
+        type: integer
+      total_items:
+        type: integer
+      total_pages:
+        type: integer
+    type: object
+  handlers.PaginationParamsHTTP:
+    properties:
+      limit:
+        maximum: 100
+        minimum: 1
+        type: integer
+      page:
+        minimum: 1
+        type: integer
     type: object
   handlers.ProcessTraderCheckResponse:
     properties:
@@ -663,6 +909,34 @@ definitions:
       version:
         type: string
     type: object
+  handlers.SearchStoresRequestHTTP:
+    properties:
+      filters:
+        $ref: '#/definitions/handlers.StoreFiltersHTTP'
+      pagination:
+        $ref: '#/definitions/handlers.PaginationParamsHTTP'
+      search_query:
+        type: string
+      sort_by:
+        items:
+          type: string
+        type: array
+      sort_desc:
+        type: boolean
+    type: object
+  handlers.SearchStoresResponseHTTP:
+    properties:
+      applied_filters:
+        $ref: '#/definitions/handlers.StoreFiltersHTTP'
+      pagination_info:
+        $ref: '#/definitions/handlers.PaginationInfoHTTP'
+      search_query:
+        type: string
+      stores:
+        items:
+          $ref: '#/definitions/handlers.StoreHTTP'
+        type: array
+    type: object
   handlers.Sort:
     properties:
       empty:
@@ -671,6 +945,160 @@ definitions:
         type: boolean
       unsorted:
         type: boolean
+    type: object
+  handlers.StoreBusinessParamsHTTP:
+    properties:
+      deal_created_duration:
+        type: string
+      deal_pending_duration:
+        description: e.g., "10s", "1h"
+        type: string
+      name:
+        type: string
+      platform_fee:
+        type: number
+      traffic_type:
+        $ref: '#/definitions/handlers.StoreTrafficType'
+    type: object
+  handlers.StoreFiltersHTTP:
+    properties:
+      created_from:
+        type: string
+      created_to:
+        type: string
+      enabled:
+        type: boolean
+      merchant_id:
+        type: string
+      name:
+        type: string
+      store_ids:
+        items:
+          type: string
+        type: array
+      traffic_type:
+        $ref: '#/definitions/handlers.StoreTrafficType'
+    type: object
+  handlers.StoreHTTP:
+    properties:
+      business_params:
+        $ref: '#/definitions/handlers.StoreBusinessParamsHTTP'
+      created_at:
+        type: string
+      deleted_at:
+        type: string
+      enabled:
+        type: boolean
+      id:
+        type: string
+      merchant_id:
+        type: string
+      merchant_info:
+        $ref: '#/definitions/handlers.MerchantUserInfoHTTP'
+      updated_at:
+        type: string
+    type: object
+  handlers.StoreMetricsHTTP:
+    properties:
+      active_traffics:
+        type: integer
+      average_deal_amount:
+        type: number
+      average_trader_reward:
+        type: number
+      created_at:
+        type: string
+      failed_deals:
+        type: integer
+      last_activity_at:
+        type: string
+      locked_traffics_count:
+        type: integer
+      store_id:
+        type: string
+      successful_deals:
+        type: integer
+      total_deals:
+        type: integer
+      total_revenue:
+        type: number
+      total_traffics:
+        type: integer
+      unlocked_traffics_count:
+        type: integer
+    type: object
+  handlers.StoreTrafficType:
+    enum:
+    - STORE_TRAFFIC_TYPE_UNSPECIFIED
+    - STORE_TRAFFIC_TYPE_PAYIN
+    - STORE_TRAFFIC_TYPE_PAYOUT
+    type: string
+    x-enum-varnames:
+    - StoreTrafficTypeUnspecified
+    - StoreTrafficTypePayIn
+    - StoreTrafficTypePayOut
+  handlers.ToggleStoreStatusRequestHTTP:
+    properties:
+      enabled:
+        type: boolean
+      store_id:
+        type: string
+    required:
+    - enabled
+    - store_id
+    type: object
+  handlers.ToggleStoreStatusResponseHTTP:
+    properties:
+      new_status:
+        type: string
+      previous_status:
+        type: string
+      store:
+        $ref: '#/definitions/handlers.StoreHTTP'
+    type: object
+  handlers.TrafficActivityParamsHTTP:
+    properties:
+      antifraud_unlocked:
+        type: boolean
+      manually_unlocked:
+        type: boolean
+      merchant_unlocked:
+        type: boolean
+      trader_unlocked:
+        type: boolean
+    type: object
+  handlers.TrafficAntifraudParamsHTTP:
+    properties:
+      antifraud_required:
+        type: boolean
+    type: object
+  handlers.TrafficBusinessParamsHTTP:
+    properties:
+      merchant_deals_duration:
+        type: string
+    type: object
+  handlers.TrafficRecordHTTP:
+    properties:
+      activity_params:
+        $ref: '#/definitions/handlers.TrafficActivityParamsHTTP'
+      antifraud_params:
+        $ref: '#/definitions/handlers.TrafficAntifraudParamsHTTP'
+      business_params:
+        $ref: '#/definitions/handlers.TrafficBusinessParamsHTTP'
+      created_at:
+        type: string
+      id:
+        type: string
+      store_id:
+        type: string
+      trader_id:
+        type: string
+      trader_priority:
+        type: number
+      trader_reward_percent:
+        type: number
+      updated_at:
+        type: string
     type: object
   handlers.TrafficRecordResponse:
     properties:
@@ -690,21 +1118,10 @@ definitions:
           antifraud_required:
             type: boolean
         type: object
-      business_params:
-        properties:
-          merchant_deals_duration:
-            type: integer
-        type: object
-      enabled:
-        type: boolean
       id:
         type: string
-      merchant_id:
+      store_id:
         type: string
-      name:
-        type: string
-      platform_fee:
-        type: number
       trader_id:
         type: string
       trader_priority:
@@ -751,6 +1168,45 @@ definitions:
       message:
         type: string
       success:
+        type: boolean
+    type: object
+  handlers.UpdateStoreRequestHTTP:
+    properties:
+      deal_created_duration:
+        type: string
+      deal_pending_duration:
+        type: string
+      enabled:
+        type: boolean
+      merchant_username:
+        type: string
+      name:
+        type: string
+      platform_fee:
+        maximum: 100
+        minimum: 0
+        type: number
+      store_id:
+        type: string
+      traffic_type:
+        $ref: '#/definitions/handlers.StoreTrafficType'
+    required:
+    - store_id
+    type: object
+  handlers.UpdateStoreResponseHTTP:
+    properties:
+      store:
+        $ref: '#/definitions/handlers.StoreHTTP'
+    type: object
+  handlers.ValidateStoreForTrafficResponseHTTP:
+    properties:
+      errors:
+        items:
+          type: string
+        type: array
+      message:
+        type: string
+      valid:
         type: boolean
     type: object
   merchant.AccountBalance:
@@ -1102,14 +1558,8 @@ definitions:
     type: object
   request.CreateTrafficRequest:
     properties:
-      enabled:
-        type: boolean
-      merchant_id:
+      store_id:
         type: string
-      name:
-        type: string
-      platform_fee:
-        type: number
       trader_id:
         type: string
       trader_priority:
@@ -1120,8 +1570,6 @@ definitions:
         $ref: '#/definitions/request.TrafficActivityParams'
       traffic_antifraud_params:
         $ref: '#/definitions/request.TrafficAntifraudParams'
-      traffic_business_params:
-        $ref: '#/definitions/request.TrafficBusinessParams'
     type: object
   request.CreateWalletRequest:
     properties:
@@ -1161,18 +1609,10 @@ definitions:
         $ref: '#/definitions/request.TrafficActivityParams'
       antifraud_params:
         $ref: '#/definitions/request.TrafficAntifraudParams'
-      business_params:
-        $ref: '#/definitions/request.TrafficBusinessParams'
-      enabled:
-        type: boolean
       id:
         type: string
-      merchant_id:
+      store_id:
         type: string
-      name:
-        type: string
-      platform_fee:
-        type: number
       trader_id:
         type: string
       trader_priority:
@@ -1283,11 +1723,6 @@ definitions:
     properties:
       antifraud_required:
         type: boolean
-    type: object
-  request.TrafficBusinessParams:
-    properties:
-      merchant_deals_duration:
-        type: string
     type: object
   request.UpdateBankDetailRequest:
     properties:
@@ -1644,17 +2079,6 @@ definitions:
       dispute:
         $ref: '#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_payment_response.Dispute'
     type: object
-  response.GetProfileByIDResponse:
-    properties:
-      avatar_url:
-        type: string
-      profile_id:
-        type: string
-      tg_link:
-        type: string
-      user_id:
-        type: string
-    type: object
   response.GetTraderBalanceErrorResponse:
     properties:
       error:
@@ -1840,21 +2264,10 @@ definitions:
         allOf:
         - $ref: '#/definitions/response.TrafficAntifraudParams'
         description: Для антифрода
-      business_params:
-        allOf:
-        - $ref: '#/definitions/response.TrafficBusinessParams'
-        description: Бизнес-параметры
-      enabled:
-        description: для админов `json:"enabled"`
-        type: boolean
       id:
         type: string
-      merchant_id:
+      store_id:
         type: string
-      name:
-        type: string
-      platform_fee:
-        type: number
       trader_id:
         type: string
       trader_priority:
@@ -1877,11 +2290,6 @@ definitions:
     properties:
       antifraud_required:
         type: boolean
-    type: object
-  response.TrafficBusinessParams:
-    properties:
-      merchant_deals_duration:
-        type: string
     type: object
   response.Transaction:
     properties:
@@ -4049,6 +4457,54 @@ paths:
       summary: Get order status
       tags:
       - merchant
+  /merchants/{merchant_id}/stores:
+    get:
+      description: Возвращает список магазинов, принадлежащих указанному мерчанту
+      parameters:
+      - description: ID мерчанта
+        in: path
+        name: merchant_id
+        required: true
+        type: string
+      - default: 1
+        description: Номер страницы
+        in: query
+        name: page
+        type: integer
+      - default: 20
+        description: Лимит записей
+        in: query
+        name: limit
+        type: integer
+      - default: false
+        description: Только активные магазины
+        in: query
+        name: only_active
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.GetStoresByMerchantResponseHTTP'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseHTTP'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseHTTP'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseHTTP'
+      security:
+      - BearerAuth: []
+      summary: Получение магазинов мерчанта
+      tags:
+      - store
   /orders:
     post:
       consumes:
@@ -4940,35 +5396,6 @@ paths:
       summary: Create new H2H Pay-Out
       tags:
       - payments
-  /profiles/{uuid}:
-    get:
-      consumes:
-      - application/json
-      description: Get profile by uuid
-      parameters:
-      - description: Profile uuid
-        in: path
-        name: uuid
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/response.GetProfileByIDResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/handlers.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/handlers.ErrorResponse'
-      summary: Get profile by uuid
-      tags:
-      - profiles
   /rbac/permissions:
     post:
       consumes:
@@ -5157,6 +5584,629 @@ paths:
       summary: User registration
       tags:
       - auth
+  /stores:
+    post:
+      consumes:
+      - application/json
+      description: Создает новый магазин с указанными параметрами
+      parameters:
+      - description: Параметры создания магазина
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.CreateStoreRequestHTTP'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.CreateStoreResponseHTTP'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseHTTP'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseHTTP'
+      security:
+      - BearerAuth: []
+      summary: Создание нового магазина
+      tags:
+      - store
+  /stores/{store_id}:
+    delete:
+      description: Удаляет магазин по ID с возможностью принудительного удаления
+      parameters:
+      - description: ID магазина
+        in: path
+        name: store_id
+        required: true
+        type: string
+      - default: false
+        description: Принудительное удаление
+        in: query
+        name: force
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.DeleteStoreResponseHTTP'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseHTTP'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseHTTP'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseHTTP'
+      security:
+      - BearerAuth: []
+      summary: Удаление магазина
+      tags:
+      - store
+    get:
+      description: Возвращает полную информацию о магазине по ID
+      parameters:
+      - description: ID магазина
+        in: path
+        name: store_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.GetStoreResponseHTTP'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseHTTP'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseHTTP'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseHTTP'
+      security:
+      - BearerAuth: []
+      summary: Получение информации о магазине
+      tags:
+      - store
+    put:
+      consumes:
+      - application/json
+      description: Обновляет параметры существующего магазина
+      parameters:
+      - description: ID магазина
+        in: path
+        name: store_id
+        required: true
+        type: string
+      - description: Параметры обновления
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.UpdateStoreRequestHTTP'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.UpdateStoreResponseHTTP'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseHTTP'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseHTTP'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseHTTP'
+      security:
+      - BearerAuth: []
+      summary: Обновление информации о магазине
+      tags:
+      - store
+  /stores/{store_id}/calculate-metrics:
+    post:
+      description: Запускает расчет метрик магазина в реальном времени
+      parameters:
+      - description: ID магазина
+        in: path
+        name: store_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.CalculateStoreMetricsResponseHTTP'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseHTTP'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseHTTP'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseHTTP'
+      security:
+      - BearerAuth: []
+      summary: Расчет метрик магазина
+      tags:
+      - store
+  /stores/{store_id}/disable:
+    post:
+      description: Отключает магазин (устанавливает enabled=false)
+      parameters:
+      - description: ID магазина
+        in: path
+        name: store_id
+        required: true
+        type: string
+      - default: false
+        description: Принудительное отключение
+        in: query
+        name: force
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.DisableStoreResponseHTTP'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseHTTP'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseHTTP'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseHTTP'
+      security:
+      - BearerAuth: []
+      summary: Отключение магазина
+      tags:
+      - store
+  /stores/{store_id}/enable:
+    post:
+      description: Включает магазин (устанавливает enabled=true)
+      parameters:
+      - description: ID магазина
+        in: path
+        name: store_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.EnableStoreResponseHTTP'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseHTTP'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseHTTP'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseHTTP'
+      security:
+      - BearerAuth: []
+      summary: Включение магазина
+      tags:
+      - store
+  /stores/{store_id}/metrics:
+    get:
+      description: Возвращает метрики магазина за указанный период
+      parameters:
+      - description: ID магазина
+        in: path
+        name: store_id
+        required: true
+        type: string
+      - description: Начало периода (RFC3339)
+        in: query
+        name: period_from
+        type: string
+      - description: Конец периода (RFC3339)
+        in: query
+        name: period_to
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.GetStoreMetricsResponseHTTP'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseHTTP'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseHTTP'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseHTTP'
+      security:
+      - BearerAuth: []
+      summary: Получение метрик магазина
+      tags:
+      - store
+  /stores/{store_id}/toggle-status:
+    post:
+      consumes:
+      - application/json
+      description: Включает или выключает магазин
+      parameters:
+      - description: ID магазина
+        in: path
+        name: store_id
+        required: true
+        type: string
+      - description: Параметры переключения статуса
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.ToggleStoreStatusRequestHTTP'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.ToggleStoreStatusResponseHTTP'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseHTTP'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseHTTP'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseHTTP'
+      security:
+      - BearerAuth: []
+      summary: Переключение статуса магазина
+      tags:
+      - store
+  /stores/{store_id}/traffics:
+    get:
+      description: Возвращает информацию о магазине вместе с его трафиками
+      parameters:
+      - description: ID магазина
+        in: path
+        name: store_id
+        required: true
+        type: string
+      - default: 1
+        description: Номер страницы
+        in: query
+        name: page
+        type: integer
+      - default: 20
+        description: Лимит записей
+        in: query
+        name: limit
+        type: integer
+      - description: Фильтр по трейдеру
+        in: query
+        name: trader_filter
+        type: string
+      - default: false
+        description: Включить детали трафика
+        in: query
+        name: include_traffic_details
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.GetStoreWithTrafficsResponseHTTP'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseHTTP'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseHTTP'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseHTTP'
+      security:
+      - BearerAuth: []
+      summary: Получение магазина с трафиками
+      tags:
+      - store
+  /stores/{store_id}/validate-traffic:
+    get:
+      description: Проверяет, готов ли магазин к приему трафика
+      parameters:
+      - description: ID магазина
+        in: path
+        name: store_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.ValidateStoreForTrafficResponseHTTP'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseHTTP'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseHTTP'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseHTTP'
+      security:
+      - BearerAuth: []
+      summary: Валидация магазина для трафика
+      tags:
+      - store
+  /stores/active:
+    get:
+      description: Возвращает список активных магазинов мерчанта
+      parameters:
+      - description: ID мерчанта
+        in: query
+        name: merchant_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.GetActiveStoresResponseHTTP'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseHTTP'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseHTTP'
+      security:
+      - BearerAuth: []
+      summary: Получение активных магазинов
+      tags:
+      - store
+  /stores/batch:
+    post:
+      consumes:
+      - application/json
+      description: Возвращает информацию о нескольких магазинах по их ID
+      parameters:
+      - description: Список ID магазинов
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.BatchGetStoresRequestHTTP'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.BatchGetStoresResponseHTTP'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseHTTP'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseHTTP'
+      security:
+      - BearerAuth: []
+      summary: Пакетное получение магазинов
+      tags:
+      - store
+  /stores/bulk-update-status:
+    post:
+      consumes:
+      - application/json
+      description: Включает или выключает несколько магазинов одновременно
+      parameters:
+      - description: Параметры массового обновления
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.BulkUpdateStoresStatusRequestHTTP'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.BulkUpdateStoresStatusResponseHTTP'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseHTTP'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseHTTP'
+      security:
+      - BearerAuth: []
+      summary: Массовое обновление статуса магазинов
+      tags:
+      - store
+  /stores/check-name:
+    get:
+      description: Проверяет, уникально ли имя магазина для указанного мерчанта
+      parameters:
+      - description: ID мерчанта
+        in: query
+        name: merchant_id
+        required: true
+        type: string
+      - description: Имя магазина
+        in: query
+        name: store_name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.CheckStoreNameUniqueResponseHTTP'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseHTTP'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseHTTP'
+      security:
+      - BearerAuth: []
+      summary: Проверка уникальности имени магазина
+      tags:
+      - store
+  /stores/health:
+    get:
+      description: Возвращает статус здоровья сервиса магазинов
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.HealthCheckResponseHTTP'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseHTTP'
+      security:
+      - BearerAuth: []
+      summary: Проверка здоровья сервиса
+      tags:
+      - store
+  /stores/list:
+    post:
+      consumes:
+      - application/json
+      description: Возвращает список магазинов с пагинацией и фильтрацией
+      parameters:
+      - description: Параметры пагинации и фильтрации
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.ListStoresRequestHTTP'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.ListStoresResponseHTTP'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseHTTP'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseHTTP'
+      security:
+      - BearerAuth: []
+      summary: Список магазинов
+      tags:
+      - store
+  /stores/search:
+    post:
+      consumes:
+      - application/json
+      description: Поиск магазинов с расширенными фильтрами, сортировкой и пагинацией
+      parameters:
+      - description: Параметры поиска
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.SearchStoresRequestHTTP'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.SearchStoresResponseHTTP'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseHTTP'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseHTTP'
+      security:
+      - BearerAuth: []
+      summary: Поиск магазинов
+      tags:
+      - store
   /traffic/{trafficID}/lock-statuses:
     get:
       consumes:
@@ -5371,6 +6421,40 @@ paths:
       summary: Set trader traffic lock status
       tags:
       - traffic
+  /traffics/{traffic_id}/store:
+    get:
+      description: Возвращает информацию о магазине, к которому относится указанный
+        трафик
+      parameters:
+      - description: ID трафика
+        in: path
+        name: traffic_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.GetStoreByTrafficIdResponseHTTP'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseHTTP'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseHTTP'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseHTTP'
+      security:
+      - BearerAuth: []
+      summary: Получение магазина по ID трафика
+      tags:
+      - store
   /users/{id}:
     get:
       consumes:
