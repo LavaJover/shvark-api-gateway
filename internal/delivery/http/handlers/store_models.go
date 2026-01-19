@@ -140,7 +140,7 @@ type UpdateStoreRequestHTTP struct {
 	TrafficType         *StoreTrafficType `json:"traffic_type,omitempty"`
 	DealPendingDuration *string          `json:"deal_pending_duration,omitempty"`
 	DealCreatedDuration *string          `json:"deal_created_duration,omitempty"`
-	PlatformFee         *float64         `json:"platform_fee,omitempty" binding:"omitempty,min=0,max=100"`
+	PlatformFee         *float64         `json:"platform_fee,omitempty" binding:"omitempty,min=0,max=1"`
 	Name                string           `json:"name,omitempty"`
 }
 
@@ -244,7 +244,7 @@ type DisableStoreResponseHTTP struct {
 
 type BulkUpdateStoresStatusRequestHTTP struct {
 	StoreIDs []string `json:"store_ids" binding:"required,min=1"`
-	Enabled  bool     `json:"enabled" binding:"required"`
+	Enabled  bool     `json:"enabled" `
 }
 
 type BulkUpdateStoresStatusResponseHTTP struct {
