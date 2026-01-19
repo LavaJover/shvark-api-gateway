@@ -16,6 +16,8 @@ type CreateH2HPayInResponse struct {
 	CryptoRubRate 	float64	   `json:"crypto_rub_rate"`
 	DeeplinkHTML    string			`json:"deeplink_html"`
 	DeeplinkRedirect string			`json:"deeplink_redirect"`
+	MerchantIncome	float64		`json:"merchant_income"`
+	UsdRate			float64		`json:"usd_rate"`
 }
 
 type NoBankDetailsErrorResponse struct {

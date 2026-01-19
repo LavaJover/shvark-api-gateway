@@ -148,6 +148,8 @@ func (h *PaymentHandler) CreateH2HPayIn(c *gin.Context) {
 			BankName: response.Order.BankDetail.BankName,
 		},
 		ExpiresAt: response.Order.ExpiresAt.Seconds,
+		UsdRate: response.Order.CryptoRubRate,
+		MerchantIncome: response.Order.AmountCrypto - response.Order.AmountCrypto * response.Order.PlatformFee,
 	})
 }
 
