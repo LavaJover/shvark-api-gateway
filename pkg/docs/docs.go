@@ -10172,7 +10172,7 @@ const docTemplate = `{
                 "shuffle": {
                     "type": "integer"
                 },
-                "store_id": {
+                "storeId": {
                     "type": "string"
                 }
             }

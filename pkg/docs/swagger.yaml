@@ -1527,7 +1527,7 @@ definitions:
         type: string
       shuffle:
         type: integer
-      store_id:
+      storeId:
         type: string
     type: object
   request.CreateH2HPayOutRequest:
