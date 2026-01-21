@@ -4,11 +4,9 @@ go 1.23.2
 
 require (
 	github.com/LavaJover/shvark-authz-service v0.0.0-20250518135159-e47df48e9c1c
-	github.com/LavaJover/shvark-banking-service v0.0.6
-	github.com/LavaJover/shvark-order-service v0.0.43-0.20260115042806-64824320a225
-	github.com/LavaJover/shvark-profile-service v0.0.0-20250519161935-955e6b16225d
+	github.com/LavaJover/shvark-order-service v0.0.43-0.20260121014745-86481007ec12
 	github.com/LavaJover/shvark-sso-service v0.0.5
-	github.com/LavaJover/shvark-user-service v0.0.8
+	github.com/LavaJover/shvark-user-service v0.0.9-0.20260121033144-f079d4cb31db
 	github.com/gin-gonic/gin v1.10.1
 	github.com/google/uuid v1.6.0
 	github.com/ilyakaznacheev/cleanenv v1.5.0

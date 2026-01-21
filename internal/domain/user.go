@@ -1,15 +1,23 @@
 package domain
 
-import "time"
-
 type User struct {
-	ID 		 	string
-	Login 	 	string
-	Username 	string
-	Password 	string
-	TwoFaSecret string
-	CreatedAt 	time.Time
-	UpdatedAt 	time.Time
+	ID           string
+	Login        string
+	Username     string
+	Password     string
+	Role         string
+	TwoFaSecret  string
+	TwoFaEnabled bool
+}
+
+// UpdateUserData используется для обновления пользователя
+type UpdateUserData struct {
+	Login        string
+	Username     string
+	Password     string
+	Role         string
+	TwoFaSecret  string
+	TwoFaEnabled bool
 }
 
 func NewUser(login, username, password string) *User {

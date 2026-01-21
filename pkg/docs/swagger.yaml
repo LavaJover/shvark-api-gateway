@@ -127,6 +127,13 @@ definitions:
       proof_url:
         type: string
     type: object
+  github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_admin_response.GetUsersResponse:
+    properties:
+      users:
+        items:
+          $ref: '#/definitions/response.User'
+        type: array
+    type: object
   github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_admin_response.Order:
     properties:
       amount_crypto:
@@ -329,6 +336,17 @@ definitions:
       proof_url:
         type: string
     type: object
+  github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_user_response.GetUsersResponse:
+    properties:
+      total_count:
+        type: integer
+      total_pages:
+        type: integer
+      users:
+        items:
+          $ref: '#/definitions/response.UserResponse'
+        type: array
+    type: object
   github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_wallet_request.WithdrawRequest:
     properties:
       amount:
@@ -433,7 +451,6 @@ definitions:
         minItems: 1
         type: array
     required:
-    - enabled
     - store_ids
     type: object
   handlers.BulkUpdateStoresStatusResponseHTTP:
@@ -1037,6 +1054,11 @@ definitions:
     - StoreTrafficTypeUnspecified
     - StoreTrafficTypePayIn
     - StoreTrafficTypePayOut
+  handlers.SuccessResponse:
+    properties:
+      message:
+        type: string
+    type: object
   handlers.ToggleStoreStatusRequestHTTP:
     properties:
       enabled:
@@ -1183,7 +1205,7 @@ definitions:
       name:
         type: string
       platform_fee:
-        maximum: 100
+        maximum: 1
         minimum: 0
         type: number
       store_id:
@@ -1326,6 +1348,18 @@ definitions:
     - object
     - role
     type: object
+  request.AddTraderToTeamRequest:
+    properties:
+      commission:
+        maximum: 100
+        minimum: 0
+        type: number
+      trader_id:
+        type: string
+    required:
+    - commission
+    - trader_id
+    type: object
   request.ApproveOrderRequest:
     properties:
       order_id:
@@ -1392,6 +1426,15 @@ definitions:
     properties:
       order_id:
         type: string
+    type: object
+  request.ChangePasswordRequest:
+    properties:
+      new_password:
+        maxLength: 100
+        minLength: 6
+        type: string
+    required:
+    - new_password
     type: object
   request.CheckPermissionRequest:
     properties:
@@ -1478,14 +1521,14 @@ definitions:
         type: boolean
       issuer:
         type: string
-      merchantId:
-        type: string
       merchantOrderId:
         type: string
       paymentSystem:
         type: string
       shuffle:
         type: integer
+      store_id:
+        type: string
     type: object
   request.CreateH2HPayOutRequest:
     properties:
@@ -1570,6 +1613,32 @@ definitions:
         $ref: '#/definitions/request.TrafficActivityParams'
       traffic_antifraud_params:
         $ref: '#/definitions/request.TrafficAntifraudParams'
+    type: object
+  request.CreateUserRequest:
+    properties:
+      login:
+        maxLength: 50
+        minLength: 3
+        type: string
+      password:
+        maxLength: 100
+        minLength: 6
+        type: string
+      role:
+        enum:
+        - TRADER
+        - MERCHANT
+        - ADMIN
+        type: string
+      username:
+        maxLength: 100
+        minLength: 2
+        type: string
+    required:
+    - login
+    - password
+    - role
+    - username
     type: object
   request.CreateWalletRequest:
     properties:
@@ -1692,6 +1761,20 @@ definitions:
     - role
     - user_id
     type: object
+  request.SetTwoFaEnabledRequest:
+    properties:
+      enabled:
+        type: boolean
+    required:
+    - enabled
+    type: object
+  request.SetTwoFaSecretRequest:
+    properties:
+      two_fa_secret:
+        type: string
+    required:
+    - two_fa_secret
+    type: object
   request.SetWithdrawalRulesRequest:
     properties:
       cooldown_seconds:
@@ -1729,12 +1812,47 @@ definitions:
       bank_detail:
         $ref: '#/definitions/request.BankDetail'
     type: object
+  request.UpdateRelationshipParamsRequest:
+    properties:
+      commission:
+        maximum: 100
+        minimum: 0
+        type: number
+    required:
+    - commission
+    type: object
   request.UpdateTeamRelationRequest:
     properties:
       relationId:
         type: string
       teamRelationParams:
         $ref: '#/definitions/request.TeamRelationParams'
+    type: object
+  request.UpdateUserRequest:
+    properties:
+      login:
+        maxLength: 50
+        minLength: 3
+        type: string
+      password:
+        maxLength: 100
+        minLength: 6
+        type: string
+      role:
+        enum:
+        - TRADER
+        - MERCHANT
+        - ADMIN
+        - TEAM_LEAD
+        type: string
+      two_fa_enabled:
+        type: boolean
+      two_fa_secret:
+        type: string
+      username:
+        maxLength: 100
+        minLength: 2
+        type: string
     type: object
   request.ValidateTokenRequest:
     properties:
@@ -1794,6 +1912,11 @@ definitions:
     properties:
       message:
         type: string
+    type: object
+  response.ChangePasswordResponse:
+    properties:
+      success:
+        type: boolean
     type: object
   response.CheckPermissionResponse:
     properties:
@@ -1913,6 +2036,13 @@ definitions:
     properties:
       message:
         type: string
+      traffic:
+        $ref: '#/definitions/response.Traffic'
+    type: object
+  response.CreateUserResponse:
+    properties:
+      user_id:
+        type: string
     type: object
   response.CreateWalletErrorResponse:
     type: object
@@ -1928,6 +2058,11 @@ definitions:
     required:
     - success
     type: object
+  response.DeleteUserResponse:
+    properties:
+      success:
+        type: boolean
+    type: object
   response.DeleteWithdrawalRulesResponse:
     type: object
   response.DepositErrorResponse:
@@ -1942,6 +2077,9 @@ definitions:
         type: boolean
     type: object
   response.EditTrafficResponse:
+    properties:
+      traffic:
+        $ref: '#/definitions/response.Traffic'
     type: object
   response.ErrorResponse:
     properties:
@@ -2128,24 +2266,6 @@ definitions:
           $ref: '#/definitions/response.Traffic'
         type: array
     type: object
-  response.GetUserByIDResponse:
-    properties:
-      login:
-        type: string
-      password:
-        type: string
-      user_id:
-        type: string
-      username:
-        type: string
-    type: object
-  response.GetUsersResponse:
-    properties:
-      users:
-        items:
-          $ref: '#/definitions/response.User'
-        type: array
-    type: object
   response.GetWithdrawalRulesResponse:
     properties:
       rule:
@@ -2218,6 +2338,11 @@ definitions:
         type: string
       updated_at:
         type: string
+    type: object
+  response.SetTwoFaEnabledResponse:
+    properties:
+      success:
+        type: boolean
     type: object
   response.SetWithdrawalRulesResponse:
     properties:
@@ -2313,7 +2438,17 @@ definitions:
       type:
         type: string
     type: object
+  response.TwoFaSecretResponse:
+    properties:
+      two_fa_secret:
+        type: string
+    type: object
   response.UpdateBankDetailResponse:
+    type: object
+  response.UpdateUserResponse:
+    properties:
+      user:
+        $ref: '#/definitions/response.UserResponse'
     type: object
   response.User:
     properties:
@@ -2322,6 +2457,23 @@ definitions:
       login:
         type: string
       role:
+        type: string
+      username:
+        type: string
+    type: object
+  response.UserResponse:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: string
+      login:
+        type: string
+      role:
+        type: string
+      two_fa_enabled:
+        type: boolean
+      updated_at:
         type: string
       username:
         type: string
@@ -2567,7 +2719,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.GetUsersResponse'
+            $ref: '#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_admin_response.GetUsersResponse'
         "502":
           description: Bad Gateway
           schema:
@@ -2911,7 +3063,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.GetUsersResponse'
+            $ref: '#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_admin_response.GetUsersResponse'
         "502":
           description: Bad Gateway
           schema:
@@ -3058,7 +3210,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.GetUsersResponse'
+            $ref: '#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_admin_response.GetUsersResponse'
         "404":
           description: Not Found
           schema:
@@ -4880,6 +5032,10 @@ paths:
         in: query
         name: merchant_order_id
         type: string
+      - description: Order type
+        in: query
+        name: type
+        type: string
       produces:
       - application/json
       responses:
@@ -5584,6 +5740,47 @@ paths:
       summary: User registration
       tags:
       - auth
+  /relationships/{relationship_id}:
+    put:
+      consumes:
+      - application/json
+      description: Update commission parameters for a team relationship
+      parameters:
+      - description: Relationship ID
+        in: path
+        name: relationship_id
+        required: true
+        type: string
+      - description: New parameters
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/request.UpdateRelationshipParamsRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update relationship parameters
+      tags:
+      - teams
   /stores:
     post:
       consumes:
@@ -6207,6 +6404,79 @@ paths:
       summary: Поиск магазинов
       tags:
       - store
+  /teams/{team_lead_id}/traders:
+    get:
+      consumes:
+      - application/json
+      description: Get all traders in a team lead's team
+      parameters:
+      - description: Team Lead ID
+        in: path
+        name: team_lead_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/response.UserResponse'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get traders by team lead
+      tags:
+      - teams
+    post:
+      consumes:
+      - application/json
+      description: Add a trader to a team lead's team
+      parameters:
+      - description: Team Lead ID
+        in: path
+        name: team_lead_id
+        required: true
+        type: string
+      - description: Trader data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/request.AddTraderToTeamRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Add trader to team
+      tags:
+      - teams
   /traffic/{trafficID}/lock-statuses:
     get:
       consumes:
@@ -6455,7 +6725,149 @@ paths:
       summary: Получение магазина по ID трафика
       tags:
       - store
+  /users:
+    get:
+      consumes:
+      - application/json
+      description: Get users with filtering, sorting and pagination
+      parameters:
+      - default: 1
+        description: Page number
+        in: query
+        minimum: 1
+        name: page
+        type: integer
+      - default: 20
+        description: Items per page
+        in: query
+        maximum: 100
+        minimum: 1
+        name: limit
+        type: integer
+      - description: Filter by login (substring)
+        in: query
+        name: login_filter
+        type: string
+      - description: Filter by username (substring)
+        in: query
+        name: username_filter
+        type: string
+      - collectionFormat: multi
+        description: Filter by roles
+        in: query
+        items:
+          enum:
+          - TRADER
+          - MERCHANT
+          - ADMIN
+          - TEAM_LEAD
+          type: string
+        name: roles
+        type: array
+      - description: Sort field
+        enum:
+        - login
+        - username
+        - created_at
+        - role
+        in: query
+        name: sort_by
+        type: string
+      - default: false
+        description: Sort descending
+        in: query
+        name: sort_desc
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_LavaJover_shvark-api-gateway_internal_delivery_http_dto_user_response.GetUsersResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get users with filters
+      tags:
+      - users
+    post:
+      consumes:
+      - application/json
+      description: Create a new user in the system
+      parameters:
+      - description: User data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/request.CreateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/response.CreateUserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create new user
+      tags:
+      - users
   /users/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete user from the system
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.DeleteUserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete user
+      tags:
+      - users
     get:
       consumes:
       - application/json
@@ -6472,18 +6884,291 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.GetUserByIDResponse'
+            $ref: '#/definitions/response.UserResponse'
         "400":
           description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "404":
+          description: Not Found
           schema:
             $ref: '#/definitions/handlers.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
             $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Get user by UUID
       tags:
       - users
+    put:
+      consumes:
+      - application/json
+      description: Update user information
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: User data to update
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/request.UpdateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.UpdateUserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update user
+      tags:
+      - users
+  /users/{id}/2fa:
+    put:
+      consumes:
+      - application/json
+      description: Enable or disable 2FA for user
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Enable/disable flag
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/request.SetTwoFaEnabledRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.SetTwoFaEnabledResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Enable/disable 2FA
+      tags:
+      - users
+  /users/{id}/2fa/secret:
+    get:
+      consumes:
+      - application/json
+      description: Get 2FA secret for user
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.TwoFaSecretResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get 2FA secret
+      tags:
+      - users
+    post:
+      consumes:
+      - application/json
+      description: Set 2FA secret for user
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: 2FA secret
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/request.SetTwoFaSecretRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Set 2FA secret
+      tags:
+      - users
+  /users/{id}/demote-team-lead:
+    post:
+      consumes:
+      - application/json
+      description: Demote a team lead to trader role
+      parameters:
+      - description: Team Lead ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Demote team lead
+      tags:
+      - teams
+  /users/{id}/password:
+    put:
+      consumes:
+      - application/json
+      description: Change user's password
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: New password
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/request.ChangePasswordRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.ChangePasswordResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Change user password
+      tags:
+      - users
+  /users/{id}/promote-to-team-lead:
+    post:
+      consumes:
+      - application/json
+      description: Promote a user to team lead role
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Promote user to team lead
+      tags:
+      - teams
   /validate_token:
     post:
       consumes:

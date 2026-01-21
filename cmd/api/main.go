@@ -132,6 +132,10 @@ func main() {
 
 	// user-service
 	r.GET("/api/v1/users/:id", userHandler.GetUserByID)
+	userGroup := r.Group("/api/v1/users", middleware.AuthMiddleware(authHandler.SSOClient))
+	{
+		userGroup.GET("", userHandler.GetUsersWithFilter)
+	}
 
 	// RBAC-service
 	rbacGroup := r.Group("/api/v1/rbac", middleware.AuthMiddleware(authHandler.SSOClient))

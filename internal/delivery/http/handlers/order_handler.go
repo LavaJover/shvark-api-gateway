@@ -226,6 +226,7 @@ func (h *OrderHandler) GetOrderByMerchantOrderID(c *gin.Context) {
 // @Param currency query string false "Currency code"
 // @Param order_id query string false "Order ID"
 // @Param merchant_order_id query string false "Merchant order ID"
+// @Param type query string false "Order type"
 // @Success 200 {object} orderResponse.GetOrdersByTraderIDResponse
 // @Failure 400 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
@@ -267,6 +268,7 @@ func (h *OrderHandler) GetOrdersByTraderID(c *gin.Context) {
 				Currency:      request.Currency,
 				OrderId: 	   request.OrderID,
 				MerchantOrderId: request.MerchantOrderID,
+				Type: request.Type,
 			},
 		},
 	)

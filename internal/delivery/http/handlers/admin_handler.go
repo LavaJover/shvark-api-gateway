@@ -154,7 +154,7 @@ func (h *AdminHandler) CreateTraffic(c *gin.Context) {
 		return
 	}
 
-	err := h.OrderClient.AddTraffic(&orderpb.AddTrafficRequest{
+	rpcResponse, err := h.OrderClient.AddTraffic(&orderpb.AddTrafficRequest{
 		StoreId: request.StoreID,
 		TraderId: request.TraderID,
 		TraderRewardPercent: request.TraderReward,
@@ -175,6 +175,22 @@ func (h *AdminHandler) CreateTraffic(c *gin.Context) {
 	}
 	c.JSON(http.StatusCreated, adminResponse.CreateTrafficResponse{
 		Message: "successfully created traffic",
+		Traffic: adminResponse.Traffic{
+			ID: rpcResponse.Traffic.Id,
+			StoreID: rpcResponse.Traffic.StoreId,
+			TraderID: rpcResponse.Traffic.TraderId,
+			TraderRewardPercent: rpcResponse.Traffic.TraderRewardPercent,
+			TraderPriority: rpcResponse.Traffic.TraderPriority,
+			ActivityParams: adminResponse.TrafficActivityParams{
+				MerchantUnlocked: rpcResponse.Traffic.ActivityParams.MerchantUnlocked,
+				TraderUnlocked: rpcResponse.Traffic.ActivityParams.TraderUnlocked,
+				AntifraudUnlocked: rpcResponse.Traffic.ActivityParams.AntifraudUnlocked,
+				ManuallyUnlocked: rpcResponse.Traffic.ActivityParams.ManuallyUnlocked,
+			},
+			AntifraudParams: adminResponse.TrafficAntifraudParams{
+				AntifraudRequired: rpcResponse.Traffic.AntifraudParams.AntifraudRequired,
+			},
+		},
 	})
 }
 
@@ -221,13 +237,30 @@ func (h *AdminHandler) EditTraffic(c *gin.Context) {
 		}
 	}
 
-	err := h.OrderClient.EditTraffic(editRequest)
+	rpcResponse, err := h.OrderClient.EditTraffic(editRequest)
 	if err != nil {
 		c.JSON(http.StatusBadGateway, ErrorResponse{Error: err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "success"})
+	c.JSON(http.StatusOK, adminResponse.EditTrafficResponse{
+		Traffic: adminResponse.Traffic{
+			ID: rpcResponse.Traffic.Id,
+			StoreID: rpcResponse.Traffic.StoreId,
+			TraderID: rpcResponse.Traffic.TraderId,
+			TraderRewardPercent: rpcResponse.Traffic.TraderRewardPercent,
+			TraderPriority: rpcResponse.Traffic.TraderPriority,
+			ActivityParams: adminResponse.TrafficActivityParams{
+				MerchantUnlocked: rpcResponse.Traffic.ActivityParams.MerchantUnlocked,
+				TraderUnlocked: rpcResponse.Traffic.ActivityParams.TraderUnlocked,
+				AntifraudUnlocked: rpcResponse.Traffic.ActivityParams.AntifraudUnlocked,
+				ManuallyUnlocked: rpcResponse.Traffic.ActivityParams.ManuallyUnlocked,
+			},
+			AntifraudParams: adminResponse.TrafficAntifraudParams{
+				AntifraudRequired: rpcResponse.Traffic.AntifraudParams.AntifraudRequired,
+			},
+		},
+	})
 }
 
 // @Summary Delete traffic record

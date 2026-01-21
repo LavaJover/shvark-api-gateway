@@ -31,27 +31,27 @@ func (c *OrderClient) CheckTrafficUnlocked(r *orderpb.CheckTrafficUnlockedReques
 	return c.trafficService.CheckTrafficUnlocked(ctx, r)
 }
 
-func (c *OrderClient) AddTraffic(r *orderpb.AddTrafficRequest) error {
+func (c *OrderClient) AddTraffic(r *orderpb.AddTrafficRequest) (*orderpb.AddTrafficResponse, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	_, err := c.trafficService.AddTraffic(
+	response, err := c.trafficService.AddTraffic(
 		ctx,
 		r,
 	)
-	return err
+	return response, err
 }
 
-func (c *OrderClient) EditTraffic(r *orderpb.EditTrafficRequest) error {
+func (c *OrderClient) EditTraffic(r *orderpb.EditTrafficRequest) (*orderpb.EditTrafficResponse, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	_, err := c.trafficService.EditTraffic(
+	response, err := c.trafficService.EditTraffic(
 		ctx,
 		r,
 	)
 
-	return err
+	return response, err
 }
 
 func (c *OrderClient) GetTrafficRecords(page, limit int32) ([]*orderpb.Traffic, error) {

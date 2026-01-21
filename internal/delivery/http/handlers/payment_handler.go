@@ -98,8 +98,21 @@ func (h *PaymentHandler) CreateH2HPayIn(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	userID, exists := c.Get("userID")
+    if !exists {
+        c.JSON(http.StatusUnauthorized, gin.H{"error": "user not authenticated"})
+        return
+    }
+    
+    // Приводим к нужному типу (предполагая, что это string)
+    userIDStr, ok := userID.(string)
+    if !ok {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "invalid user id type"})
+        return
+    }
 	response, err := h.OrderClient.CreatePayInOrder(&orderpb.CreatePayInOrderRequest{
-		MerchantId: payInRequest.MerchantID,
+		MerchantId: userIDStr,
+		StoreId: payInRequest.StoreID,
 		AmountFiat: payInRequest.AmountFiat,
 		Currency: payInRequest.Currency,
 		ClientId: payInRequest.ClientID,
