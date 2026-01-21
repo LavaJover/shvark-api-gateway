@@ -135,6 +135,7 @@ func main() {
 	userGroup := r.Group("/api/v1/users", middleware.AuthMiddleware(authHandler.SSOClient))
 	{
 		userGroup.GET("", userHandler.GetUsersWithFilter)
+		userGroup.DELETE("/:id", userHandler.DeleteUser)
 	}
 
 	// RBAC-service

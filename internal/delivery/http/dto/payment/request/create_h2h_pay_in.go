@@ -1,7 +1,7 @@
 package request
 
 type CreateH2HPayInRequest struct {
-	StoreID			string  `json:"store_id"`
+	StoreID			string  `json:"storeId"`
 	Currency 		string 	`json:"currency"`
 	PaymentSystem 	string 	`json:"paymentSystem"`
 	AmountFiat   	float64 `json:"amountFiat"`
