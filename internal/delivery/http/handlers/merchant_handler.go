@@ -82,16 +82,16 @@ func (h *MerchantHandler) CreatePayIn(c *gin.Context) {
 	}else {
 		orderServiceRequest.PaymentSystem = "C2C"
 	}
-	orderServiceResponse, err := h.OrderClient.CreatePayInOrder(&orderServiceRequest)
-	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
-		return
-	}
 	if merchantID == "80da023c-9604-4996-afac-5d7729575622"{
 		orderServiceRequest.StoreId = "2ded072b-e251-4783-9662-51fb6c713756"
 	}
 	if merchantID == "455854ce-27e8-405b-9cbf-83a9c9ac8109" {
 		orderServiceRequest.StoreId = "b847e3f6-25d0-4c47-a68a-22393572a755"
+	}
+	orderServiceResponse, err := h.OrderClient.CreatePayInOrder(&orderServiceRequest)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		return
 	}
  	c.JSON(http.StatusCreated, merchant.CreatePayInResponse{
 		OrderID: orderServiceResponse.Order.OrderId,
