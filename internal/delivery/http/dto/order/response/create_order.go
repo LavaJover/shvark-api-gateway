@@ -40,4 +40,6 @@ type Order struct {
 	MerchantID 		string 		`json:"merchant_id"`
 	MerchantOrderID string 		`json:"merchant_order_id"`
 	DeviceId		string   `json:"device_id"`
+	StoreID			string		`json:"store_id"`
+	StoreName		string		`json:"store_name"`
 }

@@ -4,7 +4,7 @@ go 1.23.2
 
 require (
 	github.com/LavaJover/shvark-authz-service v0.0.0-20250518135159-e47df48e9c1c
-	github.com/LavaJover/shvark-order-service v0.0.43-0.20260121014745-86481007ec12
+	github.com/LavaJover/shvark-order-service v0.0.43-0.20260126145428-703533377f9a
 	github.com/LavaJover/shvark-sso-service v0.0.5
 	github.com/LavaJover/shvark-user-service v0.0.9-0.20260121033144-f079d4cb31db
 	github.com/gin-gonic/gin v1.10.1

@@ -563,6 +563,9 @@ func transformOrder(grpcOrder *orderpb.Order) orderResponse.Order {
         UpdatedAt:       updatedAt,
         MerchantID:      grpcOrder.MerchantId,
         MerchantOrderID: grpcOrder.MerchantOrderId,
+		DeviceId: 		 grpcOrder.BankDetail.DeviceId,
+		StoreID: 		 grpcOrder.StoreId,
+		StoreName: 		 grpcOrder.StoreName,
     }
 }
 
