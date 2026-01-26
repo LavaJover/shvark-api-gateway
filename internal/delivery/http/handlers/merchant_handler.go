@@ -52,21 +52,32 @@ func NewMerchanHandler(
 // @Failure 404 {object} ErrorResponse
 // @Router /merchant/order/{accountID}/deposit [post]
 func (h *MerchantHandler) CreatePayIn(c *gin.Context) {
-	merchantID := c.Param("accountID")
-	if merchantID == "" {
+	storeID := c.Param("accountID")
+	if storeID == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "accountID path param missed"})
 		return
 	}
+	userID, exists := c.Get("userID")
+    if !exists {
+        c.JSON(http.StatusUnauthorized, gin.H{"error": "user not authenticated"})
+        return
+    }
+    // Приводим к нужному типу (предполагая, что это string)
+    userIDStr, ok := userID.(string)
+    if !ok {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "invalid user id type"})
+        return
+    }
 	var request merchant.CreatePayInRequest
 	if err := c.ShouldBindJSON(&request); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 	orderServiceRequest := orderpb.CreatePayInOrderRequest{
-		MerchantId: merchantID,
+		MerchantId: userIDStr,
 		AmountFiat: request.Amount,
 		Currency: request.Currency,
-		StoreId: "2ded072b-e251-4783-9662-51fb6c713756",
+		StoreId: storeID,
 		Country: "Russia",
 		ClientId: "",
 		ExpiresAt: timestamppb.New(time.Now().Add(20*time.Minute)),
@@ -82,10 +93,10 @@ func (h *MerchantHandler) CreatePayIn(c *gin.Context) {
 	}else {
 		orderServiceRequest.PaymentSystem = "C2C"
 	}
-	if merchantID == "80da023c-9604-4996-afac-5d7729575622"{
+	if storeID == "80da023c-9604-4996-afac-5d7729575622"{
 		orderServiceRequest.StoreId = "2ded072b-e251-4783-9662-51fb6c713756"
 	}
-	if merchantID == "455854ce-27e8-405b-9cbf-83a9c9ac8109" {
+	if storeID == "455854ce-27e8-405b-9cbf-83a9c9ac8109" {
 		orderServiceRequest.StoreId = "b847e3f6-25d0-4c47-a68a-22393572a755"
 	}
 	orderServiceResponse, err := h.OrderClient.CreatePayInOrder(&orderServiceRequest)
